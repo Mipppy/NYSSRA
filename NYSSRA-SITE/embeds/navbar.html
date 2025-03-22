@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<nav class="navbar navbar-expand-lg navbar-light bg-light pb-1 pt-1" logged-in="0">
+    <a class="navbar-brand ms-3" href="/" style="font-family: 'Libre Baskerville', serif;">NYSSRA Nordic</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-between row" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto col-6">
+            <li class="nav-item">
+                <a class="nav-link" href="/results.html">RESULTS</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/calender.html">UPCOMING EVENTS</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/clubs.html">CLUBS</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-item"></a>
+            </li>
+            <!-- <li class="nav-item">
+                <a class="nav-link" href="/results.html"></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/races.html">Races</a>
+            </li> -->
+        </ul>
+        <div class="d-flex align-items-start justify-content-end align-items-center col-6">
+            <form class="d-flex col-8 me-3" onsubmit="event.preventDefault(); var ele = event.target.querySelector('#searchquery');if (ele.value == '') {return;}; location.href =`/search.html?q=${ele.value}`">
+                <input class="form-control me-2" placeholder="Search the site" aria-label="Search" id="searchquery">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+</nav>
+</html>
