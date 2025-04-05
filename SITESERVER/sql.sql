@@ -10,4 +10,4 @@
 -- );
 
 INSERT INTO posts (author, markdown, date, event, event_date, category, header) 
-VALUES ('John Smith', '### Heading', 'Marhc 20 ', 0, '', 'test', 'Test post 2!');
+VALUES ('Race', '### there is a race', '', 1, '', 'test', 'Test post 2!');

@@ -109,5 +109,14 @@ def get_recent_posts():
     finally:
         cursor.close()
         db.close()
+
+@app.route("/get_events")
+def get_events():
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM posts WHERE event = true")
+    return jsonify(cursor.fetchall()), 200
+
 if __name__ == "__main__":
     app.run(debug=True)
+
