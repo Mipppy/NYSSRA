@@ -23,8 +23,8 @@ class XC_TIMER_DLL:
         dll_dir = os.path.abspath("includes")
         self.dll_path = os.path.join(dll_dir, "xc_timer_dll.dll")
         os.environ["PATH"] += f";{dll_dir}"
-
-        self.dll = WinDLL(self.dll_path, winmode=0) # type: ignore
+        print(self.dll_path)
+        self.dll = WinDLL(self.dll_path) # type: ignore
     
     @ensure_dll_loaded
     def register_dll_functions(self) -> None:
@@ -92,9 +92,10 @@ class XC_TIMER_DLL:
     def dll_initialize_dll_task(self, initialize_method:Union[int, c_long],race_directory:Union[str, c_char_p]) -> int:
         """
         <b>It is necessary to call this function.</b>\n
+        <b>VERY IMPORTANT!!!! SET `initialize_method` to 0x110 TO ENABLE LOGGING!!!</b>\n
         The following function initializes the timer dll.
-        First, this function sets members of the configuration to their default values.
-        If `read_ini_file_flag` = 1, then the dll overwrites the configuration parameters with values from the .INI file.
+        First, this function sets members of the configuration to their default values.\n
+        If `read_ini_file_flag` = 1, then the dll overwrites the configuration parameters with values from the .INI file.\n
         If `read_ini_file_flag` = 0, then the dll does not overwrites the configuration parameters with values from the .INI file.
         Args:
             initialize_method (Union[int, c_long]): Read above

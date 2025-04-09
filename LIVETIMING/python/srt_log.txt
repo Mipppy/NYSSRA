@@ -1,0 +1,12 @@
+SRT Data Acquisition Module Runtime Log Here
+  at 20:41:42  on 04/08/25:
+  1.6.2 at 9:54 on 6/04/09
+
+
+SRT Data Acquisition Module Has Been Initialized
+
+Set COMM Port to 2
+
+Set Diagnostic Flags to        1 
+
+DLL Call: Generating a Dummy Record at 20:41:44

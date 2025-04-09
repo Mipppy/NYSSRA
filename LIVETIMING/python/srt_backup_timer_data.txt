@@ -26,3 +26,27 @@ Summit Systems Timer Backup Text File Initialized  at 16:15:38  on 04/08/25:
 
 table_id	device_num	record_num	event_num	heat_num	channel	record_typ	total_user_string	bib_string	timer_time	pc_time	notes
 0	99	1	0	0	0	b	9999 dummy	9999	16:15:40	16:15:40	notes
+
+Summit Systems Timer Backup Text File Initialized  at 20:16:55  on 04/08/25:
+
+table_id	device_num	record_num	event_num	heat_num	channel	record_typ	total_user_string	bib_string	timer_time	pc_time	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:16:58	20:16:58	notes
+
+Summit Systems Timer Backup Text File Initialized  at 20:35:37  on 04/08/25:
+
+table_id	device_num	record_num	event_num	heat_num	channel	record_typ	total_user_string	bib_string	timer_time	pc_time	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:35:43	20:35:43	notes
+
+Summit Systems Timer Backup Text File Initialized  at 20:36:13  on 04/08/25:
+
+table_id	device_num	record_num	event_num	heat_num	channel	record_typ	total_user_string	bib_string	timer_time	pc_time	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:36:16	20:36:16	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:36:28	20:36:28	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:36:30	20:36:30	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:36:31	20:36:31	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:36:32	20:36:32	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:38:40	20:38:40	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:38:43	20:38:43	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:39:56	20:39:56	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:40:49	20:40:49	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:41:44	20:41:44	notes
