@@ -1,3 +1,9 @@
+""" 
+<b>DO NOT USE.</b>  
+<br>
+<hr>
+USE XC_TIMER.PY INSTEAD
+"""
 from ctypes import *
 from ctypes import _SimpleCData
 import os
@@ -7,7 +13,7 @@ from helpers import convert_to_ctypes, ensure_dll_loaded, ensure_ready_to_call_f
 
 class SRT_ACQUISITION_DLL:
     """
-    Functions starting with `dll` are DLL functions.
+    DO NOT USE!  USE XC_TIMER.PY INSTEAD
     """
     def __init__(self):
         self.dll_init_called = False
