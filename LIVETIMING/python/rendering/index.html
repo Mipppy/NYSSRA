@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .tab-bar {
+            display: flex;
+            background-color: #333;
+            border: 1px solid #332
+        }
+        .tab-btn {
+            padding: 14px 20px;
+            background: #444;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+            width: calc(100%/6)
+        }
+        .tab-btn:hover {
+            background-color: #555;
+        }
+        .tab-btn.active {
+            background-color: #0078d7;
+            filter: drop-shadow(4px 8px 6px #000000);
+        }
+        .content {
+            padding: 20px;
+            display: none;
+        }
+        .content.active {
+            display: block;
+        }
+    </style>
+    <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+</head>
+<body>
+    <div class="tab-bar">
+        <button class="tab-btn active" onclick="openTab('tab1')">Tab 1</button>
+        <button class="tab-btn" onclick="openTab('tab2')">Tab 2</button>
+        <button class="tab-btn" onclick="openTab('tab3')">Tab 3</button>
+        <button class="tab-btn" onclick="openTab('tab4')">Tab 4</button>
+        <button class="tab-btn" onclick="openTab('tab5')">Tab 5</button>
+        <button class="tab-btn" onclick="openTab('tab6')">Tab 6</button>
+
+    </div>
+
+    <div id="tab1" class="content active">
+        <h2>Tab 1 Content</h2>
+        <p>This is the first tab's content area.</p>
+    </div>
+
+    <div id="tab2" class="content">
+        <h2>Tab 2 Content</h2>
+        <p>Different content appears here.</p>
+    </div>
+
+    <div id="tab3" class="content">
+        <h2>Tab 3 Content</h2>
+        <p>Third tab content area.</p>
+    </div>
+
+    <div id="tab4" class="content">
+        <h2>Tab 4 Content</h2>
+        <p>Fourth tab content area.</p>
+    </div>
+
+    <div id="tab5" class="content">
+        <h2>Tab 5 Content</h2>
+        <p>Fifth tab content area.</p>
+    </div>
+
+    <div id="tab6" class="content">
+        <h2>Tab 6 Content</h2>
+        <p>Sixth tab content area.</p>
+    </div>
+
+    <script>
+        function openTab(tabId) {
+            document.querySelectorAll('.content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            new QWebChannel(qt.webChannelTransport, channel => {
+                window.bridge = channel.objects.bridge;
+                
+                window.sendToPython = function(text) {
+                    bridge.sendText(text);
+                };
+            });
+        });
+    </script>
+</body>
+</html>

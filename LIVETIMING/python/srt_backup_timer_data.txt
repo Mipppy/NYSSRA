@@ -1,0 +1,28 @@
+
+Summit Systems Timer Backup Text File Initialized  at 15:43:41  on 04/08/25:
+
+table_id	device_num	record_num	event_num	heat_num	channel	record_typ	total_user_string	bib_string	timer_time	pc_time	notes
+
+Summit Systems Timer Backup Text File Initialized  at 15:43:53  on 04/08/25:
+
+table_id	device_num	record_num	event_num	heat_num	channel	record_typ	total_user_string	bib_string	timer_time	pc_time	notes
+
+Summit Systems Timer Backup Text File Initialized  at 15:56:25  on 04/08/25:
+
+table_id	device_num	record_num	event_num	heat_num	channel	record_typ	total_user_string	bib_string	timer_time	pc_time	notes
+0	99	1	0	0	0	b	9999 dummy	9999	15:56:26	15:56:26	notes
+
+Summit Systems Timer Backup Text File Initialized  at 16:12:48  on 04/08/25:
+
+table_id	device_num	record_num	event_num	heat_num	channel	record_typ	total_user_string	bib_string	timer_time	pc_time	notes
+0	99	1	0	0	0	b	9999 dummy	9999	16:12:50	16:12:50	notes
+
+Summit Systems Timer Backup Text File Initialized  at 16:14:35  on 04/08/25:
+
+table_id	device_num	record_num	event_num	heat_num	channel	record_typ	total_user_string	bib_string	timer_time	pc_time	notes
+0	99	1	0	0	0	b	9999 dummy	9999	16:14:37	16:14:37	notes
+
+Summit Systems Timer Backup Text File Initialized  at 16:15:38  on 04/08/25:
+
+table_id	device_num	record_num	event_num	heat_num	channel	record_typ	total_user_string	bib_string	timer_time	pc_time	notes
+0	99	1	0	0	0	b	9999 dummy	9999	16:15:40	16:15:40	notes
