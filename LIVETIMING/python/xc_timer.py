@@ -3,15 +3,18 @@ from ctypes import _SimpleCData
 import os
 from typing import Type, TypeVar, Union
 from helpers import *
+import logging
 
 class XC_TIMER_DLL:
     def __init__(self):
         self.dll_init_called = False
         self.dll = None
         self.timer_number = 0
+        self.logger = logging.getLogger('BART2')
         self.all_functions_loaded = False
         self.load_dll()
         self.register_dll_functions()
+        self.logger.info("Successfully loaded xc_timer_dll.dll")
         
     def load_dll(self) -> None:
         """
@@ -84,6 +87,20 @@ class XC_TIMER_DLL:
         
         self.dll.dll_get_next_timer_record.argstypes = [POINTER(c_long), POINTER(c_long), POINTER(c_long), POINTER(c_long), POINTER(c_long), POINTER(c_long), POINTER(c_long), c_char_p,c_char_p,c_char_p,c_char_p,c_char_p,c_char_p,c_char_p,c_char_p,c_char_p,c_char_p]
         self.dll.dll_get_next_timer_record.restype = c_long
+        
+        self.dll.dll_set_baud_rate.argstypes = [POINTER(c_long)]
+        self.dll.dll_set_baud_rate.restype = c_long
+        
+        self.dll.dll_assign_default_values.argstypes = None
+        self.dll.dll_assign_default_values.restype = c_long
+        
+        self.dll.dll_set_event_and_heat.argstypes = [POINTER(c_long), POINTER(c_long), POINTER(c_long)]
+        self.dll.dll_set_event_and_heat.restype = c_long
+        
+        self.dll.dll_disable_timer_reset.argstypes = None
+        self.dll.dll_disable_timer_reset.restype = c_long
+        
+        self.logger.debug("Loaded xc_timer_dll.dll's functions successfully.")
         
         self.all_functions_loaded = True
         
@@ -214,7 +231,7 @@ class XC_TIMER_DLL:
             talk_rate (Union[int, c_long]): The new talk rate.
         """
         c_talk_rate = convert_to_ctypes(talk_rate, c_long)
-        self.dll.dll_set_talk_time(c_talk_rate)
+        self.dll.dll_set_talk_time(byref(c_talk_rate))
         return
     
     @ensure_dll_loaded
@@ -227,7 +244,7 @@ class XC_TIMER_DLL:
             string_delimiter (Union[int, c_long]): The new string delimiter
         """
         c_string_delimiter = convert_to_ctypes(string_delimiter, c_long)
-        self.dll.dll_set_string_delimiter(c_string_delimiter)
+        self.dll.dll_set_string_delimiter(byref(c_string_delimiter))
         return
     
     @ensure_dll_loaded
@@ -275,7 +292,7 @@ class XC_TIMER_DLL:
         if int(device_num) > self.timer_number - 1:
             return c_long(0)
         c_device_num = convert_to_ctypes(device_num, c_long)
-        return self.dll.dll_get_msec_since_last_communication(c_device_num)
+        return self.dll.dll_get_msec_since_last_communication(byref(c_device_num))
     
     @ensure_dll_loaded
     @ensure_ready_to_call_function
@@ -304,25 +321,93 @@ class XC_TIMER_DLL:
         Returns a dict with the values
         """
         XC_Struct = {
-            "app": c_long(0),
-            "tableid": c_long(0),
-            "devicenum": c_long(0),
-            "recordnum": c_long(0),
-            "eventnum": c_long(0),
-            "heatnum": c_long(0),
-            "channel": c_long(0),
-            "record_typ": c_char_p(),
-            "userstring": c_char_p(),
-            "user1_string": c_char_p(),
-            "user2_string": c_char_p(),
-            "user3_string": c_char_p(),
-            "user4_string": c_char_p(),
-            "bib_string": c_char_p(),
-            "timer_time": c_char_p(),
-            "pc_time": c_char_p(),
-            "notes": c_char_p()
+            "app": c_long(),
+            "tableid": c_long(),
+            "devicenum": c_long(),
+            "recordnum": c_long(),
+            "eventnum": c_long(),
+            "heatnum": c_long(),
+            "channel": c_long(),
+            "record_typ": create_string_buffer(1),
+            "userstring": create_string_buffer(20),
+            "user1_string": create_string_buffer(20),
+            "user2_string": create_string_buffer(20),
+            "user3_string": create_string_buffer(20),
+            "user4_string": create_string_buffer(20),
+            "bib_string": create_string_buffer(20),
+            "timer_time": create_string_buffer(20),
+            "pc_time": create_string_buffer(20),
+            "notes": create_string_buffer(20)
         }
-        res = self.dll.dll_get_next_timer_record(byref(XC_Struct["app"]), byref(XC_Struct["tableid"]), byref(XC_Struct['devicenum']), byref(XC_Struct['recordnum']), byref(XC_Struct['eventnum']), byref(XC_Struct['heatnum']), byref(XC_Struct['channel']), byref(XC_Struct['record_typ']), byref(XC_Struct['userstring']), byref(XC_Struct['user1_string']), byref(XC_Struct['user2_string']), byref(XC_Struct['user3_string']), byref(XC_Struct['user4_string']), byref(XC_Struct['bib_string']), byref(XC_Struct['timer_time']), byref(XC_Struct['pc_time']), byref(XC_Struct['notes']))
+        res = self.dll.dll_get_next_timer_record(byref(XC_Struct["app"]), byref(XC_Struct["tableid"]), byref(XC_Struct['devicenum']), byref(XC_Struct['recordnum']), byref(XC_Struct['eventnum']), byref(XC_Struct['heatnum']), byref(XC_Struct['channel']), XC_Struct['record_typ'], XC_Struct['userstring'], XC_Struct['user1_string'], XC_Struct['user2_string'], XC_Struct['user3_string'], XC_Struct['user4_string'], XC_Struct['bib_string'], XC_Struct['timer_time'], XC_Struct['pc_time'], XC_Struct['notes'])
         if res == 1:
-            return XC_Struct
-        return 
+            converted_XC_Struct = {}
+            for key, item in XC_Struct.items():
+                if isinstance(item, (c_char_p, Array)):  
+                    try:
+                        raw_bytes = item.value if hasattr(item, 'value') else item.raw
+                        decoded_str = raw_bytes.decode('ascii', errors='ignore')
+                        converted_XC_Struct[key] = decoded_str if decoded_str else None
+                    except Exception as e:
+                        print(f"Failed to decode {key}: {e}")
+                        converted_XC_Struct[key] = None
+                else:
+                    converted_XC_Struct[key] = item.value
+            return converted_XC_Struct
+        return None
+    
+    @ensure_dll_loaded
+    @ensure_ready_to_call_function
+    def dll_set_baud_rate(self, baud_rate:Union[int,c_long]) -> None:
+        """
+        <b>Never call this function.  The only working baud rate is the default 9600.</b>
+        <hr>
+        The following function does the obvious thing.  Default is 9600.  That is the only baud rate currently supported
+
+
+        Args:
+            baud_rate (Union[int,c_long]): The new baud rate
+        """
+        c_baud_rate = convert_to_ctypes(baud_rate, c_long)
+        self.dll.dll_set_baud_rate(byref(c_baud_rate))
+        return
+    
+    @ensure_dll_loaded
+    @ensure_ready_to_call_function
+    def dll_assign_default_values(self) -> None:
+        """
+        The following function sets variables back to their default values
+        It is not necessary to call this function
+        """ 
+        self.dll.dll_assign_default_values()
+        return
+    
+    @ensure_dll_loaded
+    @ensure_ready_to_call_function
+    def dll_set_event_and_heat(self, device:Union[int, c_long], event:Union[int, c_long], heat:Union[int, c_long]) -> None:
+        """
+        The following function sends event and heat information to the timers.
+        If device = 0, then the event and heat information is sent to all timers
+
+        Args:
+            device (Union[int, c_long]): The device number, typically set this to 0
+            event (Union[int, c_long]): The current event
+            heat (Union[int, c_long]): The current heat
+        """
+        c_device = convert_to_ctypes(device, c_long)
+        c_event = convert_to_ctypes(event, c_long)
+        c_heat = convert_to_ctypes(heat, c_long)
+        self.dll.dll_set_event_and_heat(byref(c_device), byref(c_event), byref(c_heat))
+        return
+    
+    @ensure_dll_loaded
+    @ensure_ready_to_call_function
+    def dll_disable_timer_reset(self) -> None:
+        """
+        The following function disables the ability to reset the timers from the PC
+
+        Note: From what I can tell, this function must serve some other purpose, as it used in the 2 code examples provided.\n
+        I would call this just to be careful.
+        """
+        self.dll.dll_disable_timer_reset()
+        return

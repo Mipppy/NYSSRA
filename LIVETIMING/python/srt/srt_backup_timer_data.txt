@@ -1,0 +1,122 @@
+
+Summit Systems Timer Backup Text File Initialized  at 15:43:41  on 04/08/25:
+
+table_id	device_num	record_num	event_num	heat_num	channel	record_typ	total_user_string	bib_string	timer_time	pc_time	notes
+
+Summit Systems Timer Backup Text File Initialized  at 15:43:53  on 04/08/25:
+
+table_id	device_num	record_num	event_num	heat_num	channel	record_typ	total_user_string	bib_string	timer_time	pc_time	notes
+
+Summit Systems Timer Backup Text File Initialized  at 15:56:25  on 04/08/25:
+
+table_id	device_num	record_num	event_num	heat_num	channel	record_typ	total_user_string	bib_string	timer_time	pc_time	notes
+0	99	1	0	0	0	b	9999 dummy	9999	15:56:26	15:56:26	notes
+
+Summit Systems Timer Backup Text File Initialized  at 16:12:48  on 04/08/25:
+
+table_id	device_num	record_num	event_num	heat_num	channel	record_typ	total_user_string	bib_string	timer_time	pc_time	notes
+0	99	1	0	0	0	b	9999 dummy	9999	16:12:50	16:12:50	notes
+
+Summit Systems Timer Backup Text File Initialized  at 16:14:35  on 04/08/25:
+
+table_id	device_num	record_num	event_num	heat_num	channel	record_typ	total_user_string	bib_string	timer_time	pc_time	notes
+0	99	1	0	0	0	b	9999 dummy	9999	16:14:37	16:14:37	notes
+
+Summit Systems Timer Backup Text File Initialized  at 16:15:38  on 04/08/25:
+
+table_id	device_num	record_num	event_num	heat_num	channel	record_typ	total_user_string	bib_string	timer_time	pc_time	notes
+0	99	1	0	0	0	b	9999 dummy	9999	16:15:40	16:15:40	notes
+
+Summit Systems Timer Backup Text File Initialized  at 20:16:55  on 04/08/25:
+
+table_id	device_num	record_num	event_num	heat_num	channel	record_typ	total_user_string	bib_string	timer_time	pc_time	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:16:58	20:16:58	notes
+
+Summit Systems Timer Backup Text File Initialized  at 20:35:37  on 04/08/25:
+
+table_id	device_num	record_num	event_num	heat_num	channel	record_typ	total_user_string	bib_string	timer_time	pc_time	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:35:43	20:35:43	notes
+
+Summit Systems Timer Backup Text File Initialized  at 20:36:13  on 04/08/25:
+
+table_id	device_num	record_num	event_num	heat_num	channel	record_typ	total_user_string	bib_string	timer_time	pc_time	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:36:16	20:36:16	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:36:28	20:36:28	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:36:30	20:36:30	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:36:31	20:36:31	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:36:32	20:36:32	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:38:40	20:38:40	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:38:43	20:38:43	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:39:56	20:39:56	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:40:49	20:40:49	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:41:44	20:41:44	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:47:20	20:47:20	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:48:24	20:48:24	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:48:38	20:48:38	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:49:00	20:49:00	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:49:20	20:49:20	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:50:59	20:50:59	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:51:16	20:51:16	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:52:22	20:52:22	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:53:47	20:53:47	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:54:08	20:54:08	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:54:17	20:54:17	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:55:18	20:55:18	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:55:45	20:55:45	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:56:47	20:56:47	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:57:12	20:57:12	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:59:04	20:59:04	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:59:19	20:59:19	notes
+0	99	1	0	0	0	b	9999 dummy	9999	20:59:57	20:59:57	notes
+0	99	1	0	0	0	b	9999 dummy	9999	21:00:04	21:00:04	notes
+0	99	1	0	0	0	b	9999 dummy	9999	21:02:03	21:02:03	notes
+0	99	1	0	0	0	b	9999 dummy	9999	21:02:31	21:02:31	notes
+0	99	1	0	0	0	b	9999 dummy	9999	21:05:50	21:05:50	notes
+0	99	1	0	0	0	b	9999 dummy	9999	21:06:04	21:06:04	notes
+0	99	1	0	0	0	b	9999 dummy	9999	21:06:20	21:06:20	notes
+0	99	1	0	0	0	b	9999 dummy	9999	21:10:56	21:10:56	notes
+0	99	1	0	0	0	b	9999 dummy	9999	21:11:10	21:11:10	notes
+0	99	1	0	0	0	b	9999 dummy	9999	21:11:24	21:11:24	notes
+0	99	1	0	0	0	b	9999 dummy	9999	21:11:35	21:11:35	notes
+0	99	1	0	0	0	b	9999 dummy	9999	21:14:42	21:14:42	notes
+0	99	1	0	0	0	b	9999 dummy	9999	21:15:44	21:15:44	notes
+0	99	1	0	0	0	b	9999 dummy	9999	21:17:43	21:17:43	notes
+0	99	1	0	0	0	b	9999 dummy	9999	21:17:58	21:17:58	notes
+0	99	1	0	0	0	b	9999 dummy	9999	21:18:35	21:18:35	notes
+0	99	1	0	0	0	b	9999 dummy	9999	21:18:48	21:18:48	notes
+0	99	1	0	0	0	b	9999 dummy	9999	21:19:18	21:19:18	notes
+0	99	1	0	0	0	b	9999 dummy	9999	21:19:37	21:19:37	notes
+0	99	1	0	0	0	b	9999 dummy	9999	21:19:55	21:19:55	notes
+0	99	1	0	0	0	b	9999 dummy	9999	21:20:54	21:20:54	notes
+0	99	1	0	0	0	b	9999 dummy	9999	21:21:15	21:21:15	notes
+0	99	1	0	0	0	b	9999 dummy	9999	21:21:27	21:21:27	notes
+0	99	1	0	0	0	b	9999 dummy	9999	21:21:57	21:21:57	notes
+0	99	1	0	0	0	b	9999 dummy	9999	21:22:11	21:22:11	notes
+0	99	1	0	0	0	b	9999 dummy	9999	21:22:20	21:22:20	notes
+0	99	1	0	0	0	b	9999 dummy	9999	21:23:22	21:23:22	notes
+0	99	1	0	0	0	b	9999 dummy	9999	21:23:39	21:23:39	notes
+0	99	1	0	0	0	b	9999 dummy	9999	21:26:56	21:26:56	notes
+0	99	1	0	0	0	b	9999 dummy	9999	21:31:31	21:31:31	notes
+0	99	1	0	0	0	b	9999 dummy	9999	21:33:15	21:33:15	notes
+0	99	1	0	0	0	b	9999 dummy	9999	22:02:13	22:02:13	notes
+0	99	1	0	0	0	b	9999 dummy	9999	22:15:02	22:15:02	notes
+0	99	1	0	0	0	b	9999 dummy	9999	22:20:20	22:20:20	notes
+0	99	1	0	0	0	b	9999 dummy	9999	22:21:11	22:21:11	notes
+0	99	1	0	0	0	b	9999 dummy	9999	22:21:31	22:21:31	notes
+0	99	1	0	0	0	b	9999 dummy	9999	22:22:59	22:22:59	notes
+0	99	1	0	0	0	b	9999 dummy	9999	22:42:42	22:42:42	notes
+0	99	1	0	0	0	b	9999 dummy	9999	22:48:31	22:48:31	notes
+0	99	1	0	0	0	b	9999 dummy	9999	22:49:01	22:49:01	notes
+0	99	1	0	0	0	b	9999 dummy	9999	22:49:26	22:49:26	notes
+0	99	1	0	0	0	b	9999 dummy	9999	10:40:48	10:40:48	notes
+0	99	1	0	0	0	b	9999 dummy	9999	11:04:01	11:04:01	notes
+0	99	1	0	0	0	b	9999 dummy	9999	11:04:20	11:04:20	notes
+0	99	1	0	0	0	b	9999 dummy	9999	11:14:38	11:14:38	notes
+0	99	1	0	0	0	b	9999 dummy	9999	11:16:01	11:16:01	notes
+0	99	1	0	0	0	b	9999 dummy	9999	11:23:20	11:23:20	notes
+0	99	1	0	0	0	b	9999 dummy	9999	12:53:06	12:53:06	notes
+0	99	1	0	0	0	b	9999 dummy	9999	12:53:27	12:53:27	notes
+0	99	1	0	0	0	b	9999 dummy	9999	12:55:06	12:55:06	notes
+0	99	1	0	0	0	b	9999 dummy	9999	12:55:23	12:55:23	notes
+0	99	1	0	0	0	b	9999 dummy	9999	12:56:38	12:56:38	notes
+0	99	1	0	0	0	b	9999 dummy	9999	12:56:55	12:56:55	notes

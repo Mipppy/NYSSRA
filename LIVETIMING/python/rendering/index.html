@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <style>
         body {
@@ -7,11 +8,13 @@
             margin: 0;
             padding: 0;
         }
+
         .tab-bar {
             display: flex;
             background-color: #333;
             border: 1px solid #332
         }
+
         .tab-btn {
             padding: 14px 20px;
             background: #444;
@@ -22,35 +25,45 @@
             transition: 0.3s;
             width: calc(100%/6)
         }
+
         .tab-btn:hover {
             background-color: #555;
         }
+
         .tab-btn.active {
             background-color: #0078d7;
             filter: drop-shadow(4px 8px 6px #000000);
         }
+
         .content {
             padding: 20px;
             display: none;
         }
+
         .content.active {
             display: block;
         }
     </style>
     <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+    <link href="static/bootstrap.css" rel="stylesheet"
+        integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+    <script src="static/bootstrap.js"
+        integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"
+        crossorigin="anonymous"></script>
 </head>
+
 <body>
     <div class="tab-bar">
-        <button class="tab-btn active" onclick="openTab('tab1')">Tab 1</button>
+        <button class="tab-btn" onclick="openTab('tab1')">Tab 1</button>
         <button class="tab-btn" onclick="openTab('tab2')">Tab 2</button>
         <button class="tab-btn" onclick="openTab('tab3')">Tab 3</button>
         <button class="tab-btn" onclick="openTab('tab4')">Tab 4</button>
         <button class="tab-btn" onclick="openTab('tab5')">Tab 5</button>
-        <button class="tab-btn" onclick="openTab('tab6')">Tab 6</button>
+        <button class="tab-btn active" onclick="openTab('tab6')">Debug</button>
 
     </div>
 
-    <div id="tab1" class="content active">
+    <div id="tab1" class="content">
         <h2>Tab 1 Content</h2>
         <p>This is the first tab's content area.</p>
     </div>
@@ -75,34 +88,83 @@
         <p>Fifth tab content area.</p>
     </div>
 
-    <div id="tab6" class="content">
-        <h2>Tab 6 Content</h2>
-        <p>Sixth tab content area.</p>
+    <div id="tab6" class="content active d-flex flex-column" style="height: calc(100vh - 50px);"> <!-- Subtract tab bar height -->
+        <div class="row g-3 flex-grow-1 overflow-hidden"> <!-- Takes remaining space -->
+            <div class="col-7 bg-light p-3 rounded me-3 h-100 overflow-hidden"> <!-- Left panel -->
+                Hi
+            </div>
+            <div class="col-4 p-0 bg-secondary d-flex flex-column h-100"> <!-- Right panel -->
+                <h4 class="ps-3 pt-2 mb-2 flex-shrink-0">Log</h4>
+                <div id="log_div" class="bg-dark text-light p-2 overflow-auto rounded flex-grow-1">
+                    <!-- Log messages will appear here -->
+                </div>
+            </div>
+        </div>
     </div>
+    
+    <style>
+        /* Custom height utilities */
+        .h-85 { height: 85%; }
+        .h-log-panel { height: calc(100% - 50px); } /* Account for header */
+        
+        /* Custom scrollbar styling */
+        #log_div::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        #log_div::-webkit-scrollbar-track {
+            background: #555;
+        }
+        #log_div::-webkit-scrollbar-thumb {
+            background-color: #888;
+            border-radius: 4px;
+        }
+        #log_div::-webkit-scrollbar-thumb:hover {
+            background: #777;
+        }
+    </style>
 
     <script>
         function openTab(tabId) {
             document.querySelectorAll('.content').forEach(content => {
                 content.classList.remove('active');
             });
-            
+
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            
+
             document.getElementById(tabId).classList.add('active');
             event.currentTarget.classList.add('active');
         }
 
-        document.addEventListener("DOMContentLoaded", () => {
-            new QWebChannel(qt.webChannelTransport, channel => {
+        const log_message_type_color = { "CRITICAL": "danger" ,"INFO":'info', 'DEBUG':'primary', 'ERROR':'danger', 'WARNING':'warning'}
+        const log_type_parser_regex = /^[^\[]*\[([^\]]+)\]/;
+        function add_to_log(message) {
+            const logDiv = document.getElementById('log_div');
+            if (logDiv) {
+                var p = document.createElement('p')
+                p.innerText = message
+                const match = message.match(log_type_parser_regex) 
+                p.style.fontSize = '11px'
+                p.classList.add('text-nowrap',`text-${match ? log_message_type_color[match[1]] : 'primary'}`, 'm-1')
+                logDiv.insertBefore(p, logDiv.firstChild)
+            }
+        }
+        document.addEventListener("DOMContentLoaded", function () {
+            new QWebChannel(qt.webChannelTransport, function (channel) {
                 window.bridge = channel.objects.bridge;
-                
-                window.sendToPython = function(text) {
-                    bridge.sendText(text);
-                };
+
+                bridge.js_message.connect(function (message) {
+                    add_to_log(message);
+                });
+
+                bridge.py_message("ready");
+
             });
         });
+
     </script>
 </body>
+
 </html>
