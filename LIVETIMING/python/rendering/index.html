@@ -83,12 +83,23 @@
         <p>Fourth tab content area.</p>
     </div>
 
-    <div id="tab5" class="content">
-        <h2>Tab 5 Content</h2>
-        <p>Fifth tab content area.</p>
+    <div id="tab5" class="content active d-flex flex-column" style="height: calc(100vh - 50px);">
+        <!-- Subtract tab bar height -->
+        <div class="row g-3 flex-grow-1 overflow-hidden"> <!-- Takes remaining space -->
+            <div class="col-7 bg-light p-3 rounded me-3 h-100 overflow-hidden"> <!-- Left panel -->
+                <input class="form" type="file" id="startlist_file_input">
+            </div>
+            <div class="col-4 p-0 bg-secondary d-flex flex-column h-100"> <!-- Right panel -->
+                <h4 class="ps-3 pt-2 mb-2 flex-shrink-0">Log</h4>
+                <div id="log_div" class="bg-dark text-light p-2 overflow-auto rounded flex-grow-1">
+                    <!-- Log messages will appear here -->
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div id="tab6" class="content active d-flex flex-column" style="height: calc(100vh - 50px);"> <!-- Subtract tab bar height -->
+    <div id="tab6" class="content active d-flex flex-column" style="height: calc(100vh - 50px);">
+        <!-- Subtract tab bar height -->
         <div class="row g-3 flex-grow-1 overflow-hidden"> <!-- Takes remaining space -->
             <div class="col-7 bg-light p-3 rounded me-3 h-100 overflow-hidden"> <!-- Left panel -->
                 Hi
@@ -101,30 +112,41 @@
             </div>
         </div>
     </div>
-    
+
     <style>
         /* Custom height utilities */
-        .h-85 { height: 85%; }
-        .h-log-panel { height: calc(100% - 50px); } /* Account for header */
-        
+        .h-85 {
+            height: 85%;
+        }
+
+        .h-log-panel {
+            height: calc(100% - 50px);
+        }
+
+        /* Account for header */
+
         /* Custom scrollbar styling */
         #log_div::-webkit-scrollbar {
             width: 8px;
             height: 8px;
         }
+
         #log_div::-webkit-scrollbar-track {
             background: #555;
         }
+
         #log_div::-webkit-scrollbar-thumb {
             background-color: #888;
             border-radius: 4px;
         }
+
         #log_div::-webkit-scrollbar-thumb:hover {
             background: #777;
         }
     </style>
 
     <script>
+        // Switches the open tab. (I didn't want to learn multiple HTML files with PyQt5, nor did I want to loaded them dynamically.  Works out nicely.)
         function openTab(tabId) {
             document.querySelectorAll('.content').forEach(content => {
                 content.classList.remove('active');
@@ -138,19 +160,21 @@
             event.currentTarget.classList.add('active');
         }
 
-        const log_message_type_color = { "CRITICAL": "danger" ,"INFO":'info', 'DEBUG':'primary', 'ERROR':'danger', 'WARNING':'warning'}
+        // The logger, which creates, colors, and appends a <p> to the log window.
+        const log_message_type_color = { "CRITICAL": "danger", "INFO": 'info', 'DEBUG': 'primary', 'ERROR': 'danger', 'WARNING': 'warning' }
         const log_type_parser_regex = /^[^\[]*\[([^\]]+)\]/;
         function add_to_log(message) {
             const logDiv = document.getElementById('log_div');
             if (logDiv) {
                 var p = document.createElement('p')
                 p.innerText = message
-                const match = message.match(log_type_parser_regex) 
+                const match = message.match(log_type_parser_regex)
                 p.style.fontSize = '11px'
-                p.classList.add('text-nowrap',`text-${match ? log_message_type_color[match[1]] : 'primary'}`, 'm-1')
+                p.classList.add('text-nowrap', `text-${match ? log_message_type_color[match[1]] : 'primary'}`, 'm-1')
                 logDiv.insertBefore(p, logDiv.firstChild)
             }
         }
+        // Once the document is loaded, create connection with python and send confirmation signal.
         document.addEventListener("DOMContentLoaded", function () {
             new QWebChannel(qt.webChannelTransport, function (channel) {
                 window.bridge = channel.objects.bridge;
@@ -163,7 +187,121 @@
 
             });
         });
+        function parseCSVAndPopulateTableEnhanced(file) {
+            //Populates a table with a CSV's file's data
+            //Adjusts for quote strings.
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
 
+                reader.onload = function (event) {
+                    try {
+                        const csvData = event.target.result;
+                        const table = document.getElementById('startlist_table');
+                        table.innerHTML = '';
+                        const rows = [];
+                        let currentRow = [];
+                        let inQuotes = false;
+                        let currentField = '';
+
+                        for (let i = 0; i < csvData.length; i++) {
+                            const char = csvData[i];
+
+                            if (char === '"') {
+                                inQuotes = !inQuotes;
+                            } else if (char === ',' && !inQuotes) {
+                                currentRow.push(currentField.trim());
+                                currentField = '';
+                            } else if (char === '\n' && !inQuotes) {
+                                currentRow.push(currentField.trim());
+                                rows.push(currentRow);
+                                currentRow = [];
+                                currentField = '';
+                            } else {
+                                currentField += char;
+                            }
+                        }
+
+                        if (currentField.trim() !== '' || currentRow.length > 0) {
+                            currentRow.push(currentField.trim());
+                            rows.push(currentRow);
+                        }
+
+                        if (rows.length === 0) {
+                            throw new Error('CSV file is empty');
+                        }
+
+                        const thead = document.createElement('thead');
+                        const headerRow = document.createElement('tr');
+
+                        rows[0].forEach(header => {
+                            const th = document.createElement('th');
+                            th.textContent = header;
+                            headerRow.appendChild(th);
+                        });
+
+                        thead.appendChild(headerRow);
+                        table.appendChild(thead);
+
+                        const tbody = document.createElement('tbody');
+
+                        for (let i = 1; i < rows.length; i++) {
+                            if (rows[i].length === 0 || (rows[i].length === 1 && rows[i][0] === '')) {
+                                continue;
+                            }
+
+                            const row = document.createElement('tr');
+
+                            for (let j = 0; j < rows[0].length; j++) {
+                                const cell = document.createElement('td');
+                                cell.textContent = j < rows[i].length ? rows[i][j] : '';
+                                row.appendChild(cell);
+                            }
+
+                            tbody.appendChild(row);
+                        }
+
+                        table.appendChild(tbody);
+                        table.classList.add('table', 'table-striped', 'table-bordered');
+
+                        resolve({ success: true, rowCount: rows.length - 1 });
+                    } catch (error) {
+                        reject(error);
+                    }
+                };
+
+                reader.onerror = function () {
+                    reject(new Error('Error reading file'));
+                };
+
+                reader.readAsText(file);
+            });
+            
+
+            async function fetchCSVFromURL(url) {
+                //  This function async fetches CSV data from a URL and converts it to a File object for parsing later.
+                try {
+                    const response = await fetch(url);
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const filename = url.substring(url.lastIndexOf('/') + 1);
+
+                    const blob = await response.blob();
+
+                    const file = new File([blob], filename, {
+                        type: 'text/csv',
+                        lastModified: new Date().getTime()
+                    });
+
+                    return file;
+                } catch (error) {
+                    console.error('Error fetching CSV:', error);
+                    throw error;
+                }
+            }
+        }
     </script>
 </body>
 
