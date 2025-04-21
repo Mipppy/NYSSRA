@@ -4,7 +4,7 @@ import logging.config
 import os, io
 import logging
 from pathlib import Path
-from typing import Type, TypeVar, Union, Optional
+from typing import Type, TypeVar, Union, Optional, List
 
 T = TypeVar("T", bound=_SimpleCData)
 
@@ -137,5 +137,5 @@ def initialize_logger(verbose: bool = False,
     formatter = logging.Formatter('[%(levelname)s] (%(asctime)s) - %(message)s')
     interceptor.setFormatter(formatter)
     logger.addHandler(interceptor)
-    
+    logger.info("Logger has been initialized")
     return logger

@@ -5,6 +5,7 @@ from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtCore import QUrl, QObject, pyqtSlot, pyqtSignal
 from PyQt5.QtWebChannel import QWebChannel
 import logging
+from typing import List
 
 class Bridge(QObject):
     js_message = pyqtSignal(str)
@@ -46,11 +47,11 @@ class HTMLWindow(QMainWindow):
     def send_test_message(self,message):
         self.bridge.send_to_js(message)
 
-def main():
+def create_window() -> List[QApplication|HTMLWindow]:
     app = QApplication(sys.argv)
     window = HTMLWindow()
     window.show()
-    sys.exit(app.exec_())
+    return [app,window]
 
 if __name__ == "__main__":
-    main()
+    create_window()
