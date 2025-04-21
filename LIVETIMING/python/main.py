@@ -4,19 +4,11 @@ To run:
  **Linux** - `wine python main.py`   (Tested with: Fedora)
 """
 
-from xc_timer import XC_TIMER_DLL
-from settings import BART2_SETTINGS
-from helpers import initialize_logger
-from render import HTMLWindow
-from PyQt5.QtWidgets import QApplication, QMainWindow
-import sys,os,platform
-from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
+import sys
 from instances import Instances
 
 
 Instances.create_instances()
-
-
 
 
 

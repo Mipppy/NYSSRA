@@ -120,3 +120,6 @@ def get_events():
 if __name__ == "__main__":
     app.run(debug=True)
 
+@app.route("/get_startlists")
+def get_startlists():
+    None
