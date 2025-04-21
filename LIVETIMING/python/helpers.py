@@ -84,7 +84,7 @@ class InterceptorHandler(logging.Handler):
             msg = self.format(record)
             if self.window_provider:
                 print(msg)
-                self.window_provider.bridge.send_to_js(msg)  # Use dedicated method
+                self.window_provider.bridge.send_to_js("LOG|||"+msg)  # Use dedicated method
             self._log_stream.write(msg + '\n')
         except Exception:
             self.handleError(record)
