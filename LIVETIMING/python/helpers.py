@@ -78,6 +78,7 @@ class InterceptorHandler(logging.Handler):
         self._log_stream = io.StringIO()
         self.window_provider = window_provider
 
+    # FIXME: Store previous logs that happen before the Javascript connection was initialized 
     def emit(self, record):
         try:
             msg = self.format(record)
@@ -131,11 +132,10 @@ def initialize_logger(verbose: bool = False,
     target_level = logging.DEBUG if verbose else logging.INFO
     logger.setLevel(target_level)
     
-    logger.handlers.clear()
     
     interceptor = InterceptorHandler(level=target_level, window_provider=window_provider)
     formatter = logging.Formatter('[%(levelname)s] (%(asctime)s) - %(message)s')
     interceptor.setFormatter(formatter)
     logger.addHandler(interceptor)
-    logger.info("Logger has been initialized")
+    logger.info("Logger has been initialized.")
     return logger
