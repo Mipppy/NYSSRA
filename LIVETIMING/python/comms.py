@@ -1,5 +1,7 @@
 import asyncio, websockets, logging
 
+# Socketed the sockets on a websocket
+
 class ServerCommunications:
     """Static class for communicating with various servers, mainly the NYSSRA server, which is in /SITESERVER/""" 
     
