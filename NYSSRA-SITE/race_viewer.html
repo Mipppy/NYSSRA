@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Live Timing - NYSSRA Nordic</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="/scripts/navbar.js"></script>
+    <link rel="shortcut icon" href="/images/nyssra-logo.jpg">
+    <style>
+        .timing-container {
+            min-height: calc(100vh - 120px);
+        }
+        .data-card {
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            max-height: 70vh;
+            overflow-y: auto;
+            background-color: #f8f9fa;
+        }
+        .last-updated {
+            font-family: monospace;
+        }
+    </style>
+</head>
+
+<body class="d-flex flex-column bg-light">
+    <nav class=""></nav>
+
+    <main class="container my-4 flex-grow-1 timing-container">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">
+                                <i class="bi bi-speedometer2 me-2"></i>Live Race Data
+                            </h5>
+                            <span class="badge bg-light text-dark">
+                                <i class="bi bi-arrow-repeat me-1"></i>Auto-updating
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div id="livedata-div" class="p-3 data-card">Loading race data...</div>
+                    </div>
+                    <div class="card-footer bg-light d-flex justify-content-between align-items-center">
+                        <small class="text-muted last-updated">
+                            Last updated: <span id="last-updated">-</span>
+                        </small>
+                        <small class="text-muted">
+                            Polling: <span id="polling-status">Active</span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer></footer>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/scripts/race_viewer.js"></script>
+</body>
+</html>
