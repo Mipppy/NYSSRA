@@ -7,6 +7,7 @@ async function fetchRaces() {
         const response = await fetch('http://nyssra.pythonanywhere.com/all_races');
         const data = await response.json();
         allRaces = data;
+        console.log(data)
         sortAndDisplayRaces();
     } catch (error) {
         console.error('Failed to fetch race data:', error);
@@ -16,7 +17,6 @@ async function fetchRaces() {
 function sortAndDisplayRaces() {
     const container = document.getElementById('raceList');
     container.innerHTML = '';
-
     const now = new Date();
     let races = [...allRaces];
 
@@ -40,19 +40,25 @@ function sortAndDisplayRaces() {
             races.sort((a, b) => b.place.localeCompare(a.place));
             break;
         case 'live':
-            races = races.filter(race => {
-                const raceTime = new Date(race.timestamp);
-                return (now - raceTime) / (1000 * 60) <= 60;
-            });
-            races.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            races = races.filter(race => race.header?.live === true);
             break;
-        default:
-            races.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
     }
 
     races.forEach(race => {
         const raceTime = new Date(race.timestamp);
-        const isLive = (now - raceTime) / (1000 * 60) <= 60;
+        const minutesSinceRace = (now - raceTime) / (1000 * 60);
+        const isLive = race.live === true;
+        console.log(race)
+        let statusLabel = 'Finished';
+        let statusColor = 'red';
+
+        if (isLive) {
+            statusLabel = 'Live!';
+            statusColor = 'green';
+        } else if (minutesSinceRace <= 1440) {
+            statusLabel = 'Recent';
+            statusColor = 'blue';
+        }
 
         const dateString = raceTime.toLocaleString('en-US', {
             year: 'numeric',
@@ -65,22 +71,30 @@ function sortAndDisplayRaces() {
 
         const div = document.createElement('div');
         div.className = 'list-group-item race-entry';
-
         div.innerHTML = `
-                    <div class="d-flex justify-content-between align-items-center" onclick="handleRaceEntryClick(event)" race-url=${race.filename}>
-                        <div class="flex-grow-1 px-3">
-                            <div class="race-title">${race.name}</div>
-                            <div class="race-place">${race.place}</div>
-                        </div>
-                        <div class=" px-3">
-                            <div class="text-muted">${dateString}</div>
-                            ${isLive ? '<div class="live-indicator" title="Live now"><b>Live!</b><span class="live-dot"></span></div>' : ''}
-                        </div>
+            <div class="d-flex justify-content-between align-items-center" onclick="handleRaceEntryClick(event)" race-url="${race.filename}">
+                <div class="flex-grow-1 px-3">
+                    <div class="race-title">${race.name}</div>
+                    <div class="race-place">${race.place}</div>
+                </div>
+                <div class="px-3 text-end">
+                    <div class="text-muted">${dateString}</div>
+                    <div class="status-indicator" title="${statusLabel}">
+                        <b>${statusLabel}</b>
+                        <span class="status-dot" style="background-color: ${statusColor};"></span>
                     </div>
-                `;
-
+                </div>
+            </div>
+        `;
         container.appendChild(div);
     });
+}
+
+function handleRaceEntryClick(ev) {
+    const clickableDiv = ev.target.closest('[race-url]');
+    if (!clickableDiv) return;
+    const filename = clickableDiv.getAttribute('race-url');
+    window.location.replace(`/race_viewer.html?race_url=${filename}`);
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -88,12 +102,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.querySelectorAll('.sort-option').forEach(option => {
         option.addEventListener('click', function () {
-            document.querySelectorAll('.sort-option').forEach(opt => {
-                opt.classList.remove('active');
-            });
-
+            document.querySelectorAll('.sort-option').forEach(opt => opt.classList.remove('active'));
             this.classList.add('active');
-
             currentSort = this.dataset.sort;
             sortAndDisplayRaces();
         });
@@ -101,29 +111,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.querySelector(`.sort-option[data-sort="${currentSort}"]`).classList.add('active');
 
-    document.getElementById('refreshBtn').addEventListener('click', fetchRaces);
 
-    document.getElementById('search_races').addEventListener("keyup" , ev=> {
+    document.getElementById('search_races').addEventListener('keyup', ev => {
         const searchTerm = ev.target.value.toLowerCase().trim();
-        const container = document.getElementById('raceList');
-        const raceEntries = container.querySelectorAll('.race-entry');
-        
+        const raceEntries = document.querySelectorAll('.race-entry');
         raceEntries.forEach(entry => {
             const raceName = entry.querySelector('.race-title').textContent.toLowerCase();
-            const shouldShow = raceName.includes(searchTerm);
-            entry.style.display = shouldShow ? '' : 'none';
+            entry.style.display = raceName.includes(searchTerm) ? '' : 'none';
         });
-    })
+    });
 
-
+    setInterval(fetchRaces, 15000);
 });
-
-function handleRaceEntryClick(ev) {
-    const clickableDiv = ev.target.closest('[race-url]');
-    if (!clickableDiv) return;
-    
-    const filename = clickableDiv.getAttribute('race-url');
-    window.location.replace(`/race_viewer.html?race_url=${filename}`);
-}
-
-setInterval(fetchRaces, 15000);

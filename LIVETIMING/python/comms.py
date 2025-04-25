@@ -2,7 +2,7 @@ import asyncio
 import websockets
 import logging
 from typing import Optional
-
+import json
 # Socketed the sockets on a websocket
 
 """
@@ -39,7 +39,7 @@ class ServerCommunications:
                 self.livetiming_websocket = await websockets.connect(url)
                 self._reconnect_attempts = 0
                 self.logging.info(f'Successfully connected to {url}')
-
+                self.ping_task = asyncio.create_task(self._ping_loop())
                 # Main message loop
                 while True:
                     try:
@@ -58,6 +58,17 @@ class ServerCommunications:
                 await self.close_livetiming()
                 if self._should_reconnect:
                     await self._attempt_reconnect(url)
+
+    async def _ping_loop(self) -> None:
+        """Send a ping every 2 seconds to keep the connection alive."""
+        while self.livetiming_websocket and not self.livetiming_websocket.closed:
+            try:
+                await self.livetiming_websocket.send(json.dumps({"INFO_CLIENT_PING": "still alive"}))
+                self.logging.debug("Sent keep-alive ping")
+            except Exception as e:
+                self.logging.warning(f"Ping failed: {e}")
+                break
+            await asyncio.sleep(2)
 
     async def _attempt_reconnect(self, url: str) -> None:
         """Handle reconnection attempts with backoff."""
@@ -112,13 +123,15 @@ class ServerCommunications:
         if self.livetiming_websocket and not self.livetiming_websocket.closed:
             self.livetiming_loop.run_until_complete(self.livetiming_websocket.close())
             self.livetiming_websocket = None
+            self.ping_task.cancel()
             self.logging.info("Closed WebSocket connection")
 
         if self.livetiming_loop and not self.livetiming_loop.is_closed():
             self.livetiming_loop.stop()
             self.livetiming_loop.close()
+            self.ping_task.cancel()
             self.livetiming_loop = None
             self.logging.debug("Closed event loop")
     
-    def livetiming_send_password(self, password:str):
-        None
+    def livetiming_send_auth_and_config(self, password: str, filename: str, headers: dict) -> None:
+        pass

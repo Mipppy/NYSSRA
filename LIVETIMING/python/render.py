@@ -36,6 +36,9 @@ class HTMLWindow(QMainWindow):
         self.channel.registerObject('bridge', self.bridge)
         self.browser.page().setWebChannel(self.channel)
         
+        screen = QApplication.primaryScreen().availableGeometry()
+        self.resize(screen.width() , screen.height())  # 90% of screen
+        
         self.load_html(html_file)
         
     

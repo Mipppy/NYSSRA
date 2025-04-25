@@ -1,19 +1,27 @@
-"""Copied from Python Anywhere"""
-from fastapi import FastAPI, WebSocket #type:ignore
-from fastapi.websockets import WebSocketDisconnect, WebSocketState #type:ignore
-from fastapi.responses import JSONResponse #type:ignore
-from fastapi.staticfiles import StaticFile #type:ignore
+# Copied from Pythonanywhere
+
+from fastapi import FastAPI, WebSocket
+from fastapi.websockets import WebSocketDisconnect, WebSocketState
+from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 import os
 import json
 from datetime import datetime, timedelta, timezone
+from fastapi.middleware.cors import CORSMiddleware
 
 # Set up directories
 os.makedirs("livetiming_data", exist_ok=True)
 
 app = FastAPI()
-app.mount("/static", StaticFiles(directory="static"), name="static") #type:ignore
-app.mount("/livetiming_data", StaticFiles(directory="livetiming_data"), name="livetiming_data") #type:ignore
-
+app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/livetiming_data", StaticFiles(directory="livetiming_data"), name="livetiming_data")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Or restrict to your frontend URL like ["https://yourfrontend.com"]
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 # Config
 CORRECT_PASSWORD = "the password"
 BUFFER_SIZE = 100
@@ -39,6 +47,7 @@ async def get_all_results():
 
                     name = header.get("header", {}).get("name") or filename.replace(".jsonl", "")
                     place = header.get("header", {}).get("place", "Unknown")
+                    live = header.get("header",{}).get("live", False)
                     timestamp_str = header.get("header_timestamp")
 
                     try:
@@ -55,7 +64,8 @@ async def get_all_results():
                         "filename": filename,
                         "name": name,
                         "place": place,
-                        "timestamp": timestamp.isoformat()
+                        "timestamp": timestamp.isoformat(),
+                        "live":live
                     })
 
             except Exception as e:
@@ -74,6 +84,8 @@ async def websocket_endpoint(websocket: WebSocket):
     last_flush_time = datetime.now()
     message_count = 0
     header_written = False
+    header_data = None  # Track the header content
+    log_file_path = ""
 
     try:
         while True:
@@ -105,26 +117,28 @@ async def websocket_endpoint(websocket: WebSocket):
                 if message_count == 2 and "new_url" in json_data:
                     created_route = json_data["new_url"].replace(" ", "_")
                     date_str = now_et.strftime("%d-%m-%Y_%H-%M")
-                    filename = f"livetiming_data/{created_route}_{date_str}.jsonl"
-                    log_file = open(filename, "w", buffering=1)
+                    log_file_path = f"livetiming_data/{created_route}_{date_str}.jsonl"
+                    log_file = open(log_file_path, "w", buffering=1)
                     await websocket.send_json({
                         "status": "success",
                         "new_route": created_route,
-                        "log_file": filename
+                        "log_file": log_file_path
                     })
                     continue
 
                 # 3. Header
                 if message_count == 3 and log_file and not header_written:
-                    header_entry = json.dumps({
+                    header_data = {
                         "header_timestamp": now_et.strftime("%Y-%m-%d %H:%M:%S EDT"),
                         "header": json_data
-                    })
-                    log_file.write(header_entry + "\n")
+                    }
+                    header_data["header"]["live"] = True  # Set live:true
+
+                    log_file.write(json.dumps(header_data) + "\n")
                     header_written = True
                     await websocket.send_json({
                         "status": "success",
-                        "message": "Header written"
+                        "message": "Header written with live:true"
                     })
                     continue
 
@@ -146,7 +160,8 @@ async def websocket_endpoint(websocket: WebSocket):
                         log_file.write("\n".join(write_buffer) + "\n")
                         write_buffer.clear()
                         last_flush_time = datetime.now()
-
+                if "INFO_SERVER_PING" in json_data:
+                    await websocket.send_json({"INFO_CLIENT_PONG":"bro got ponged fr fr"})
             except json.JSONDecodeError:
                 await websocket.send_json({
                     "status": "error",
@@ -165,6 +180,19 @@ async def websocket_endpoint(websocket: WebSocket):
         if log_file:
             if write_buffer:
                 log_file.write("\n".join(write_buffer) + "\n")
+
+            # Set header live:false and overwrite first line
+            if header_written and header_data:
+                try:
+                    header_data["header"]["live"] = False
+                    with open(log_file_path, "r+") as f:
+                        lines = f.readlines()
+                        lines[0] = json.dumps(header_data) + "\n"
+                        f.seek(0)
+                        f.writelines(lines)
+                except Exception as e:
+                    print(f"Error updating header live status: {e}")
+
             log_file.close()
         if websocket.client_state != WebSocketState.DISCONNECTED:
             await websocket.close()
