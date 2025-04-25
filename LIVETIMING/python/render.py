@@ -6,6 +6,8 @@ from PyQt5.QtCore import QUrl, QObject, pyqtSlot, pyqtSignal
 from PyQt5.QtWebChannel import QWebChannel
 import logging
 from typing import List
+import json
+
 
 class Bridge(QObject):
     js_message = pyqtSignal(str)
@@ -13,13 +15,45 @@ class Bridge(QObject):
     def __init__(self):
         super().__init__()
         self._messages = []
+        self.livetiming_called = False
         
     @pyqtSlot(str)
-    def py_message(self, msg):
-        print(f"From JS: {msg}")
-        if msg == "ready":  
-            logging.getLogger('BART2').info('Javascript connection initialized.')
+    def py_message(self, msg: str):
+        """Handle messages from JavaScript with proper error handling and logging."""
+        logger = logging.getLogger('BART2')
+        
+        try:
+            if not msg or not isinstance(msg, str):
+                logger.warning(f"Received empty or invalid message: {msg}")
+                return
+
+            logger.debug(f"Raw message from JS: {msg}")
             
+            try:
+                json_msg = json.loads(msg)
+            except json.JSONDecodeError as e:
+                logger.error(f"Failed to parse JSON message: {e}\nMessage: {msg}")
+                return
+
+            if not isinstance(json_msg, dict):
+                logger.error(f"Expected dictionary but got {type(json_msg)}: {json_msg}")
+                return
+
+            message_type = json_msg.get('message_type')
+            
+            if message_type == "ready":
+                logger.info("JavaScript connection initialized")
+                self.js_initialized = True  
+            elif message_type == "livetiming_form" and self.livetiming_called is not True:
+                self.livetiming_called = True
+                from instances import Instances
+                Instances.communications.livetiming_send_auth_and_config(json_msg['data'])
+            else:
+                logger.warning(f"Unhandled message type: {message_type}")
+                
+        except Exception as e:
+            logger.exception(f"Unexpected error processing message: {e}")
+                
         
     def send_to_js(self, message):
         self.js_message.emit(str(message))
@@ -55,6 +89,3 @@ def create_window() -> List[QApplication|HTMLWindow]:
     window = HTMLWindow()
     window.show()
     return [app,window]
-
-if __name__ == "__main__":
-    create_window()

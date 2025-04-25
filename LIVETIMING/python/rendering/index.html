@@ -31,6 +31,10 @@
             white-space: nowrap;
             height: 100%;
         }
+        .scrollable-inner {
+    height: 100%;
+    overflow-y: auto;
+}
     </style>
 </head>
 
@@ -60,9 +64,8 @@
         <div class="container-fluid">
             <div class="row">
                 <!-- Scrollable Form Container -->
-                <div class="col-md-12 col-lg-6 p-4 bg-secondary rounded" 
-                     style="height: 100vh; overflow-y: auto;">
-                    <form oninput="updateSubmitButton()">
+                <div class="col-md-12 col-lg-6 p-4 bg-secondary rounded scrollable-inner" style="height: 100vh; overflow-y: auto;">
+                    <form oninput="updateSubmitButton()" id="livetiming_form">
                         <!-- Server Config Section -->
                         <div class="row mb-4">
                             <div class="col-12">
@@ -70,13 +73,13 @@
                                     <div class="card-body">
                                         <div class="mb-3">
                                             <label for="password" class="form-label">Server Password</label>
-                                            <input type="password" class="form-control" id="password"
+                                            <input type="password" class="form-control" id="livetiming_password"
                                                 placeholder="Enter server password" maxlength="250" name="password"
                                                 required />
                                         </div>
                                         <div class="mb-3">
                                             <label for="filename" class="form-label">Server Filename</label>
-                                            <input type="text" class="form-control" id="filename"
+                                            <input type="text" class="form-control" id="livetiming_filename"
                                                 placeholder="Enter server filename" maxlength="50" name="filename"
                                                 required />
                                         </div>
@@ -84,7 +87,7 @@
                                 </div>
                             </div>
                         </div>
-    
+
                         <!-- Headers Section -->
                         <div class="row mb-4">
                             <div class="col-12">
@@ -103,14 +106,14 @@
                                                 </tr>
                                             </thead>
                                         </table>
-    
+
                                         <div style="max-height: 200px; overflow-y: auto;">
                                             <table class="table table-dark table-striped table-hover mb-3">
-                                                <tbody id="keyValueTable">
+                                                <tbody id="livetiming_headers">
                                                 </tbody>
                                             </table>
                                         </div>
-    
+
                                         <div class="mt-3 mb-5">
                                             <button type="button" class="btn btn-success" onclick="addKeyValueRow()">
                                                 <i class="bi bi-plus-circle me-2"></i>Add Additional Header
@@ -120,89 +123,92 @@
                                 </div>
                             </div>
                         </div>
-    
+
                         <div class="row mt-4">
                             <div class="col-12">
-                                <button class="btn btn-primary btn-lg w-100 py-3" name="btnSubmit" disabled>
+                                <button class="btn btn-primary btn-lg w-100 py-3" name="btnSubmit" disabled id="livetiming_submit">
                                     <i class="bi bi-send-fill me-2"></i>Submit Configuration
                                 </button>
                             </div>
                         </div>
                     </form>
+                    <!-- HACK: I hate styling and without these the submit button gets awkwardly cut off. -->
+                    <br>
+                    <br>
                 </div>
             </div>
         </div>
-    
+
         <script>
             function addKeyValueRow(key = "", value = "", isRequired = false) {
-                const table = document.getElementById("keyValueTable");
+                const table = document.getElementById("livetiming_headers");
                 const newRow = document.createElement("tr");
-    
+
                 newRow.innerHTML = `
                     <td>
-                        <input type="text" class="form-control key-input" 
+                        <input type="text" class="form-control key-input LIVETIMING_KEY" 
                                placeholder="Enter header key" value="${key}" 
                                ${isRequired ? "readonly" : ""}
-                               required oninput="updateSubmitButton()">
+                               required oninput="updateSubmitButton() ">
                     </td>
                     <td>
-                        <input type="text" class="form-control value-input" 
-                               placeholder="Enter header value" value="${value}"
+                        <input type="text" class="form-control value-input LIVETIMING_VALUE" 
+                               placeholder="Enter header value" value="${value}" key-value="${key}"
                                oninput="updateSubmitButton()">
                     </td>
                     <td class="text-center align-items-center">
                         ${isRequired
-                            ? '<span class="text-light">Required</span>'
-                            : `<button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)">
+                        ? '<span class="text-light">Required</span>'
+                        : `<button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)">
                                  <i class="bi bi-trash"></i>
                                </button>`
-                        }
+                    }
                     </td>
                 `;
-    
+
                 table.appendChild(newRow);
                 updateSubmitButton();
             }
-    
+
             function deleteRow(button) {
                 const row = button.closest("tr");
                 row.remove();
                 updateSubmitButton();
             }
-    
+
             function updateSubmitButton() {
                 const password = document.querySelector('input[name="password"]').value;
                 const filename = document.querySelector('input[name="filename"]').value;
                 const keyInputs = document.querySelectorAll(".key-input");
                 const valueInputs = document.querySelectorAll(".value-input");
-    
+
                 let hasNameKey = false;
                 let hasPlaceKey = false;
                 let allValuesValid = true;
-    
+
                 keyInputs.forEach((input, index) => {
                     const key = input.value.trim();
                     const value = valueInputs[index].value.trim();
-    
+
                     if (key === "name" && value) hasNameKey = true;
                     if (key === "place" && value) hasPlaceKey = true;
                     if (!value && input.required) allValuesValid = false;
                 });
-    
+
                 const submitButton = document.querySelector('button[name="btnSubmit"]');
                 const isValid = password && filename && hasNameKey && hasPlaceKey && allValuesValid;
-    
+
                 submitButton.disabled = !isValid;
             }
-    
+
             window.onload = function () {
                 addKeyValueRow("name", "", true);
                 addKeyValueRow("place", "", true);
             };
         </script>
     </div>
-    
-    
+
+
     <div id="tab5" class="content">
         <div class="row g-0 h-100">
             <div class="col-8 bg-light p-3">
@@ -222,9 +228,9 @@
             <div class="col-8 bg-light p-3">
                 <p>Debug area content here.</p>
             </div>
-            <div class="col-4 bg-dark text-white d-flex flex-column p-2">
+            <div class="col-4  text-white d-flex flex-column p-2" style="background-color:rgb(83, 97, 110) !important;">
                 <h5 class="mb-2">Log</h5>
-                <div id="log_div" class="bg-secondary p-2 rounded flex-grow-1 noscroll">
+                <div id="log_div" class="bg-dark p-2 rounded flex-grow-1 noscroll">
                     <!-- Long log messages will appear here -->
                 </div>
             </div>
@@ -274,7 +280,7 @@
                 bridge.js_message.connect(function (message) {
                     handleIncomingMessages(message);
                 });
-                bridge.py_message("ready");
+                bridge.py_message(`{"message_type": "ready", "data": {}}`);
             });
         });
 
@@ -409,6 +415,43 @@
                 }
             }
         }
+        document.getElementById("livetiming_form").addEventListener("submit", ev => {
+            ev.preventDefault(); 
+            
+            try {
+                document.getElementById("livetiming_submit").disabled = true
+                const password = document.getElementById("livetiming_password").value.trim();
+                const filename = document.getElementById("livetiming_filename").value.trim();
+
+                
+                if (!password || !filename) {
+                    throw new Error("Password and filename are required");
+                }
+
+
+                const headers = {};
+                const headerInputs = document.querySelectorAll("#LIVETIMING_VALUE");
+
+                headerInputs.forEach(input => {
+                    const key = input.getAttribute('key-value');
+                    const value = input.value.trim();
+                    if (key && value) { 
+                        headers[key] = value;
+                    }
+                });
+
+                const formData = {
+                    password: password,
+                    filename: filename,
+                    headers: headers
+                };
+
+                bridge.py_message(`{"message_type":"livetiming_form", "data":${JSON.stringify(formData)}}`);
+
+            } catch (error) {
+                alert(`Form error: ${error}`)
+            }
+        });
     </script>
 </body>
 

@@ -1,3 +1,4 @@
-[INFO] (2025-04-25 10:53:59) - Logger has been initialized.
-[INFO] (2025-04-25 10:53:59) - All classes successfully initialized.
-[INFO] (2025-04-25 10:54:00) - Javascript connection initialized.
+[INFO] (2025-04-25 13:02:44) - Logger has been initialized.
+[INFO] (2025-04-25 13:02:44) - All classes successfully initialized.
+[DEBUG] (2025-04-25 13:02:45) - Raw message from JS: {"message_type": "ready", "data": {}}
+[INFO] (2025-04-25 13:02:45) - JavaScript connection initialized

@@ -131,7 +131,7 @@ def initialize_logger(verbose: bool = False,
     logger = logging.getLogger('BART2')
     target_level = logging.DEBUG if verbose else logging.INFO
     logger.setLevel(target_level)
-    
+    print('\n\n\n\n\n\nLOGGER CALLED\n\n\n\n\n')
     
     interceptor = InterceptorHandler(level=target_level, window_provider=window_provider)
     formatter = logging.Formatter('[%(levelname)s] (%(asctime)s) - %(message)s')

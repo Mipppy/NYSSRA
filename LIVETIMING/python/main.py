@@ -12,7 +12,6 @@ Instances.create_instances()
 
 
 
-
 sys.exit(Instances.window_app.exec_())
 # xc_instance.dll_initialize_dll_task(0x110, 'srt/')
 # xc_instance.dll_set_comm_port(2)
