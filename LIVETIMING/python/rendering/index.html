@@ -64,7 +64,7 @@
         <div class="container-fluid">
             <div class="row">
                 <!-- Scrollable Form Container -->
-                <div class="col-md-12 col-lg-6 p-4 bg-secondary rounded scrollable-inner" style="height: 100vh; overflow-y: auto;">
+                <div class="col-lg-6 p-4 bg-secondary rounded scrollable-inner" style="height: 100vh; overflow-y: auto;" id="live_config">
                     <form oninput="updateSubmitButton()" id="livetiming_form">
                         <!-- Server Config Section -->
                         <div class="row mb-4">
@@ -289,7 +289,19 @@
             if (msg_type === "LOG") {
                 add_to_log(msg_body);
             }
+            else if (msg_type === "LIVETIMING") {
+                handleLivetimingMessage(msg_body)
+            }
         }
+        
+        function handleLivetimingMessage(msg) {
+            if (msg === "t_cancled") {
+                document.getElementById("livetiming_submit").disabled = false
+                document.getElementById("live_config").style.display = "flex"
+            }
+        }
+        
+        
 
         document.getElementById('startlist_file_input').addEventListener("change", ev => {
             const files = ev.target.files;
@@ -417,9 +429,10 @@
         }
         document.getElementById("livetiming_form").addEventListener("submit", ev => {
             ev.preventDefault(); 
-            
+            // FIXME: Livetiming window not showing up once Websocket is closed
             try {
                 document.getElementById("livetiming_submit").disabled = true
+                document.getElementById("live_config").style.display = "none"
                 const password = document.getElementById("livetiming_password").value.trim();
                 const filename = document.getElementById("livetiming_filename").value.trim();
 

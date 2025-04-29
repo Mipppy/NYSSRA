@@ -27,6 +27,9 @@ class LivetimingHandler:
         if self.websocket_thread_running:
             self._stop_websocket_thread()
 
+        from instances import Instances
+        Instances.window.bridge.send_to_js(f"LIVETIMING|||t_canceled")
+
         self._initialize()
 
     def connect_to_livetiming_ws(self, url: Union[None, str] = None):
@@ -49,9 +52,11 @@ class LivetimingHandler:
 
         except WebSocketException as e:
             self.logger.error(f"Livetiming WS error: {e}")
+            self.reinit()
         except Exception as e:
             self.logger.error(f"Unexpected Livetiming WS error: {e}")
-
+            self.reinit()
+            
     def _listen_for_messages(self):
         while self.websocket_thread_running:
             try:
@@ -61,14 +66,36 @@ class LivetimingHandler:
                     self.logger.debug(f"Received Livetiming WS message: {json_data}")
 
                     if "INFO_CLIENT_PONG" in json_data:
-                        self.last_pong_time = time.time()  
-                        self.logger.debug("Received PONG from server")
+                        self.last_pong_time = time.time()
+
+                    msg_type = json_data.get("type")
+                    status = json_data.get("status")
+
+                    if msg_type == "auth" and status == "success":
+                        self.authenticated = True
+                        self.logger.info("Authentication successful.")
+
+                    elif msg_type == "auth" and status == "error":
+                        self.logger.error(f"Authentication failed: {json_data.get('message')}")
+                        self.reinit()
+                        return
+
+                    elif msg_type == "new_url" and status == "success":
+                        self.logger.info(f"New route created: {json_data.get('new_route')}")
+
+                    elif msg_type == "header" and status == "success":
+                        self.logger.info("Header successfully written.")
+
+                    elif msg_type == "data" and status == "success":
+                        self.logger.debug("Livedata received and acknowledged.")
 
             except WebSocketException as e:
                 self.logger.error(f"Livetiming WS receive error: {e}")
+                self.reinit()
                 break
             except Exception as e:
                 self.logger.error(f"Unexpected Livetiming WS error: {e}")
+                self.reinit()
                 break
 
     def start_ping_pong(self):
@@ -98,6 +125,7 @@ class LivetimingHandler:
                 self.websocket_connection.close()  
                 self.connection_ready.clear()
                 self.logger.info("Livetiming WS connection closed successfully.")
+                self.reinit()
             except Exception as e:
                 self.logger.error(f"Error closing Livetiming WS: {e}")
         if self.websocket_thread is not None:
@@ -113,6 +141,7 @@ class LivetimingHandler:
     def send_auth_and_config(self, config: dict):
         # FIXME: Headers not being in config
         if not self.connection_ready.wait(timeout=5):
+            self.reinit()
             self.logger.error("WebSocket not ready in time for sending auth/config.")
             return
 
