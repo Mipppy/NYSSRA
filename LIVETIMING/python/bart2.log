@@ -35,3 +35,6 @@
 [DEBUG] (2025-04-29 13:11:48) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
 [DEBUG] (2025-04-29 13:12:03) - Sent PING to server
 [DEBUG] (2025-04-29 13:12:03) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-04-29 13:12:18) - Sent PING to server
+[DEBUG] (2025-04-29 13:12:18) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[INFO] (2025-04-29 13:12:21) - Livetiming WS connection closed successfully.
