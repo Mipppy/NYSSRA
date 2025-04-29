@@ -430,7 +430,7 @@
 
 
                 const headers = {};
-                const headerInputs = document.querySelectorAll("#LIVETIMING_VALUE");
+                const headerInputs = document.querySelectorAll(".LIVETIMING_VALUE");
 
                 headerInputs.forEach(input => {
                     const key = input.getAttribute('key-value');
@@ -439,7 +439,6 @@
                         headers[key] = value;
                     }
                 });
-
                 const formData = {
                     password: password,
                     filename: filename,

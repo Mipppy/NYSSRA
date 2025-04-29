@@ -1,6 +1,53 @@
-[INFO] (2025-04-29 11:54:40) - Logger has been initialized.
-[DEBUG] (2025-04-29 11:54:40) - Loaded xc_timer_dll.dll's functions successfully.
-[INFO] (2025-04-29 11:54:40) - Successfully loaded xc_timer_dll.dll
-[INFO] (2025-04-29 11:54:40) - All classes successfully initialized.
-[DEBUG] (2025-04-29 11:54:41) - Raw message from JS: {"message_type": "ready", "data": {}}
-[INFO] (2025-04-29 11:54:41) - JavaScript connection initialized
+[INFO] (2025-04-29 12:37:52) - Logger has been initialized.
+[DEBUG] (2025-04-29 12:37:52) - Loaded xc_timer_dll.dll's functions successfully.
+[INFO] (2025-04-29 12:37:52) - Successfully loaded xc_timer_dll.dll
+[INFO] (2025-04-29 12:37:52) - All classes successfully initialized.
+[DEBUG] (2025-04-29 12:37:52) - Raw message from JS: {"message_type": "ready", "data": {}}
+[INFO] (2025-04-29 12:37:52) - JavaScript connection initialized
+[DEBUG] (2025-04-29 12:38:06) - Raw message from JS: {"name":"we","place":"got it"}
+[WARNING] (2025-04-29 12:38:06) - Unhandled message type: None
+[DEBUG] (2025-04-29 12:38:06) - Raw message from JS: {"message_type":"livetiming_form", "data":{"password":"the password","filename":"I think","headers":{"name":"we","place":"got it"}}}
+[INFO] (2025-04-29 12:38:06) - Successfully created WS connection to wss://nyssra.pythonanywhere.com/livetiming-ws
+[DEBUG] (2025-04-29 12:38:06) - WebSocket ready — sending auth/config
+[DEBUG] (2025-04-29 12:38:06) - Sent PING to server
+[DEBUG] (2025-04-29 12:38:06) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-04-29 12:38:06) - Received PONG from server
+[DEBUG] (2025-04-29 12:38:06) - Received Livetiming WS message: {'status': 'success', 'message': 'Authentication successful'}
+[DEBUG] (2025-04-29 12:38:07) - Received Livetiming WS message: {'status': 'success', 'new_route': 'I_think', 'log_file': 'livetiming_data/I_think_29-04-2025_12-38.jsonl'}
+[DEBUG] (2025-04-29 12:38:07) - Received Livetiming WS message: {'status': 'success', 'message': 'Header written with live:true'}
+[DEBUG] (2025-04-29 12:38:21) - Sent PING to server
+[DEBUG] (2025-04-29 12:38:21) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-04-29 12:38:21) - Received PONG from server
+[DEBUG] (2025-04-29 12:38:36) - Sent PING to server
+[DEBUG] (2025-04-29 12:38:36) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-04-29 12:38:36) - Received PONG from server
+[DEBUG] (2025-04-29 12:38:51) - Sent PING to server
+[DEBUG] (2025-04-29 12:38:51) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-04-29 12:38:51) - Received PONG from server
+[DEBUG] (2025-04-29 12:39:06) - Sent PING to server
+[DEBUG] (2025-04-29 12:39:06) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-04-29 12:39:07) - Received PONG from server
+[DEBUG] (2025-04-29 12:39:21) - Sent PING to server
+[DEBUG] (2025-04-29 12:39:21) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-04-29 12:39:22) - Received PONG from server
+[DEBUG] (2025-04-29 12:39:36) - Sent PING to server
+[DEBUG] (2025-04-29 12:39:37) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-04-29 12:39:37) - Received PONG from server
+[DEBUG] (2025-04-29 12:39:51) - Sent PING to server
+[DEBUG] (2025-04-29 12:39:52) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-04-29 12:39:52) - Received PONG from server
+[DEBUG] (2025-04-29 12:40:06) - Sent PING to server
+[DEBUG] (2025-04-29 12:40:07) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-04-29 12:40:07) - Received PONG from server
+[DEBUG] (2025-04-29 12:40:21) - Sent PING to server
+[DEBUG] (2025-04-29 12:40:22) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-04-29 12:40:22) - Received PONG from server
+[DEBUG] (2025-04-29 12:40:36) - Sent PING to server
+[DEBUG] (2025-04-29 12:40:37) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-04-29 12:40:37) - Received PONG from server
+[DEBUG] (2025-04-29 12:40:51) - Sent PING to server
+[DEBUG] (2025-04-29 12:40:52) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-04-29 12:40:52) - Received PONG from server
+[DEBUG] (2025-04-29 12:41:06) - Sent PING to server
+[DEBUG] (2025-04-29 12:41:07) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-04-29 12:41:07) - Received PONG from server
