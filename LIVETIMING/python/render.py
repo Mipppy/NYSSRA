@@ -15,7 +15,6 @@ class Bridge(QObject):
     def __init__(self):
         super().__init__()
         self._messages = []
-        self.livetiming_called = False
         
     @pyqtSlot(str)
     def py_message(self, msg: str):
@@ -44,10 +43,11 @@ class Bridge(QObject):
             if message_type == "ready":
                 logger.info("JavaScript connection initialized")
                 self.js_initialized = True  
-            elif message_type == "livetiming_form" and self.livetiming_called is not True:
-                self.livetiming_called = True
+            elif message_type == "livetiming_form":
                 from instances import Instances
-                Instances.communications.livetiming_send_auth_and_config(json_msg['data'])
+                Instances.livetiming.reinit()
+                Instances.livetiming.connect_to_livetiming_ws()
+                Instances.livetiming.send_auth_and_config(json_msg['data'])
             else:
                 logger.warning(f"Unhandled message type: {message_type}")
                 
@@ -71,10 +71,14 @@ class HTMLWindow(QMainWindow):
         self.browser.page().setWebChannel(self.channel)
         
         screen = QApplication.primaryScreen().availableGeometry()
-        self.resize(screen.width() , screen.height())  # 90% of screen
+        self.resize(screen.width() , screen.height())  
         
         self.load_html(html_file)
         
+    def closeEvent(self, a0):
+        from instances import Instances
+        Instances.livetiming.reinit()
+        a0.accept()
     
     def load_html(self, file_path):
         html = Path(file_path).read_text(encoding="utf8")

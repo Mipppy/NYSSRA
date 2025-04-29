@@ -2,7 +2,7 @@ from render import create_window
 from xc_timer import XC_TIMER_DLL
 from settings import BART2_SETTINGS
 from helpers import initialize_logger
-from comms import ServerCommunications
+from comms import LivetimingHandler
 # I WISH I HAD POINTERS
 
 class Instances:
@@ -14,17 +14,17 @@ class Instances:
     logger = None
     @classmethod
     def create_instances(cls):
-            print("CALLED")
             window_list = create_window()
-            cls.window = window_list[1]
-            cls.window_app = window_list[0]
-            cls.xc_timer_dll = XC_TIMER_DLL()
             cls.settings = BART2_SETTINGS()
-            cls.communications = ServerCommunications()
+            cls.window = window_list[1]
             cls.logger = initialize_logger(
                 bool(cls.settings.get_setting("VERBOSE_LOGGING")),
                 window_provider=cls.window
             )
+            cls.window_app = window_list[0]
+            cls.xc_timer_dll = XC_TIMER_DLL()
+            cls.livetiming = LivetimingHandler()
+
             cls.logger.info("All classes successfully initialized.")
 
 # Instances = _Instances

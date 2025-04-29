@@ -1,4 +1,6 @@
-[INFO] (2025-04-25 13:02:44) - Logger has been initialized.
-[INFO] (2025-04-25 13:02:44) - All classes successfully initialized.
-[DEBUG] (2025-04-25 13:02:45) - Raw message from JS: {"message_type": "ready", "data": {}}
-[INFO] (2025-04-25 13:02:45) - JavaScript connection initialized
+[INFO] (2025-04-29 11:54:40) - Logger has been initialized.
+[DEBUG] (2025-04-29 11:54:40) - Loaded xc_timer_dll.dll's functions successfully.
+[INFO] (2025-04-29 11:54:40) - Successfully loaded xc_timer_dll.dll
+[INFO] (2025-04-29 11:54:40) - All classes successfully initialized.
+[DEBUG] (2025-04-29 11:54:41) - Raw message from JS: {"message_type": "ready", "data": {}}
+[INFO] (2025-04-29 11:54:41) - JavaScript connection initialized
