@@ -1,7 +1,8 @@
-[INFO] (2025-05-01 11:33:14) - Logger has been initialized.
-[DEBUG] (2025-05-01 11:33:14) - Loaded xc_timer_dll.dll's functions successfully.
-[INFO] (2025-05-01 11:33:14) - Successfully loaded xc_timer_dll.dll
-[INFO] (2025-05-01 11:33:14) - All classes successfully initialized.
-[DEBUG] (2025-05-01 11:33:15) - Raw message from JS: {"message_type": "ready", "data": {}}
-[INFO] (2025-05-01 11:33:15) - JavaScript connection initialized
-[DEBUG] (2025-05-01 11:33:15) - Raw message from JS: {"message_type": "give_me_the_fucking_password", "data": {}}
+[INFO] (2025-05-01 12:56:14) - Logger has been initialized.
+[INFO] (2025-05-01 12:56:14) - Successfully loaded xc_timer_dll.dll
+[INFO] (2025-05-01 12:56:14) - All classes successfully initialized.
+[INFO] (2025-05-01 12:56:15) - JavaScript connection initialized
+[INFO] (2025-05-01 12:56:34) - Successfully created WS connection to wss://nyssra.pythonanywhere.com/livetiming-ws
+[INFO] (2025-05-01 12:56:34) - Authentication successful.
+[INFO] (2025-05-01 12:56:34) - New route created: eee
+[INFO] (2025-05-01 12:56:35) - Header successfully written.

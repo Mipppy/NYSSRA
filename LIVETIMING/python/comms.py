@@ -49,7 +49,6 @@ class LivetimingHandler:
             self.logger.info(f"Successfully created WS connection to {url}")
             from instances import Instances
             Instances.window.bridge.send_to_js(f"LIVETIMING|||t_canceled")
-            Instances.settings.update_setting("SAVED_PASSWORD", self.config_password)
             self.connection_ready.set() 
             self.start_ping_pong()
 
@@ -79,6 +78,9 @@ class LivetimingHandler:
                     if msg_type == "auth" and status == "success":
                         self.authenticated = True
                         self.logger.info("Authentication successful.")
+                        from instances import Instances
+                        Instances.settings.update_setting("SAVED_PASSWORD", self.config_password)
+
 
                     elif msg_type == "auth" and status == "error":
                         self.logger.error(f"Authentication failed: {json_data.get('message')}")
@@ -144,7 +146,7 @@ class LivetimingHandler:
                 self.logger.error(f"Error sending message to Livetiming WS: {e}")
 
     def send_auth_and_config(self, config: dict):
-        if not self.connection_ready.wait(timeout=5):
+        if not self.connection_ready.wait(timeout=self.timeout_wait_sec):
             self.reinit()
             self.logger.error("WebSocket not ready in time for sending auth/config.")
             return
