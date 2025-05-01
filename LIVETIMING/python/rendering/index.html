@@ -36,12 +36,37 @@
             height: 80%;
             max-height: 80%;
             overflow-y: auto;
+            background-color: transparent;
+            scrollbar-gutter: stable both-edges;
+        }
+
+        * {
+            scrollbar-width: thin;
+        }
+
+        *::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        *::-webkit-scrollbar-track {
+            background-color: transparent;
+        }
+
+        *::-webkit-scrollbar-thumb {
+            border-radius: 15px;
+            border: 0px solid transparent;
+            background-color: #1a1a27;
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-corner {
+            background: rgba(0, 0, 0, 0);
         }
     </style>
 </head>
 
 <body class="m-0 p-0 ">
-    <div class="row m-0" >
+    <div class="row m-0">
         <div class="col-3 d-flex flex-column">
             <div class="row flex-grow-1" style="height:100%;background-color:rgb(83, 97, 110) !important;">
                 <div class="col-12" style="height:35%" id="side_ui_general">
@@ -52,7 +77,7 @@
                 </div>
                 <div class="col-12 text-white p-2" style="height: 35%;" id="side_ui_log">
                     <h5 class="mb-2">Log</h5>
-                    <div id="log_div" class="bg-dark p-2 rounded flex-grow-1 scrollable-inner">
+                    <div id="log_div" class="bg-dark p-2 rounded flex-grow-1 scrollable-inner nice_scrollbar">
                     </div>
                 </div>
             </div>
@@ -83,8 +108,8 @@
                 <div class="container-fluid">
                     <div class="row">
                         <!-- Scrollable Form Container -->
-                        <div class="col-lg-6 p-4 bg-secondary scrollable-inner"
-                            style="height: 100vh; overflow-y: auto;" id="live_config">
+                        <div class="col-lg-6 p-4 bg-secondary scrollable-inner" style="height: 100vh; overflow-y: auto;"
+                            id="live_config">
                             <form oninput="updateSubmitButton()" id="livetiming_form">
                                 <!-- Server Config Section -->
                                 <div class="row mb-4">
@@ -291,7 +316,7 @@
                 const logDiv = document.getElementById('log_div');
                 if (logDiv) {
                     const p = document.createElement('p');
-                    p.className = 'small m-1';
+                    p.className = 'small m-1 text-nowrap';
                     p.innerText = message;
                     const match = message.match(log_type_parser_regex);
                     if (match) p.classList.add(log_message_type_color[match[1]] || 'text-light');

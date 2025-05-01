@@ -1,9 +1,12 @@
 from typing import Union
+import logging
 
 class BART2_SETTINGS:
     def __init__(self):
         self.loaded_data = {}
         self.load_settings()
+        self.logger = logging.getLogger("BART2")
+        self.logger.info("Successfully loaded Settings")
 
     def load_settings(self):
         """

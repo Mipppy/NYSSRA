@@ -25,7 +25,7 @@ class Instances:
             cls.xc_timer_dll = XC_TIMER_DLL()
             cls.livetiming = LivetimingHandler()
 
-            cls.logger.info("All classes successfully initialized.")
+            cls.logger.info("Successfully loaded all classes.")
 
 # Instances = _Instances
 # settings = _Instances.settings

@@ -1,4 +1,7 @@
-[INFO] (2025-05-01 13:12:13) - Logger has been initialized.
-[INFO] (2025-05-01 13:12:13) - Successfully loaded xc_timer_dll.dll
-[INFO] (2025-05-01 13:12:13) - All classes successfully initialized.
-[INFO] (2025-05-01 13:12:14) - JavaScript connection initialized
+[INFO] (2025-05-01 13:44:00) - Successfully loaded Logger.
+[INFO] (2025-05-01 13:44:00) - Successfully loaded xc_timer_dll.dll
+[INFO] (2025-05-01 13:44:00) - Successfully loaded all classes.
+[INFO] (2025-05-01 13:44:01) - JavaScript connection initialized
+[INFO] (2025-05-01 13:44:09) - Successfully created WS connection to wss://nyssra.pythonanywhere.com/livetiming-ws
+[ERROR] (2025-05-01 13:44:09) - Authentication failed: Invalid password
+[INFO] (2025-05-01 13:44:09) - Livetiming WS connection closed successfully.

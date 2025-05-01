@@ -127,6 +127,8 @@ def initialize_logger(verbose: bool = False,
         Configured logger instance
     """
     
+    reset_loggers()
+    
     if log_file is None:
         log_file = 'bart2.log'
     
@@ -149,5 +151,22 @@ def initialize_logger(verbose: bool = False,
     formatter = logging.Formatter('[%(levelname)s] (%(asctime)s) - %(message)s')
     interceptor.setFormatter(formatter)
     logger.addHandler(interceptor)
-    logger.info("Logger has been initialized.")
+    logger.info("Successfully loaded Logger.")
     return logger
+
+
+def reset_loggers():
+    root_logger = logging.getLogger()
+
+    for handler in root_logger.handlers[:]:
+        root_logger.removeHandler(handler)
+        handler.close()
+
+    
+    for logger_name in list(logging.root.manager.loggerDict.keys()):
+        logger = logging.getLogger(logger_name)
+        logger.handlers.clear()
+        logger.propagate = True  
+
+        if not isinstance(logger, logging.Logger):
+            continue
