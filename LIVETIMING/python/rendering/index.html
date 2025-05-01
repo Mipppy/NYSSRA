@@ -31,120 +31,139 @@
             white-space: nowrap;
             height: 100%;
         }
+
         .scrollable-inner {
-    height: 100%;
-    overflow-y: auto;
-}
+            height: 100%;
+            overflow-y: auto;
+        }
     </style>
 </head>
 
 <body class="m-0 p-0">
-    <div class="d-flex bg-dark text-white" style="height: 50px;">
-        <button class="btn btn-dark flex-fill" onclick="openTab('tab1')">Tab 1</button>
-        <button class="btn btn-dark flex-fill" onclick="openTab('tab2')">Tab 2</button>
-        <button class="btn btn-dark flex-fill" onclick="openTab('tab3')">Tab 3</button>
-        <button class="btn btn-dark flex-fill" onclick="openTab('tab4')">Livetiming</button>
-        <button class="btn btn-dark flex-fill" onclick="openTab('tab5')">Startlist</button>
-        <button class="btn btn-primary flex-fill" onclick="openTab('tab6')">Debug</button>
-    </div>
-
-    <div id="tab1" class="content">
-        <div class="p-3">Tab 1 Content</div>
-    </div>
-
-    <div id="tab2" class="content">
-        <div class="p-3">Tab 2 Content</div>
-    </div>
-
-    <div id="tab3" class="content">
-        <div class="p-3">Tab 3 Content</div>
-    </div>
-
-    <div id="tab4" class="content">
-        <div class="container-fluid">
-            <div class="row">
-                <!-- Scrollable Form Container -->
-                <div class="col-lg-6 p-4 bg-secondary rounded scrollable-inner" style="height: 100vh; overflow-y: auto;" id="live_config">
-                    <form oninput="updateSubmitButton()" id="livetiming_form">
-                        <!-- Server Config Section -->
-                        <div class="row mb-4">
-                            <div class="col-12">
-                                <div class="card bg-dark text-white">
-                                    <div class="card-body">
-                                        <div class="mb-3">
-                                            <label for="password" class="form-label">Server Password</label>
-                                            <input type="password" class="form-control" id="livetiming_password"
-                                                placeholder="Enter server password" maxlength="250" name="password"
-                                                required />
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="filename" class="form-label">Server Filename</label>
-                                            <input type="text" class="form-control" id="livetiming_filename"
-                                                placeholder="Enter server filename" maxlength="50" name="filename"
-                                                required />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Headers Section -->
-                        <div class="row mb-4">
-                            <div class="col-12">
-                                <div class="card bg-dark text-white">
-                                    <div class="card-header">
-                                        <h5 class="mb-0">Headers</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <!-- Fixed header -->
-                                        <table class="table table-dark table-striped table-hover mb-0">
-                                            <thead>
-                                                <tr>
-                                                    <th width="40%">Key</th>
-                                                    <th width="50%">Value</th>
-                                                    <th width="10%" class="text-center">Actions</th>
-                                                </tr>
-                                            </thead>
-                                        </table>
-
-                                        <div style="max-height: 200px; overflow-y: auto;">
-                                            <table class="table table-dark table-striped table-hover mb-3">
-                                                <tbody id="livetiming_headers">
-                                                </tbody>
-                                            </table>
-                                        </div>
-
-                                        <div class="mt-3 mb-5">
-                                            <button type="button" class="btn btn-success" onclick="addKeyValueRow()">
-                                                <i class="bi bi-plus-circle me-2"></i>Add Additional Header
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row mt-4">
-                            <div class="col-12">
-                                <button class="btn btn-primary btn-lg w-100 py-3" name="btnSubmit" disabled id="livetiming_submit">
-                                    <i class="bi bi-send-fill me-2"></i>Submit Configuration
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                    <!-- HACK: I hate styling and without these the submit button gets awkwardly cut off. -->
-                    <br>
-                    <br>
-                </div>
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="col-9">
+            <div class="d-flex bg-dark text-white" style="height: 50px;">
+                <button class="btn btn-dark flex-fill" onclick="openTab('tab1')">Tab 1</button>
+                <button class="btn btn-dark flex-fill" onclick="openTab('tab2')">Tab 2</button>
+                <button class="btn btn-dark flex-fill" onclick="openTab('tab3')">Tab 3</button>
+                <button class="btn btn-dark flex-fill" onclick="openTab('tab4')">Livetiming</button>
+                <button class="btn btn-dark flex-fill" onclick="openTab('tab5')">Startlist</button>
+                <button class="btn btn-primary flex-fill" onclick="openTab('tab6')">Debug</button>
             </div>
-        </div>
 
-        <script>
-            function addKeyValueRow(key = "", value = "", isRequired = false) {
-                const table = document.getElementById("livetiming_headers");
-                const newRow = document.createElement("tr");
+            <div id="tab1" class="content">
+                <div class="p-3">Tab 1 Content</div>
+            </div>
 
-                newRow.innerHTML = `
+            <div id="tab2" class="content">
+                <div class="p-3">Tab 2 Content</div>
+            </div>
+
+            <div id="tab3" class="content">
+                <div class="p-3">Tab 3 Content</div>
+            </div>
+
+            <div id="tab4" class="content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <!-- Scrollable Form Container -->
+                        <div class="col-lg-6 p-4 bg-secondary rounded scrollable-inner"
+                            style="height: 100vh; overflow-y: auto;" id="live_config">
+                            <form oninput="updateSubmitButton()" id="livetiming_form">
+                                <!-- Server Config Section -->
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <div class="card bg-dark text-white">
+                                            <div class="card-body">
+                                                <div class="mb-3">
+                                                    <div class="d-flex">
+                                                        <label for="password"
+                                                            class="form-label flex-grow-1 d-inline-flex">Server
+                                                            Password</label>
+                                                        <p class="text-success" style="display: none;"
+                                                            id="autofilled_password_indicator">Loaded saved password!
+                                                        </p>
+                                                    </div>
+                                                    <input type="password" class="form-control" id="livetiming_password"
+                                                        placeholder="Enter server password" maxlength="250"
+                                                        name="password" required />
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="filename" class="form-label">Server Filename</label>
+                                                    <input type="text" class="form-control" id="livetiming_filename"
+                                                        placeholder="Enter server filename" maxlength="50"
+                                                        name="filename" required />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Headers Section -->
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <div class="card bg-dark text-white">
+                                            <div class="card-header">
+                                                <h5 class="mb-0">Headers</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <!-- Fixed header -->
+                                                <table class="table table-dark table-striped table-hover mb-0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="40%">Key</th>
+                                                            <th width="50%">Value</th>
+                                                            <th width="10%" class="text-center">Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                </table>
+
+                                                <div style="max-height: 200px; overflow-y: auto;">
+                                                    <table class="table table-dark table-striped table-hover mb-3">
+                                                        <tbody id="livetiming_headers">
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+
+                                                <div class="mt-3 mb-5">
+                                                    <button type="button" class="btn btn-success"
+                                                        onclick="addKeyValueRow()">
+                                                        <i class="bi bi-plus-circle me-2"></i>Add Additional Header
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-4">
+                                    <div class="col-12">
+                                        <button class="btn btn-primary btn-lg w-100 py-3" name="btnSubmit" disabled
+                                            id="livetiming_submit">
+                                            <i class="bi bi-send-fill me-2"></i>Submit Configuration
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                            <!-- HACK: I hate styling and without these the submit button gets awkwardly cut off. -->
+                            <br>
+                            <br>
+                        </div>
+                        <!-- <div class="col-lg-6 p-4 bg-secondary rounded scrollable-inner" style="height: 100vh; overflow-y: auto; display: none" id="livetiming_request_log">
+                    <div class="">
+
+                    </div>
+                </div> -->
+                    </div>
+                </div>
+
+                <script>
+                    function addKeyValueRow(key = "", value = "", isRequired = false) {
+                        const table = document.getElementById("livetiming_headers");
+                        const newRow = document.createElement("tr");
+
+                        newRow.innerHTML = `
                     <td>
                         <input type="text" class="form-control key-input LIVETIMING_KEY" 
                                placeholder="Enter header key" value="${key}" 
@@ -158,313 +177,327 @@
                     </td>
                     <td class="text-center align-items-center">
                         ${isRequired
-                        ? '<span class="text-light">Required</span>'
-                        : `<button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)">
+                                ? '<span class="text-light">Required</span>'
+                                : `<button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)">
                                  <i class="bi bi-trash"></i>
                                </button>`
-                    }
+                            }
                     </td>
                 `;
 
-                table.appendChild(newRow);
-                updateSubmitButton();
-            }
+                        table.appendChild(newRow);
+                        updateSubmitButton();
+                    }
 
-            function deleteRow(button) {
-                const row = button.closest("tr");
-                row.remove();
-                updateSubmitButton();
-            }
+                    function deleteRow(button) {
+                        const row = button.closest("tr");
+                        row.remove();
+                        updateSubmitButton();
+                    }
 
-            function updateSubmitButton() {
-                const password = document.querySelector('input[name="password"]').value;
-                const filename = document.querySelector('input[name="filename"]').value;
-                const keyInputs = document.querySelectorAll(".key-input");
-                const valueInputs = document.querySelectorAll(".value-input");
+                    function updateSubmitButton() {
+                        const password = document.querySelector('input[name="password"]').value;
+                        const filename = document.querySelector('input[name="filename"]').value;
+                        const keyInputs = document.querySelectorAll(".key-input");
+                        const valueInputs = document.querySelectorAll(".value-input");
 
-                let hasNameKey = false;
-                let hasPlaceKey = false;
-                let allValuesValid = true;
+                        let hasNameKey = false;
+                        let hasPlaceKey = false;
+                        let allValuesValid = true;
 
-                keyInputs.forEach((input, index) => {
-                    const key = input.value.trim();
-                    const value = valueInputs[index].value.trim();
+                        keyInputs.forEach((input, index) => {
+                            const key = input.value.trim();
+                            const value = valueInputs[index].value.trim();
 
-                    if (key === "name" && value) hasNameKey = true;
-                    if (key === "place" && value) hasPlaceKey = true;
-                    if (!value && input.required) allValuesValid = false;
-                });
-
-                const submitButton = document.querySelector('button[name="btnSubmit"]');
-                const isValid = password && filename && hasNameKey && hasPlaceKey && allValuesValid;
-
-                submitButton.disabled = !isValid;
-            }
-
-            window.onload = function () {
-                addKeyValueRow("name", "", true);
-                addKeyValueRow("place", "", true);
-            };
-        </script>
-    </div>
-
-
-    <div id="tab5" class="content">
-        <div class="row g-0 h-100">
-            <div class="col-8 bg-light p-3">
-                <input type="file" class="form-control mb-2" id="startlist_file_input" accept=".csv">
-                <div class="noscroll bg-secondary p-2 rounded flex-grow-1">
-                    <table id="startlist_table"></table>
-                </div>
-            </div>
-            <div class="col-4 bg-secondary p-3">
-                <!-- Placeholder for future content -->
-            </div>
-        </div>
-    </div>
-
-    <div id="tab6" class="content active">
-        <div class="row g-0 h-100">
-            <div class="col-8 bg-light p-3">
-                <p>Debug area content here.</p>
-            </div>
-            <div class="col-4  text-white d-flex flex-column p-2" style="background-color:rgb(83, 97, 110) !important;">
-                <h5 class="mb-2">Log</h5>
-                <div id="log_div" class="bg-dark p-2 rounded flex-grow-1 noscroll">
-                    <!-- Long log messages will appear here -->
-                </div>
-            </div>
-        </div>
-    </div>
-    <script>
-        function openTab(tabId) {
-            document.querySelectorAll('.content').forEach(content => {
-                content.classList.remove('active');
-            });
-
-            document.getElementById(tabId).classList.add('active');
-
-            document.querySelectorAll('.btn').forEach(btn => {
-                btn.classList.remove('btn-primary');
-                btn.classList.add('btn-dark');
-            });
-
-            event.currentTarget.classList.remove('btn-dark');
-            event.currentTarget.classList.add('btn-primary');
-        }
-
-        const log_message_type_color = {
-            "CRITICAL": "text-danger",
-            "INFO": "text-info",
-            "DEBUG": "text-primary",
-            "ERROR": "text-danger",
-            "WARNING": "text-warning"
-        };
-        const log_type_parser_regex = /^[^\[]*\[([^\]]+)\]/;
-
-        function add_to_log(message) {
-            const logDiv = document.getElementById('log_div');
-            if (logDiv) {
-                const p = document.createElement('p');
-                p.className = 'small m-1';
-                p.innerText = message;
-                const match = message.match(log_type_parser_regex);
-                if (match) p.classList.add(log_message_type_color[match[1]] || 'text-light');
-                logDiv.prepend(p);
-            }
-        }
-
-        document.addEventListener("DOMContentLoaded", function () {
-            new QWebChannel(qt.webChannelTransport, function (channel) {
-                window.bridge = channel.objects.bridge;
-                bridge.js_message.connect(function (message) {
-                    handleIncomingMessages(message);
-                });
-                bridge.py_message(`{"message_type": "ready", "data": {}}`);
-            });
-        });
-
-        function handleIncomingMessages(message) {
-            const [msg_type, msg_body] = message.split('|||');
-            if (msg_type === "LOG") {
-                add_to_log(msg_body);
-            }
-            else if (msg_type === "LIVETIMING") {
-                handleLivetimingMessage(msg_body)
-            }
-        }
-        
-        function handleLivetimingMessage(msg) {
-            if (msg === "t_cancled") {
-                document.getElementById("livetiming_submit").disabled = false
-                document.getElementById("live_config").style.display = "flex"
-            }
-        }
-        
-        
-
-        document.getElementById('startlist_file_input').addEventListener("change", ev => {
-            const files = ev.target.files;
-            if (files.length > 0) {
-                const file = files[0];
-                parseCSVAndPopulateTableEnhanced(file)
-            } else {
-                console.log("No file selected.");
-            }
-        });
-        function parseCSVAndPopulateTableEnhanced(file) {
-            //Populates a table with a CSV's file's data
-            //Adjusts for quote strings.
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-
-                reader.onload = function (event) {
-                    try {
-                        const csvData = event.target.result;
-                        const table = document.getElementById('startlist_table');
-                        table.innerHTML = '';
-                        const rows = [];
-                        let currentRow = [];
-                        let inQuotes = false;
-                        let currentField = '';
-
-                        for (let i = 0; i < csvData.length; i++) {
-                            const char = csvData[i];
-
-                            if (char === '"') {
-                                inQuotes = !inQuotes;
-                            } else if (char === ',' && !inQuotes) {
-                                currentRow.push(currentField.trim());
-                                currentField = '';
-                            } else if (char === '\n' && !inQuotes) {
-                                currentRow.push(currentField.trim());
-                                rows.push(currentRow);
-                                currentRow = [];
-                                currentField = '';
-                            } else {
-                                currentField += char;
-                            }
-                        }
-
-                        if (currentField.trim() !== '' || currentRow.length > 0) {
-                            currentRow.push(currentField.trim());
-                            rows.push(currentRow);
-                        }
-
-                        if (rows.length === 0) {
-                            throw new Error('CSV file is empty');
-                        }
-
-                        const thead = document.createElement('thead');
-                        const headerRow = document.createElement('tr');
-
-                        rows[0].forEach(header => {
-                            const th = document.createElement('th');
-                            th.textContent = header;
-                            headerRow.appendChild(th);
+                            if (key === "name" && value) hasNameKey = true;
+                            if (key === "place" && value) hasPlaceKey = true;
+                            if (!value && input.required) allValuesValid = false;
                         });
 
-                        thead.appendChild(headerRow);
-                        table.appendChild(thead);
+                        const submitButton = document.querySelector('button[name="btnSubmit"]');
+                        const isValid = password && filename && hasNameKey && hasPlaceKey && allValuesValid;
 
-                        const tbody = document.createElement('tbody');
-
-                        for (let i = 1; i < rows.length; i++) {
-                            if (rows[i].length === 0 || (rows[i].length === 1 && rows[i][0] === '')) {
-                                continue;
-                            }
-
-                            const row = document.createElement('tr');
-
-                            for (let j = 0; j < rows[0].length; j++) {
-                                const cell = document.createElement('td');
-                                cell.textContent = j < rows[i].length ? rows[i][j] : '';
-                                row.appendChild(cell);
-                            }
-
-                            tbody.appendChild(row);
-                        }
-
-                        table.appendChild(tbody);
-                        table.classList.add('table', 'table-striped', 'table-bordered');
-
-                        resolve({ success: true, rowCount: rows.length - 1 });
-                    } catch (error) {
-                        reject(error);
+                        submitButton.disabled = !isValid;
                     }
-                };
 
-                reader.onerror = function () {
-                    reject(new Error('Error reading file'));
-                };
+                    window.onload = function () {
+                        addKeyValueRow("name", "", true);
+                        addKeyValueRow("place", "", true);
+                    };
+                </script>
+            </div>
 
-                reader.readAsText(file);
+
+            <div id="tab5" class="content">
+                <div class="row g-0 h-100">
+                    <div class="col-8 bg-light p-3">
+                        <input type="file" class="form-control mb-2" id="startlist_file_input" accept=".csv">
+                        <div class="noscroll bg-secondary p-2 rounded flex-grow-1">
+                            <table id="startlist_table"></table>
+                        </div>
+                    </div>
+                    <div class="col-4 bg-secondary p-3">
+                        <!-- Placeholder for future content -->
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab6" class="content active">
+                <div class="row g-0 h-100">
+                    <div class="col-8 bg-light p-3">
+                        <p>Debug area content here.</p>
+                    </div>
+                    <div class="col-4  text-white d-flex flex-column p-2"
+                        style="background-color:rgb(83, 97, 110) !important;">
+                        <h5 class="mb-2">Log</h5>
+                        <div id="log_div" class="bg-dark p-2 rounded flex-grow-1 scrollable-inner">
+                            <!-- Long log messages will appear here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            function openTab(tabId) {
+                document.querySelectorAll('.content').forEach(content => {
+                    content.classList.remove('active');
+                });
+
+                document.getElementById(tabId).classList.add('active');
+
+                document.querySelectorAll('.btn').forEach(btn => {
+                    btn.classList.remove('btn-primary');
+                    btn.classList.add('btn-dark');
+                });
+
+                event.currentTarget.classList.remove('btn-dark');
+                event.currentTarget.classList.add('btn-primary');
+            }
+
+            const log_message_type_color = {
+                "CRITICAL": "text-danger",
+                "INFO": "text-info",
+                "DEBUG": "text-primary",
+                "ERROR": "text-danger",
+                "WARNING": "text-warning"
+            };
+            const log_type_parser_regex = /^[^\[]*\[([^\]]+)\]/;
+
+            function add_to_log(message) {
+                const logDiv = document.getElementById('log_div');
+                if (logDiv) {
+                    const p = document.createElement('p');
+                    p.className = 'small m-1';
+                    p.innerText = message;
+                    const match = message.match(log_type_parser_regex);
+                    if (match) p.classList.add(log_message_type_color[match[1]] || 'text-light');
+                    logDiv.prepend(p);
+                }
+            }
+
+            document.addEventListener("DOMContentLoaded", function () {
+                new QWebChannel(qt.webChannelTransport, function (channel) {
+                    window.bridge = channel.objects.bridge;
+                    bridge.js_message.connect(function (message) {
+                        handleIncomingMessages(message);
+                    });
+                    bridge.py_message(`{"message_type": "ready", "data": {}}`);
+                    bridge.py_message(`{"message_type": "give_me_the_fucking_password", "data": {}}`)
+                });
             });
 
-
-            async function fetchCSVFromURL(url) {
-                //  This function async fetches CSV data from a URL and converts it to a File object for parsing later.
-                try {
-                    const response = await fetch(url);
-
-                    if (!response.ok) {
-                        throw new Error("HTTP error! status: ${response.status}");
-                    }
-
-                    const filename = url.substring(url.lastIndexOf('/') + 1);
-
-                    const blob = await response.blob();
-
-                    const file = new File([blob], filename, {
-                        type: 'text/csv',
-                        lastModified: new Date().getTime()
-                    });
-
-                    return file;
-                } catch (error) {
-                    console.error('Error fetching CSV:', error);
-                    throw error;
+            function handleIncomingMessages(message) {
+                const [msg_type, msg_body] = message.split('|||');
+                if (msg_type === "LOG") {
+                    add_to_log(msg_body);
+                }
+                else if (msg_type === "LIVETIMING") {
+                    handleLivetimingMessage(msg_body)
+                }
+                else if (msg_type === "SAVED_PASSWORD") {
+                    document.getElementById("livetiming_password").value = msg_body
+                    document.getElementById("autofilled_password_indicator").style.display = "inline-flex"
                 }
             }
-        }
-        document.getElementById("livetiming_form").addEventListener("submit", ev => {
-            ev.preventDefault(); 
-            // FIXME: Livetiming window not showing up once Websocket is closed
-            try {
-                document.getElementById("livetiming_submit").disabled = true
-                document.getElementById("live_config").style.display = "none"
-                const password = document.getElementById("livetiming_password").value.trim();
-                const filename = document.getElementById("livetiming_filename").value.trim();
 
-                
-                if (!password || !filename) {
-                    throw new Error("Password and filename are required");
+            function handleLivetimingMessage(msg) {
+                const submit = document.getElementById("livetiming_submit")
+                const config = document.getElementById("live_config")
+                if (msg === "t_started") {
+                    submit.disabled = false
+                    config.style.display = 'block'
                 }
+                if (msg === "t_canceled") {
+                    submit.disabled = true
+                    config.style.display = 'none'
+                }
+            }
 
 
-                const headers = {};
-                const headerInputs = document.querySelectorAll(".LIVETIMING_VALUE");
 
-                headerInputs.forEach(input => {
-                    const key = input.getAttribute('key-value');
-                    const value = input.value.trim();
-                    if (key && value) { 
-                        headers[key] = value;
-                    }
+            document.getElementById('startlist_file_input').addEventListener("change", ev => {
+                const files = ev.target.files;
+                if (files.length > 0) {
+                    const file = files[0];
+                    parseCSVAndPopulateTableEnhanced(file)
+                } else {
+                    console.log("No file selected.");
+                }
+            });
+            function parseCSVAndPopulateTableEnhanced(file) {
+                //Populates a table with a CSV's file's data
+                //Adjusts for quote strings.
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+
+                    reader.onload = function (event) {
+                        try {
+                            const csvData = event.target.result;
+                            const table = document.getElementById('startlist_table');
+                            table.innerHTML = '';
+                            const rows = [];
+                            let currentRow = [];
+                            let inQuotes = false;
+                            let currentField = '';
+
+                            for (let i = 0; i < csvData.length; i++) {
+                                const char = csvData[i];
+
+                                if (char === '"') {
+                                    inQuotes = !inQuotes;
+                                } else if (char === ',' && !inQuotes) {
+                                    currentRow.push(currentField.trim());
+                                    currentField = '';
+                                } else if (char === '\n' && !inQuotes) {
+                                    currentRow.push(currentField.trim());
+                                    rows.push(currentRow);
+                                    currentRow = [];
+                                    currentField = '';
+                                } else {
+                                    currentField += char;
+                                }
+                            }
+
+                            if (currentField.trim() !== '' || currentRow.length > 0) {
+                                currentRow.push(currentField.trim());
+                                rows.push(currentRow);
+                            }
+
+                            if (rows.length === 0) {
+                                throw new Error('CSV file is empty');
+                            }
+
+                            const thead = document.createElement('thead');
+                            const headerRow = document.createElement('tr');
+
+                            rows[0].forEach(header => {
+                                const th = document.createElement('th');
+                                th.textContent = header;
+                                headerRow.appendChild(th);
+                            });
+
+                            thead.appendChild(headerRow);
+                            table.appendChild(thead);
+
+                            const tbody = document.createElement('tbody');
+
+                            for (let i = 1; i < rows.length; i++) {
+                                if (rows[i].length === 0 || (rows[i].length === 1 && rows[i][0] === '')) {
+                                    continue;
+                                }
+
+                                const row = document.createElement('tr');
+
+                                for (let j = 0; j < rows[0].length; j++) {
+                                    const cell = document.createElement('td');
+                                    cell.textContent = j < rows[i].length ? rows[i][j] : '';
+                                    row.appendChild(cell);
+                                }
+
+                                tbody.appendChild(row);
+                            }
+
+                            table.appendChild(tbody);
+                            table.classList.add('table', 'table-striped', 'table-bordered');
+
+                            resolve({ success: true, rowCount: rows.length - 1 });
+                        } catch (error) {
+                            reject(error);
+                        }
+                    };
+
+                    reader.onerror = function () {
+                        reject(new Error('Error reading file'));
+                    };
+
+                    reader.readAsText(file);
                 });
-                const formData = {
-                    password: password,
-                    filename: filename,
-                    headers: headers
-                };
 
-                bridge.py_message(`{"message_type":"livetiming_form", "data":${JSON.stringify(formData)}}`);
 
-            } catch (error) {
-                alert(`Form error: ${error}`)
+                async function fetchCSVFromURL(url) {
+                    //  This function async fetches CSV data from a URL and converts it to a File object for parsing later.
+                    try {
+                        const response = await fetch(url);
+
+                        if (!response.ok) {
+                            throw new Error("HTTP error! status: ${response.status}");
+                        }
+
+                        const filename = url.substring(url.lastIndexOf('/') + 1);
+
+                        const blob = await response.blob();
+
+                        const file = new File([blob], filename, {
+                            type: 'text/csv',
+                            lastModified: new Date().getTime()
+                        });
+
+                        return file;
+                    } catch (error) {
+                        console.error('Error fetching CSV:', error);
+                        throw error;
+                    }
+                }
             }
-        });
-    </script>
+            document.getElementById("livetiming_form").addEventListener("submit", ev => {
+                ev.preventDefault();
+                // FIXME: Livetiming window not showing up once Websocket is closed
+                try {
+                    document.getElementById("livetiming_submit").disabled = true
+                    document.getElementById("live_config").style.display = "none"
+                    const password = document.getElementById("livetiming_password").value.trim();
+                    const filename = document.getElementById("livetiming_filename").value.trim();
+
+
+                    if (!password || !filename) {
+                        throw new Error("Password and filename are required");
+                    }
+
+
+                    const headers = {};
+                    const headerInputs = document.querySelectorAll(".LIVETIMING_VALUE");
+
+                    headerInputs.forEach(input => {
+                        const key = input.getAttribute('key-value');
+                        const value = input.value.trim();
+                        if (key && value) {
+                            headers[key] = value;
+                        }
+                    });
+                    const formData = {
+                        password: password,
+                        filename: filename,
+                        headers: headers
+                    };
+
+                    bridge.py_message(`{"message_type":"livetiming_form", "data":${JSON.stringify(formData)}}`);
+
+                } catch (error) {
+                    alert(`Form error: ${error}`)
+                }
+            });
+        </script>
+    </div>
 </body>
 
 </html>

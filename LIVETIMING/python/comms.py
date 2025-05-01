@@ -1,3 +1,4 @@
+import copy
 import threading
 import json
 import logging
@@ -8,13 +9,12 @@ from websocket import create_connection, WebSocket, WebSocketException
 class LivetimingHandler:
     def __init__(self):
         self._initialize()
-        self.websocket_thread = None
-        self.connection_ready = threading.Event()
-        self.websocket_thread_running = False
-        self.loop = None
+        self.config_password = ""
         self.logger = logging.getLogger('BART2')
 
     def _initialize(self):
+        from instances import Instances
+        Instances.window.bridge.send_to_js(f"LIVETIMING|||t_started")
         self.primary_url = "wss://nyssra.pythonanywhere.com/livetiming-ws"
         self.websocket_connection: Optional[WebSocket] = None
         self.timeout_wait_sec = 20
@@ -22,13 +22,15 @@ class LivetimingHandler:
         self.ping_interval = 15
         self.pong_wait_time = 20
         self.last_pong_time = time.time()  
-
+        self.websocket_thread = None
+        self.connection_ready = threading.Event()
+        self.websocket_thread_running = False
+        self.loop = None
+        
     def reinit(self):
         if self.websocket_thread_running:
             self._stop_websocket_thread()
 
-        from instances import Instances
-        Instances.window.bridge.send_to_js(f"LIVETIMING|||t_canceled")
 
         self._initialize()
 
@@ -45,6 +47,9 @@ class LivetimingHandler:
         try:
             self.websocket_connection = create_connection(url, timeout=self.timeout_wait_sec)
             self.logger.info(f"Successfully created WS connection to {url}")
+            from instances import Instances
+            Instances.window.bridge.send_to_js(f"LIVETIMING|||t_canceled")
+            Instances.settings.update_setting("SAVED_PASSWORD", self.config_password)
             self.connection_ready.set() 
             self.start_ping_pong()
 
@@ -139,19 +144,19 @@ class LivetimingHandler:
                 self.logger.error(f"Error sending message to Livetiming WS: {e}")
 
     def send_auth_and_config(self, config: dict):
-        # FIXME: Headers not being in config
         if not self.connection_ready.wait(timeout=5):
             self.reinit()
             self.logger.error("WebSocket not ready in time for sending auth/config.")
             return
 
         self.logger.debug("WebSocket ready — sending auth/config")
-
+        self.config_password = config['password']
         self.send_json_message({"password": config['password']})
         time.sleep(0.2)  
         self.send_json_message({'new_url': config['filename']})
         time.sleep(0.2)
         self.send_json_message(config['headers'])
+        self.logger.debug(self.config_password)
 
 
 

@@ -1,1 +1,2 @@
 VERBOSE_LOGGING=1
+SAVED_PASSWORD=the password

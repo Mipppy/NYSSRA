@@ -1,40 +1,7 @@
-[INFO] (2025-04-29 13:09:19) - Logger has been initialized.
-[DEBUG] (2025-04-29 13:09:19) - Loaded xc_timer_dll.dll's functions successfully.
-[INFO] (2025-04-29 13:09:19) - Successfully loaded xc_timer_dll.dll
-[INFO] (2025-04-29 13:09:19) - All classes successfully initialized.
-[DEBUG] (2025-04-29 13:09:19) - Raw message from JS: {"message_type": "ready", "data": {}}
-[INFO] (2025-04-29 13:09:19) - JavaScript connection initialized
-[DEBUG] (2025-04-29 13:09:33) - Raw message from JS: {"message_type":"livetiming_form", "data":{"password":"the password","filename":"tther","headers":{"name":"e","place":"e"}}}
-[INFO] (2025-04-29 13:09:33) - Successfully created WS connection to wss://nyssra.pythonanywhere.com/livetiming-ws
-[DEBUG] (2025-04-29 13:09:33) - WebSocket ready — sending auth/config
-[DEBUG] (2025-04-29 13:09:33) - Sent PING to server
-[DEBUG] (2025-04-29 13:09:33) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
-[DEBUG] (2025-04-29 13:09:33) - Received Livetiming WS message: {'type': 'auth', 'status': 'success', 'message': 'Authentication successful'}
-[INFO] (2025-04-29 13:09:33) - Authentication successful.
-[DEBUG] (2025-04-29 13:09:33) - Received Livetiming WS message: {'type': 'new_url', 'status': 'success', 'new_route': 'tther', 'log_file': 'livetiming_data/tther_29-04-2025_13-09.jsonl'}
-[INFO] (2025-04-29 13:09:33) - New route created: tther
-[DEBUG] (2025-04-29 13:09:34) - Received Livetiming WS message: {'type': 'header', 'status': 'success', 'message': 'Header written with live:true'}
-[INFO] (2025-04-29 13:09:34) - Header successfully written.
-[DEBUG] (2025-04-29 13:09:48) - Sent PING to server
-[DEBUG] (2025-04-29 13:09:48) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
-[DEBUG] (2025-04-29 13:10:03) - Sent PING to server
-[DEBUG] (2025-04-29 13:10:03) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
-[DEBUG] (2025-04-29 13:10:18) - Sent PING to server
-[DEBUG] (2025-04-29 13:10:18) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
-[DEBUG] (2025-04-29 13:10:33) - Sent PING to server
-[DEBUG] (2025-04-29 13:10:33) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
-[DEBUG] (2025-04-29 13:10:48) - Sent PING to server
-[DEBUG] (2025-04-29 13:10:48) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
-[DEBUG] (2025-04-29 13:11:03) - Sent PING to server
-[DEBUG] (2025-04-29 13:11:03) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
-[DEBUG] (2025-04-29 13:11:18) - Sent PING to server
-[DEBUG] (2025-04-29 13:11:18) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
-[DEBUG] (2025-04-29 13:11:33) - Sent PING to server
-[DEBUG] (2025-04-29 13:11:33) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
-[DEBUG] (2025-04-29 13:11:48) - Sent PING to server
-[DEBUG] (2025-04-29 13:11:48) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
-[DEBUG] (2025-04-29 13:12:03) - Sent PING to server
-[DEBUG] (2025-04-29 13:12:03) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
-[DEBUG] (2025-04-29 13:12:18) - Sent PING to server
-[DEBUG] (2025-04-29 13:12:18) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
-[INFO] (2025-04-29 13:12:21) - Livetiming WS connection closed successfully.
+[INFO] (2025-05-01 11:33:14) - Logger has been initialized.
+[DEBUG] (2025-05-01 11:33:14) - Loaded xc_timer_dll.dll's functions successfully.
+[INFO] (2025-05-01 11:33:14) - Successfully loaded xc_timer_dll.dll
+[INFO] (2025-05-01 11:33:14) - All classes successfully initialized.
+[DEBUG] (2025-05-01 11:33:15) - Raw message from JS: {"message_type": "ready", "data": {}}
+[INFO] (2025-05-01 11:33:15) - JavaScript connection initialized
+[DEBUG] (2025-05-01 11:33:15) - Raw message from JS: {"message_type": "give_me_the_fucking_password", "data": {}}

@@ -48,6 +48,10 @@ class Bridge(QObject):
                 Instances.livetiming.reinit()
                 Instances.livetiming.connect_to_livetiming_ws()
                 Instances.livetiming.send_auth_and_config(json_msg['data'])
+            elif message_type == "give_me_the_fucking_password":
+                from instances import Instances
+                password = Instances.settings.get_setting("SAVED_PASSWORD")
+                self.send_to_js(f"SAVED_PASSWORD|||{password}")
             else:
                 logger.warning(f"Unhandled message type: {message_type}")
                 
