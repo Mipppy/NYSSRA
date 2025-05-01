@@ -77,14 +77,25 @@ class InterceptorHandler(logging.Handler):
         super().__init__(level)
         self._log_stream = io.StringIO()
         self.window_provider = window_provider
+        self.all_messages_before_js_init = []
+        self.is_js_init = False
 
-    # FIXME: Store previous logs that happen before the Javascript connection was initialized 
+
     def emit(self, record):
         try:
             msg = self.format(record)
-            if self.window_provider:
-                print(msg)
-                self.window_provider.bridge.send_to_js("LOG|||"+msg)  # Use dedicated method
+            if "JavaScript connection initialized" in msg and self.is_js_init == False:
+                self.is_js_init = True
+            if self.window_provider and self.is_js_init == True:
+                if self.all_messages_before_js_init != []:
+                    for saved_msg in self.all_messages_before_js_init:
+                        self.window_provider.bridge.send_to_js("LOG|||" + saved_msg)
+                    self.all_messages_before_js_init = []
+                    
+                self.window_provider.bridge.send_to_js("LOG|||" + msg)
+            else:
+                self.all_messages_before_js_init.append(msg)  
+            print(msg)
             self._log_stream.write(msg + '\n')
         except Exception:
             self.handleError(record)
@@ -115,6 +126,7 @@ def initialize_logger(verbose: bool = False,
     Returns:
         Configured logger instance
     """
+    
     if log_file is None:
         log_file = 'bart2.log'
     
