@@ -3,10 +3,11 @@ from xc_timer import XC_TIMER_DLL
 from settings import BART2_SETTINGS
 from helpers import initialize_logger
 from comms import LivetimingHandler
+from race_handler import DLL_Race_Handler
 # I WISH I HAD POINTERS
 
 class Instances:
-    # Set to None here to enable autocomplete on most IDEs
+    # Set to None here to enable autocomplete on Visual Studio Code, as it doesn't autocomplete for @classmethods for some reason.
     window = None
     window_app = None
     xc_timer_dll = None
@@ -24,6 +25,7 @@ class Instances:
             cls.window_app = window_list[0]
             cls.xc_timer_dll = XC_TIMER_DLL()
             cls.livetiming = LivetimingHandler()
+            cls.dll_interfacer = DLL_Race_Handler()
 
             cls.logger.info("Successfully loaded all classes.")
 

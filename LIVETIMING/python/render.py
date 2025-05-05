@@ -39,20 +39,21 @@ class Bridge(QObject):
                 return
 
             message_type = json_msg.get('message_type')
-            
+            from instances import Instances
             if message_type == "ready":
                 logger.info("JavaScript connection initialized")
                 self.js_initialized = True  
             elif message_type == "livetiming_form":
-                from instances import Instances
                 Instances.livetiming.reinit()
                 Instances.livetiming.connect_to_livetiming_ws()
                 Instances.livetiming.send_auth_and_config(json_msg['data'])
-            elif message_type == "give_me_the_fucking_password":
-                from instances import Instances
+            elif message_type == "give_me_the_fucking_password" and int(Instances.settings.get_setting("SAVE_PASSWORD")):
                 password = Instances.settings.get_setting("SAVED_PASSWORD")
                 self.send_to_js(f"SAVED_PASSWORD|||{password}")
-            else:
+                logger.debug("Sent saved password to window.")
+            elif message_type == "startlist_input":
+                Instances.dll_interfacer.load_startlist(json_msg['data'])
+            else:   
                 logger.warning(f"Unhandled message type: {message_type}")
                 
         except Exception as e:

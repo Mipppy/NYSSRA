@@ -67,6 +67,38 @@
         ::-webkit-scrollbar-corner {
             background: rgba(0, 0, 0, 0);
         }
+
+        .twitch_grey_button {
+
+            display: inline-block;
+            outline: 0;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            border-radius: 4px;
+            font-size: 13px;
+            height: 30px;
+            background-color: #0000000d;
+            color: #0e0e10;
+            padding: 0 20px;
+
+            :hover {
+                background-color: #0000001a;
+            }
+
+        }
+
+        .end-button.confirming::after {
+            content: "Confirm?";
+        }
+
+        .end-button.confirming {
+            pointer-events: auto;
+        }
+
+        .end-button:not(.confirming)::after {
+            content: "End race";
+        }
     </style>
 </head>
 
@@ -74,12 +106,35 @@
     <div class="row m-0">
         <div class="col-3 d-flex flex-column">
             <div class="row flex-grow-1" style="height:100%;background-color:rgb(83, 97, 110) !important;">
-                <div class="col-12" style="height:35%" id="side_ui_general">
-
+                <div class="col-12" style="height:30%; " id="side_ui_general">
+                    <h2 class="display-6">Timing System</h2>
                 </div>
+                <hr class="border border-light border-2 opacity-75">
                 <div class="col-12" style="height:30%" id="side_ui_active_race">
+                    <h5 class="mb-2 text-white">Active Race</h5>
+                    <div id="side_ui_race_details_container">
+                        <div class="row scrollable-inner" id="side_ui_race_details_part">
+                            <div class="col-12">
+                                <h6 class="d-inline-block text-white">Time elapsed: </h6>
+                                <h6 class="d-inline-block text-white">NA</h6>
+                                <br>
+                                <h6 class="d-inline-block text-white">Livetiming: </h6>
+                                <h6 class="d-inline-block text-danger">NA</h6>
+                                <br>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <button type="button" class="btn btn-danger end-button"
+                                            id="side_ui_end_race_button"></button>
+                                    </div>
+                                    <div class="col-6">
 
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+                <hr class="border border-light border-2 opacity-75">
                 <div class="col-12 text-white p-2" style="height: 35%;" id="side_ui_log">
                     <h5 class="mb-2">Log</h5>
                     <div id="log_div" class="bg-dark p-2 rounded flex-grow-1 scrollable-inner nice_scrollbar">
@@ -292,6 +347,7 @@
             </div>
         </div>
         <script>
+
             function openTab(tabId) {
                 document.querySelectorAll('.content').forEach(content => {
                     content.classList.remove('active');
@@ -381,8 +437,8 @@
                 }
             });
             function parseCSVAndPopulateTableEnhanced(file) {
-                //Populates a table with a CSV's file's data
-                //Adjusts for quote strings.
+                const built_json = []; 
+
                 return new Promise((resolve, reject) => {
                     const reader = new FileReader();
 
@@ -425,8 +481,9 @@
 
                             const thead = document.createElement('thead');
                             const headerRow = document.createElement('tr');
+                            const headers = rows[0];
 
-                            rows[0].forEach(header => {
+                            headers.forEach(header => {
                                 const th = document.createElement('th');
                                 th.textContent = header;
                                 headerRow.appendChild(th);
@@ -443,12 +500,17 @@
                                 }
 
                                 const row = document.createElement('tr');
+                                const rowObj = {};
 
-                                for (let j = 0; j < rows[0].length; j++) {
+                                for (let j = 0; j < headers.length; j++) {
                                     const cell = document.createElement('td');
-                                    cell.textContent = j < rows[i].length ? rows[i][j] : '';
+                                    const cellValue = j < rows[i].length ? rows[i][j] : '';
+                                    cell.textContent = cellValue;
                                     row.appendChild(cell);
+                                    rowObj[headers[j]] = cellValue;
                                 }
+
+                                built_json.push(rowObj);
 
                                 tbody.appendChild(row);
                             }
@@ -456,7 +518,9 @@
                             table.appendChild(tbody);
                             table.classList.add('table', 'table-striped', 'table-bordered');
 
-                            resolve({ success: true, rowCount: rows.length - 1 });
+                            window.bridge.py_message(`{"message_type": "startlist_input", "data": ${JSON.stringify(built_json)}}`)
+
+                            resolve({ success: true, rowCount: built_json.length, data: built_json });
                         } catch (error) {
                             reject(error);
                         }
@@ -468,33 +532,33 @@
 
                     reader.readAsText(file);
                 });
+            }
 
+            async function fetchCSVFromURL(url) {
+                //  This function async fetches CSV data from a URL and converts it to a File object for parsing later.
+                try {
+                    const response = await fetch(url);
 
-                async function fetchCSVFromURL(url) {
-                    //  This function async fetches CSV data from a URL and converts it to a File object for parsing later.
-                    try {
-                        const response = await fetch(url);
-
-                        if (!response.ok) {
-                            throw new Error("HTTP error! status: ${response.status}");
-                        }
-
-                        const filename = url.substring(url.lastIndexOf('/') + 1);
-
-                        const blob = await response.blob();
-
-                        const file = new File([blob], filename, {
-                            type: 'text/csv',
-                            lastModified: new Date().getTime()
-                        });
-
-                        return file;
-                    } catch (error) {
-                        console.error('Error fetching CSV:', error);
-                        throw error;
+                    if (!response.ok) {
+                        throw new Error("HTTP error! status: ${response.status}");
                     }
+
+                    const filename = url.substring(url.lastIndexOf('/') + 1);
+
+                    const blob = await response.blob();
+
+                    const file = new File([blob], filename, {
+                        type: 'text/csv',
+                        lastModified: new Date().getTime()
+                    });
+
+                    return file;
+                } catch (error) {
+                    console.error('Error fetching CSV:', error);
+                    throw error;
                 }
             }
+            
             document.getElementById("livetiming_form").addEventListener("submit", ev => {
                 ev.preventDefault();
                 // FIXME: Livetiming window not showing up once Websocket is closed
@@ -530,6 +594,20 @@
 
                 } catch (error) {
                     alert(`Form error: ${error}`)
+                }
+            });
+
+
+            document.getElementById("side_ui_end_race_button").addEventListener("click", (ev) => {
+                const endButton = ev.target
+                if (endButton.classList.contains("confirming")) {
+                    window.bridge.py_message(`{"message_type": "kill_race", "data": {}}`)
+                } else {
+                    endButton.classList.add("confirming");
+
+                    setTimeout(() => {
+                        endButton.classList.remove("confirming");
+                    }, 5000);
                 }
             });
         </script>

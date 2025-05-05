@@ -148,7 +148,7 @@ def initialize_logger(verbose: bool = False,
     print('\n\n\n\n\n\nLOGGER CALLED\n\n\n\n\n')
     
     interceptor = InterceptorHandler(level=target_level, window_provider=window_provider)
-    formatter = logging.Formatter('[%(levelname)s] (%(asctime)s) - %(message)s')
+    formatter = logging.Formatter(f'[%(levelname)s] (%(asctime)s) {"[%(filename)s:%(lineno)d]" if verbose else ""} - %(message)s')
     interceptor.setFormatter(formatter)
     logger.addHandler(interceptor)
     logger.info("Successfully loaded Logger.")
