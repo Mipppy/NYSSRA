@@ -1,7 +1,10 @@
 from ctypes import *
 from ctypes import _SimpleCData
 import logging.config
-import os, io
+import os
+import io
+import sys
+import subprocess
 import logging
 from pathlib import Path
 from typing import Type, TypeVar, Union, Optional, List
@@ -170,3 +173,24 @@ def reset_loggers():
 
         if not isinstance(logger, logging.Logger):
             continue
+
+def openFileInExplorer(relative_path):
+        abs_path = Path(relative_path).resolve()
+
+        if abs_path.exists():
+            if abs_path.is_file():
+                folder = abs_path.parent
+            else:
+                folder = abs_path
+
+            try:
+                if sys.platform == "win32":
+                    os.startfile(str(folder))
+                elif sys.platform == "darwin":
+                    subprocess.call(["open", str(folder)])
+                else:  
+                    subprocess.call(["xdg-open", str(folder)])
+            except Exception as e:
+                print(f"Error opening path: {e}")
+        else:
+            print(f"Path does not exist: {abs_path}")

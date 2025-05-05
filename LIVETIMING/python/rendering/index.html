@@ -136,7 +136,10 @@
                 </div>
                 <hr class="border border-light border-2 opacity-75">
                 <div class="col-12 text-white p-2" style="height: 35%;" id="side_ui_log">
-                    <h5 class="mb-2">Log</h5>
+                    <div class="d-flex justify-content-between">
+                        <h5 class="mb-2">Log</h5>
+                        <small style="font-size: smaller;" class="text-white">Saved to <a href="#" onclick="open_file('bart2.log')" style="color:aliceblue; font-size: smaller;">bart2.log</a></small>
+                    </div>
                     <div id="log_div" class="bg-dark p-2 rounded flex-grow-1 scrollable-inner nice_scrollbar">
                     </div>
                 </div>
@@ -391,6 +394,9 @@
                     bridge.js_message.connect(function (message) {
                         handleIncomingMessages(message);
                     });
+                    window.open_file = (relative_file_path) => {
+                        bridge.py_message(`{"message_type": "open_file", "data": "${relative_file_path}"}`)
+                    }
                     bridge.py_message(`{"message_type": "ready", "data": {}}`);
                     bridge.py_message(`{"message_type": "give_me_the_fucking_password", "data": {}}`)
                 });
@@ -610,6 +616,7 @@
                     }, 5000);
                 }
             });
+
         </script>
     </div>
 </body>

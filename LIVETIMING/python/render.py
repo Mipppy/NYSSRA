@@ -7,6 +7,7 @@ from PyQt5.QtWebChannel import QWebChannel
 import logging
 from typing import List
 import json
+from helpers import openFileInExplorer
 
 
 class Bridge(QObject):
@@ -53,6 +54,8 @@ class Bridge(QObject):
                 logger.debug("Sent saved password to window.")
             elif message_type == "startlist_input":
                 Instances.dll_interfacer.load_startlist(json_msg['data'])
+            elif message_type == "open_file":
+                openFileInExplorer(json_msg['data'])
             else:   
                 logger.warning(f"Unhandled message type: {message_type}")
                 

@@ -1,4 +1,10 @@
-[INFO] (2025-05-05 11:36:56) - Successfully loaded Logger.
-[INFO] (2025-05-05 11:36:56) - Successfully loaded xc_timer_dll.dll
-[INFO] (2025-05-05 11:36:56) - Successfully loaded all classes.
-[INFO] (2025-05-05 11:36:56) - JavaScript connection initialized
+[INFO] (2025-05-05 11:49:16) - Successfully loaded Logger.
+[DEBUG] (2025-05-05 11:49:16) - Loaded xc_timer_dll.dll's functions successfully.
+[INFO] (2025-05-05 11:49:16) - Successfully loaded xc_timer_dll.dll
+[INFO] (2025-05-05 11:49:16) - Successfully loaded all classes.
+[DEBUG] (2025-05-05 11:49:17) - Raw message from JS: {"message_type": "ready", "data": {}}
+[INFO] (2025-05-05 11:49:17) - JavaScript connection initialized
+[DEBUG] (2025-05-05 11:49:17) - Raw message from JS: {"message_type": "give_me_the_fucking_password", "data": {}}
+[DEBUG] (2025-05-05 11:49:17) - Sent saved password to window.
+[DEBUG] (2025-05-05 11:49:19) - Raw message from JS: {"message_type": "open_file", "data": "bart2.log"}
+[DEBUG] (2025-05-05 11:49:29) - Raw message from JS: {"message_type": "open_file", "data": "bart2.log"}
