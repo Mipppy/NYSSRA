@@ -52,6 +52,12 @@ def ensure_dll_loaded(func):
     return wrapper
     
 class XC_TIMER_RECORD_STRUCTURE_TYPE(Structure):
+    """
+    A structure made very early into development that doesn't work, but is still important as it shows me what the structure looks like.
+
+    Args:
+        Structure (_type_): _description_
+    """
     _fields_ = [
         ('app', c_long),
         ('table_id', c_long),
@@ -159,6 +165,10 @@ def initialize_logger(verbose: bool = False,
 
 
 def reset_loggers():
+    """
+    This attempts to solve the issue with there being 2 BART2 loggers present, due to a bug that has no actual effect on the program, so I don't care to fix it.
+    This doesn't work.
+    """
     root_logger = logging.getLogger()
 
     for handler in root_logger.handlers[:]:
@@ -174,7 +184,14 @@ def reset_loggers():
         if not isinstance(logger, logging.Logger):
             continue
 
-def openFileInExplorer(relative_path):
+def openFileInExplorer(relative_path: str):
+        """
+        This is used for the HTML/JS when it needs to open a file in file explorer.
+        This is for user convinence.
+
+        Args:
+            relative_path (str): The relative path to the file you want to open in file explorer
+        """
         abs_path = Path(relative_path).resolve()
 
         if abs_path.exists():

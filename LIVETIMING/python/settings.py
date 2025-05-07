@@ -86,6 +86,9 @@ class BART2_SETTINGS:
             return False
     
     def load_defaults(self) -> None:
+        """
+        Figure this one out yourself
+        """
         try:
             with open('bart2_settings_defaults.txt', 'r') as file:
                 for line in file:
@@ -96,6 +99,12 @@ class BART2_SETTINGS:
             self.logger.error(f'Error loading defaults {e}')
     
     def update_setting_from_window(self, data:dict):
+        """
+        This one is actually interesting, as this allows the HTML/JS to easily adjust settings
+
+        Args:
+            data (dict): The setting to update and the new value.
+        """
         setting = data['setting']
         new_value = data['value']
         if setting and new_value:

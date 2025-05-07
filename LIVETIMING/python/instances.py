@@ -8,6 +8,9 @@ from announcer import Announcer
 # I WISH I HAD POINTERS
 
 class Instances:
+    """
+    Lets be real, this is the main file, as pretty much all `main.py` does is call this.
+    """
     # Set to None here to enable autocomplete on Visual Studio Code, as it doesn't autocomplete for @classmethods for some reason.
     window = None
     window_app = None
@@ -16,6 +19,11 @@ class Instances:
     logger = None
     @classmethod
     def create_instances(cls):
+            """
+                The main function.  This initializes everything.
+                Granted, the logger initialization is very scuffed, as I copied it from when 
+                this file, `instances.py` didn't exist and I don't feel like rewriting it.
+            """
             window_list = create_window()
             cls.settings = BART2_SETTINGS()
             cls.window = window_list[1]

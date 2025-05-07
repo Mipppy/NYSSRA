@@ -1,18 +1,20 @@
 """
 To run:
  **Windows** - `python main.py`
- **Linux** - `wine python main.py`   (Tested with: Fedora)
+ **Linux** - `wine python main.py`   (Tested with: Fedora)  (Decapped)
+
+This file is super important, as you can probably guess from the whopping 4 lines of code.
 """
 
 import sys
 from instances import Instances
 
-
 Instances.create_instances()
-
-
-
 sys.exit(Instances.window_app.exec_())
+
+
+# Why is this still here.
+
 # xc_instance.dll_initialize_dll_task(0x110, 'srt/')
 # xc_instance.dll_set_comm_port(2)
 # xc_instance.dll_set_diagnostic_flags(1)

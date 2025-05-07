@@ -7,12 +7,21 @@ from typing import Optional, Union
 from websocket import create_connection, WebSocket, WebSocketException
 
 class LivetimingHandler:
+    """
+    The way LivetimingHandler works is a little funny.
+    I didn't want to delete/create a new one every time the connection was terminated,
+    so I made it have 2 init functions.  What the `initialize` function does is close
+    everything and reinitialize it, allowing for a new connection to start. 
+    """
     def __init__(self):
         self._initialize()
         self.config_password = ""
         self.logger = logging.getLogger('BART2')
 
     def _initialize(self):
+        """
+        Explained above
+        """
         from instances import Instances
         Instances.window.bridge.send_to_js(f"LIVETIMING|||t_started")
         self.primary_url = "wss://nyssra.pythonanywhere.com/livetiming-ws"
@@ -28,13 +37,21 @@ class LivetimingHandler:
         self.loop = None
         
     def reinit(self):
+        """
+        The real reinit function, this one is the one that cleans up everything
+        """
         if self.websocket_thread_running:
             self._stop_websocket_thread()
 
-
         self._initialize()
 
-    def connect_to_livetiming_ws(self, url: Union[None, str] = None):
+    def connect_to_livetiming_ws(self, url: Union[str, None] = None):
+        """
+        If you can't figure out what this does, you shouldn't be looking at this code
+
+        Args:
+            url (Union[None, str], optional): The URL to connect to, this should almost always be None. Defaults to None.
+        """
         if url is None:
             url = self.primary_url
         
@@ -44,6 +61,12 @@ class LivetimingHandler:
             self.websocket_thread.start()
 
     def _connect_ws(self, url: str):
+        """
+        Nothing crazy
+
+        Args:
+            url (str): The URL to connect to, inputted from `connect_to_livetiming_ws`.
+        """
         try:
             self.websocket_connection = create_connection(url, timeout=self.timeout_wait_sec)
             self.logger.info(f"Successfully created WS connection to {url}")
@@ -62,6 +85,9 @@ class LivetimingHandler:
             self.reinit()
             
     def _listen_for_messages(self):
+        """
+        Just handles messages coming from the server
+        """
         while self.websocket_thread_running:
             try:
                 message = self.websocket_connection.recv()
@@ -107,6 +133,9 @@ class LivetimingHandler:
                 break
 
     def start_ping_pong(self):
+        """
+        Starts a ping/pong to the server to keep the connection alive.
+        """
         def ping():
             while self.websocket_thread_running:
                 current_time = time.time()
@@ -127,6 +156,9 @@ class LivetimingHandler:
         ping_thread.start()
 
     def _stop_websocket_thread(self):
+        """
+        Forcibly closes the connection and cleans up the Websocket thread.
+        """
         self.websocket_thread_running = False
         if self.websocket_connection:
             try:
@@ -140,6 +172,12 @@ class LivetimingHandler:
             self.websocket_thread.join()
 
     def send_json_message(self, message: dict):
+        """
+        Sends a message to the server
+
+        Args:
+            message (dict): The message lol.
+        """
         if self.websocket_connection:
             try:
                 self.websocket_connection.send(json.dumps(message))
@@ -147,6 +185,12 @@ class LivetimingHandler:
                 self.logger.error(f"Error sending message to Livetiming WS: {e}")
 
     def send_auth_and_config(self, config: dict):
+        """
+        This function sends data to initialize a race and gets the Websocket ready to receive race results
+
+        Args:
+            config (dict): The config data, typically sent from the window and handled in `render.py`
+        """
         if not self.connection_ready.wait(timeout=self.timeout_wait_sec):
             self.reinit()
             self.logger.error("WebSocket not ready in time for sending auth/config.")
