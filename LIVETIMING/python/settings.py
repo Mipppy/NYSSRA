@@ -35,6 +35,7 @@ class BART2_SETTINGS:
             - int if the value is numeric
             - str if the value is a string
             - None if the setting doesn't exist or value is None
+           
             
         """
         if setting not in self.loaded_data:
