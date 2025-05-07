@@ -4,6 +4,7 @@ from settings import BART2_SETTINGS
 from helpers import initialize_logger
 from comms import LivetimingHandler
 from race_handler import DLL_Race_Handler
+from announcer import Announcer
 # I WISH I HAD POINTERS
 
 class Instances:
@@ -26,7 +27,7 @@ class Instances:
             cls.xc_timer_dll = XC_TIMER_DLL()
             cls.livetiming = LivetimingHandler()
             cls.dll_interfacer = DLL_Race_Handler()
-
+            cls.announcer = Announcer()
             cls.logger.info("Successfully loaded all classes.")
 
 # Instances = _Instances

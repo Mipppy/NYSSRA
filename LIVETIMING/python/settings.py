@@ -75,9 +75,14 @@ class BART2_SETTINGS:
                         found = True
                     else:
                         file.write(line)
+            
+            # If a TTS setting, update it for immediate change
+            if "TTS" in setting_name:
+                from instances import Instances
+                Instances.announcer.load_settings()
             return found
         except Exception as e:
-            print(f"Error updating setting: {e}")
+            self.logger.error(f"Error updating setting: {e}")
             return False
     
     def load_defaults(self) -> None:
@@ -88,4 +93,10 @@ class BART2_SETTINGS:
                     self.update_setting(s_line[0],s_line[1])
                 
         except Exception as e:
-            print(f'Error loading defaults')
+            self.logger.error(f'Error loading defaults {e}')
+    
+    def update_setting_from_window(self, data:dict):
+        setting = data['setting']
+        new_value = data['value']
+        if setting and new_value:
+            self.update_setting(setting, new_value)

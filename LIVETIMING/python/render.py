@@ -56,6 +56,8 @@ class Bridge(QObject):
                 Instances.dll_interfacer.load_startlist(json_msg['data'])
             elif message_type == "open_file":
                 openFileInExplorer(json_msg['data'])
+            elif message_type == "change_setting":
+                Instances.settings.update_setting_from_window(json_msg['data'])
             else:   
                 logger.warning(f"Unhandled message type: {message_type}")
                 
