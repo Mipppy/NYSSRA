@@ -416,6 +416,13 @@
                         document.getElementById("autofilled_password_indicator").style.display = "inline-flex"
                     }
                 }
+                else if (msg_type === "SERIAL_COM_PORTS") {
+                    handleCommPorts(msg_body.split(','))
+                }
+            }
+            
+            function handleCommPorts(available_arr) {
+                // Add to selection later
             }
 
             function handleLivetimingMessage(msg) {

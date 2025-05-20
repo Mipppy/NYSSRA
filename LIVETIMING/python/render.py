@@ -1,9 +1,9 @@
 import sys
 from pathlib import Path
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtWidgets import QApplication, QMainWindow #type: ignore
 from PyQt5.QtWebEngineWidgets import QWebEngineView #type: ignore
-from PyQt5.QtCore import QUrl, QObject, pyqtSlot, pyqtSignal
-from PyQt5.QtWebChannel import QWebChannel
+from PyQt5.QtCore import QUrl, QObject, pyqtSlot, pyqtSignal #type:ignore
+from PyQt5.QtWebChannel import QWebChannel #type: ignore
 import logging
 from typing import List
 import json

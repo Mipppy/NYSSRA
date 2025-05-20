@@ -1,8 +1,8 @@
 import logging
 import threading
 import time
-import serial.tools.list_ports
-
+import subprocess
+import serial.tools.list_ports #type:ignore
 class DLL_Race_Handler:
     def __init__(self):
         from instances import Instances 
@@ -11,6 +11,7 @@ class DLL_Race_Handler:
         self.race_results_thread = threading.Thread(target=self._race_results_worker, daemon=True)
         self.race_results_thread.start()
         self.startlist = []
+        self.serial_comm_ports = []
 
     def _race_results_worker(self):
         """
@@ -33,8 +34,14 @@ class DLL_Race_Handler:
         This will always return an empty list when using Wine.
         As I progress, the less feasible using Wine to develop the whole thing seems.
         """
-        ports = [comport.device for comport in serial.tools.list_ports.comports()]
-        # FIXME: Actually implement this later. 
+        self.serial_comm_ports = serial.tools.list_ports.comports()
+        string_builder = ""
+        for port in self.serial_comm_ports:
+            string_builder += f"{port.device},"
+        from instances import Instances
+        Instances.window.bridge.send_to_js(f"SERIAL_COM_PORTS|||{string_builder}")
+        
+
         
 
     def load_startlist(self, startlist: list):

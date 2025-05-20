@@ -1,8 +1,8 @@
-[INFO] (2025-05-07 13:14:30) - Successfully loaded Logger.
-[DEBUG] (2025-05-07 13:14:30) - Loaded xc_timer_dll.dll's functions successfully.
-[INFO] (2025-05-07 13:14:30) - Successfully loaded xc_timer_dll.dll
-[INFO] (2025-05-07 13:14:30) - Successfully loaded all classes.
-[DEBUG] (2025-05-07 13:14:30) - Raw message from JS: {"message_type": "ready", "data": {}}
-[INFO] (2025-05-07 13:14:30) - JavaScript connection initialized
-[DEBUG] (2025-05-07 13:14:30) - Raw message from JS: {"message_type": "give_me_the_fucking_password", "data": {}}
-[DEBUG] (2025-05-07 13:14:30) - Sent saved password to window.
+[INFO] (2025-05-19 19:59:26) - Successfully loaded Logger.
+[DEBUG] (2025-05-19 19:59:26) - Loaded xc_timer_dll.dll's functions successfully.
+[INFO] (2025-05-19 19:59:26) - Successfully loaded xc_timer_dll.dll
+[INFO] (2025-05-19 19:59:26) - Successfully loaded all classes.
+[DEBUG] (2025-05-19 19:59:26) - Raw message from JS: {"message_type": "ready", "data": {}}
+[INFO] (2025-05-19 19:59:26) - JavaScript connection initialized
+[DEBUG] (2025-05-19 19:59:26) - Raw message from JS: {"message_type": "give_me_the_fucking_password", "data": {}}
+[DEBUG] (2025-05-19 19:59:26) - Sent saved password to window.
