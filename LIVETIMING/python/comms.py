@@ -4,7 +4,7 @@ import json
 import logging
 import time
 from typing import Optional, Union
-from websocket import create_connection, WebSocket, WebSocketException
+from websocket import create_connection, WebSocket, WebSocketException # type:ignore
 
 class LivetimingHandler:
     """
