@@ -14,6 +14,7 @@ os.makedirs("livetiming_data", exist_ok=True)
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount('/pages', StaticFiles(directory="pages"), name="pages")
 app.mount("/livetiming_data", StaticFiles(directory="livetiming_data"), name="livetiming_data")
 app.add_middleware(
     CORSMiddleware,
@@ -196,3 +197,4 @@ async def websocket_endpoint(websocket: WebSocket):
             log_file.close()
         if websocket.client_state != WebSocketState.DISCONNECTED:
             await websocket.close()
+

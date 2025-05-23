@@ -1,5 +1,5 @@
 class Navbar {
-    static url = (window.location.host.includes('localhost') ? 'http://nyssra.pythonanywhere.com' : Globals.base_url)
+    static url = (window.location.host.includes('localhost') ? 'http://127.0.0.1:8000' : Globals.base_url)
     static async LoadExtraHTML() {
         document.querySelector('nav').innerHTML = await (await fetch(`/embeds/navbar.html`)).text()
         document.querySelector('footer').innerHTML = await (await fetch('/embeds/footer.html')).text()
