@@ -13,5 +13,5 @@ async function loadPage() {
     const md_text = await md_request.text()
     const new_html = showdownInstance.makeHtml(md_text)
     mdContentDiv.innerHTML = new_html
-} 
+}
 loadPage()

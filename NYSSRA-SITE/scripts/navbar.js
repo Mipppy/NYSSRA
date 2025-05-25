@@ -4,7 +4,7 @@ class Navbar {
         document.querySelector('nav').innerHTML = await (await fetch(`/embeds/navbar.html`)).text()
         document.querySelector('footer').innerHTML = await (await fetch('/embeds/footer.html')).text()
     }
-    
+
 }
 
 class Globals {
