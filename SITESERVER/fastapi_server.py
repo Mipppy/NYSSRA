@@ -9,7 +9,7 @@ import json
 from datetime import datetime, timedelta, timezone
 from fastapi.middleware.cors import CORSMiddleware #type:ignore
 from zoneinfo import ZoneInfo
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials #type: ignore
 import hashlib
 import secrets
 

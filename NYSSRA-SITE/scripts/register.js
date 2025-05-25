@@ -1,11 +1,12 @@
-Navbar.LoadExtraHTML()
-async function registerUser(username, password) {
+Navbar.LoadExtraHTML();
+
+async function loginUser(isRegister, username, password) {
   const formData = new FormData();
   formData.append('username', username);
   formData.append('password', password);
 
   try {
-    const response = await fetch('/register', {
+    const response = await fetch(`${Navbar.url}/${isRegister ? 'register' : 'login'}`, {
       method: 'POST',
       body: formData
     });
@@ -14,43 +15,93 @@ async function registerUser(username, password) {
     if (response.ok && data.status === 'success') {
       return { success: true, message: data.message };
     } else {
-      return { success: false, message: data.message || 'Registration failed' };
+      return { success: false, message: data.message || (isRegister ? 'Registration failed' : 'Login failed') };
     }
   } catch (error) {
     return { success: false, message: 'Network error or server unavailable' };
   }
 }
 
-document.getElementById('registerForm').addEventListener("submit", async (ev) => {
-  ev.preventDefault();  
-  
+document.getElementById('registerForm').addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+
+  const usernameInput = document.getElementById('registerUsername');
+  const passwordInput = document.getElementById('registerPassword');
+  const registerButton = document.getElementById('registerButton');
+
+  let valid = true;
+
+  if (!usernameInput.value.trim()) {
+    usernameInput.classList.add('is-invalid');
+    valid = false;
+  } else {
+    usernameInput.classList.remove('is-invalid');
+  }
+
+  if (!passwordInput.value) {
+    passwordInput.classList.add('is-invalid');
+    valid = false;
+  } else {
+    passwordInput.classList.remove('is-invalid');
+  }
+
+  if (!valid) return;
+
   if (window.isbot) {
-    // get fucked
     alert('Successfully created account!\nWelcome to NYSSRA!');
     return;
   }
 
-  const usernameInput = document.getElementById('username');
-  const passwordInput = document.getElementById("password");
-  const registerButton = document.getElementById('registerButton')
-
-  const username = usernameInput.value.trim();
-  const password = passwordInput.value;
-
-  if (!username || !password) {
-    alert('Please fill in both username and password.');
-    return;
-  }
-
-  const result = await registerUser(username, password);
+  const result = await loginUser(true, usernameInput.value.trim(), passwordInput.value);
 
   if (result.success) {
     alert('Account created successfully! Welcome to NYSSRA!');
     usernameInput.value = '';
     passwordInput.value = '';
-    usernameInput.disabled = true
-    passwordInput.disabled = true
-    registerButton.disabled = true
+    usernameInput.disabled = true;
+    passwordInput.disabled = true;
+    registerButton.disabled = true;
+  } else {
+    alert(`Error: ${result.message}`);
+  }
+});
+
+document.getElementById('loginForm').addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+
+  const usernameInput = document.getElementById('loginUsername');
+  const passwordInput = document.getElementById('loginPassword');
+  const loginButton = document.getElementById('loginButton');
+
+  let valid = true;
+
+  if (!usernameInput.value.trim()) {
+    usernameInput.classList.add('is-invalid');
+    valid = false;
+  } else {
+    usernameInput.classList.remove('is-invalid');
+  }
+
+  if (!passwordInput.value) {
+    passwordInput.classList.add('is-invalid');
+    valid = false;
+  } else {
+    passwordInput.classList.remove('is-invalid');
+  }
+
+  if (!valid) return;
+
+  if (window.isbot) {
+    alert('Login successful! Welcome back!');
+    return;
+  }
+
+  const result = await loginUser(false, usernameInput.value.trim(), passwordInput.value);
+
+  if (result.success) {
+    alert('Login successful! Welcome back!');
+    usernameInput.value = '';
+    passwordInput.value = '';
   } else {
     alert(`Error: ${result.message}`);
   }
