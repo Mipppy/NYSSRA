@@ -1,4 +1,11 @@
-Navbar.LoadExtraHTML();
+(async () => {
+  await Navbar.LoadExtraHTML(); 
+  if (!Navbar.isAdmin()) {
+    window.location.href = '/404.html'
+  }
+})();
+
+
 
 document.addEventListener("DOMContentLoaded", () => {
   const simplemde = new SimpleMDE({
@@ -6,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
     spellChecker: true,
     placeholder: "Write your Markdown content here...",
     	showIcons: ["code", "table"],
-    
+
   });
 
   const imageInput = document.getElementById("image-upload");

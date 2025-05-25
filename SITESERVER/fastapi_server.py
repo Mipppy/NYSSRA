@@ -368,9 +368,15 @@ async def register(username: str = Form(...), password: str = Form(...)):
         return {"status": "error", "message": "Username already exists"}
 
     hashed, salt = hash_password(password)
-    users[username] = {"hash": hashed, "salt": salt}
+    users[username] = {"hash": hashed, "salt": salt, "admin": False}
     save_json(USERS_PATH, users)
-    return {"status": "success", "message": "User registered"}
+
+    token = create_token()
+    tokens = load_json(TOKENS_PATH)
+    tokens[token] = username
+    save_json(TOKENS_PATH, tokens)
+
+    return {"status": "success", "message": "User registered", "token": token}
 
 @app.post("/login")
 async def login(username: str = Form(...), password: str = Form(...)):
@@ -389,9 +395,18 @@ async def login(username: str = Form(...), password: str = Form(...)):
 
     return {"status": "success", "token": token}
 
-@app.get("/me")
+@app.post("/me")
 async def read_me(user: str = Depends(get_current_user)):
-    return {"status": "success", "user": user}
+    users = load_json(USERS_PATH)
+    user_data = users.get(user)
+    if not user_data:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return {
+        "status": "success",
+        "user": user,
+        "admin": user_data.get("admin", False)
+    }
 
 @app.post("/logout")
 async def logout(credentials: HTTPAuthorizationCredentials = Depends(security)):

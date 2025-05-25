@@ -1,4 +1,10 @@
-Navbar.LoadExtraHTML();
+(async () => {
+    await Navbar.LoadExtraHTML()
+    if (Navbar.user_data !== null) {
+        alert("You are already logged in!")
+        window.location.href = '/'
+    }
+})()
 
 async function loginUser(isRegister, username, password) {
   const formData = new FormData();
@@ -13,7 +19,7 @@ async function loginUser(isRegister, username, password) {
 
     const data = await response.json();
     if (response.ok && data.status === 'success') {
-      return { success: true, message: data.message };
+      return { success: true, message: data.message, token: data.token };
     } else {
       return { success: false, message: data.message || (isRegister ? 'Registration failed' : 'Login failed') };
     }
@@ -102,6 +108,7 @@ document.getElementById('loginForm').addEventListener('submit', async (ev) => {
     alert('Login successful! Welcome back!');
     usernameInput.value = '';
     passwordInput.value = '';
+    localStorage.setItem('nyssra_login_token', result.token)
   } else {
     alert(`Error: ${result.message}`);
   }
