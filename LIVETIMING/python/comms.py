@@ -24,7 +24,7 @@ class LivetimingHandler:
         """
         from instances import Instances
         Instances.window.bridge.send_to_js(f"LIVETIMING|||t_started")
-        self.primary_url = "wss://nyssra.pythonanywhere.com/livetiming-ws"
+        self.primary_url = "ws://127.0.0.1:8000/livetiming-ws"
         self.websocket_connection: Optional[WebSocket] = None
         self.timeout_wait_sec = 20
         self.authenticated = False

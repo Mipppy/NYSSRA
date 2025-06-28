@@ -1,9 +1,24 @@
-[INFO] (2025-05-20 21:23:27) - Successfully loaded Logger.
-[DEBUG] (2025-05-20 21:23:27) - Loaded xc_timer_dll.dll's functions successfully.
-[INFO] (2025-05-20 21:23:27) - Successfully loaded xc_timer_dll.dll
-[INFO] (2025-05-20 21:23:27) - Successfully loaded all classes.
-[DEBUG] (2025-05-20 21:23:27) - Raw message from JS: {"message_type": "ready", "data": {}}
-[INFO] (2025-05-20 21:23:27) - JavaScript connection initialized
-[DEBUG] (2025-05-20 21:23:27) - Raw message from JS: {"message_type": "give_me_the_fucking_password", "data": {}}
-[DEBUG] (2025-05-20 21:23:27) - Sent saved password to window.
-[DEBUG] (2025-05-20 21:23:34) - Raw message from JS: {"message_type": "open_file", "data": "bart2.log"}
+[INFO] (2025-05-26 21:25:26) - Successfully loaded Logger.
+[DEBUG] (2025-05-26 21:25:26) - Loaded xc_timer_dll.dll's functions successfully.
+[INFO] (2025-05-26 21:25:26) - Successfully loaded xc_timer_dll.dll
+[INFO] (2025-05-26 21:25:26) - Successfully loaded all classes.
+[DEBUG] (2025-05-26 21:25:26) - Raw message from JS: {"message_type": "ready", "data": {}}
+[INFO] (2025-05-26 21:25:26) - JavaScript connection initialized
+[DEBUG] (2025-05-26 21:25:26) - Raw message from JS: {"message_type": "give_me_the_fucking_password", "data": {}}
+[DEBUG] (2025-05-26 21:25:26) - Sent saved password to window.
+[DEBUG] (2025-05-26 21:25:52) - Raw message from JS: {"message_type":"livetiming_form", "data":{"password":"the password","filename":"test","headers":{"name":"Big Gore mountain race","place":"Gore Mountian"}}}
+[INFO] (2025-05-26 21:25:52) - Successfully created WS connection to ws://127.0.0.1:8000/livetiming-ws
+[DEBUG] (2025-05-26 21:25:52) - WebSocket ready — sending auth/config
+[DEBUG] (2025-05-26 21:25:52) - Sent PING to server
+[DEBUG] (2025-05-26 21:25:52) - Received Livetiming WS message: {'status': 'error', 'message': 'Invalid password'}
+[ERROR] (2025-05-26 21:25:52) - Livetiming WS receive error: Connection to remote host was lost.
+[INFO] (2025-05-26 21:25:52) - Livetiming WS connection closed successfully.
+[DEBUG] (2025-05-26 21:25:52) - the password
+[DEBUG] (2025-05-26 21:26:21) - Raw message from JS: {"message_type":"livetiming_form", "data":{"password":"the password","filename":"test","headers":{"name":"Big Gore mountain race","place":"Gore Mountian"}}}
+[INFO] (2025-05-26 21:26:21) - Successfully created WS connection to ws://127.0.0.1:8000/livetiming-ws
+[DEBUG] (2025-05-26 21:26:21) - WebSocket ready — sending auth/config
+[DEBUG] (2025-05-26 21:26:21) - Sent PING to server
+[DEBUG] (2025-05-26 21:26:21) - Received Livetiming WS message: {'status': 'error', 'message': 'Invalid password'}
+[ERROR] (2025-05-26 21:26:21) - Livetiming WS receive error: Connection to remote host was lost.
+[INFO] (2025-05-26 21:26:21) - Livetiming WS connection closed successfully.
+[DEBUG] (2025-05-26 21:26:22) - the password

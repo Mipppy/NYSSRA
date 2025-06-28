@@ -1,5 +1,5 @@
 (async () => {
-  await Navbar.LoadExtraHTML(); 
+  await Navbar.LoadExtraHTML();
   if (!Navbar.isAdmin()) {
     window.location.href = '/404.html'
   }
@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     element: document.getElementById("markdown-editor"),
     spellChecker: true,
     placeholder: "Write your Markdown content here...",
-    	showIcons: ["code", "table"],
+    showIcons: ["code", "table"],
 
   });
 
@@ -53,7 +53,10 @@ document.addEventListener("DOMContentLoaded", () => {
         img.style.cursor = "pointer";
 
         img.addEventListener("click", () => {
-          const markdown = `![](${Navbar.url}/static/${postName}/${index}.png)`;
+          const fileExt = file.name.split('.').pop().toLowerCase();
+          const safeExt = ['png', 'jpg', 'jpeg', 'gif'].includes(fileExt) ? fileExt : 'png';
+          const markdown = `<img src="${Navbar.url}/static/${postName}/${index}.${safeExt}" class="md_pulled_image">`;
+
           const cm = simplemde.codemirror;
           const cursor = cm.getCursor();
           cm.replaceRange(markdown, cursor);
@@ -124,7 +127,11 @@ document.addEventListener("DOMContentLoaded", () => {
     formData.append("postName", slug);
     formData.append("markdown", markdownRaw);
     formData.append("tags", tag_str);
-    validImages.forEach((file) => {
+    formData.append("token", Navbar.login_token)
+    formData.append("eventData", JSON.stringify({
+      isEvent: document.getElementById('is-event-toggle').checked,
+      eventDate: document.getElementById('event-date').value
+    })); validImages.forEach((file) => {
       formData.append("files", file);
     });
 
@@ -139,7 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
       })
       .then(data => {
         alert("Post created successfully!");
-        window.location.href = `/article.html?article=${data.replaceAll('"','')}`
+        window.location.href = `/article.html?article=${data.replaceAll('"', '')}`
       })
       .catch(err => {
         console.error(err);
@@ -148,3 +155,15 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 });
+
+/*
+This will need:
+Post Body   !
+Name   !
+Tags   !
+Author
+Date  !
+Calender
+Option to add to calender
+Image upload.    !
+*/
