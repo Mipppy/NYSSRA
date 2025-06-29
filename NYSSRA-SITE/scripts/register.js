@@ -1,9 +1,9 @@
 (async () => {
-    await Navbar.LoadExtraHTML()
-    if (Navbar.user_data !== null) {
-        alert("You are already logged in!")
-        window.location.href = '/'
-    }
+  await Navbar.LoadExtraHTML()
+  if (Navbar.user_data !== null) {
+    alert("You are already logged in!")
+    window.location.href = '/'
+  }
 })()
 
 async function loginUser(isRegister, username, password) {

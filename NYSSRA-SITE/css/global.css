@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
     height: 100%;
     margin: 0;
     padding: 0;
@@ -16,7 +17,14 @@ body {
     height: auto;
     border-radius: 5px;
 }
+
 .markdown-body {
     font-size: 1rem;
     line-height: 1.7;
+}
+
+.highlighted-event {
+    border: 2px black solid;
+    box-shadow: 5px;
+    font-weight: bold;
 }

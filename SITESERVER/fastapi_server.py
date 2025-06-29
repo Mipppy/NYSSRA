@@ -230,6 +230,7 @@ async def websocket_endpoint(websocket: WebSocket):
 @app.post("/create-post")
 async def create_post(
     postName: str = Form(...),
+    postNameRaw: str = Form(...),
     markdown: str = Form(...),
     tags: str = Form(...),
     token: str = Form(...),
@@ -310,11 +311,57 @@ async def create_post(
         f.write(tags.lower() + "\n")
         f.write(f"{datetime.now(tz=ZoneInfo('America/New_York'))}\n")
         f.write(username + "\n")
-        f.write(postName + "\n")
+        f.write(postNameRaw + "\n")
         f.write(str(event_data.get('isEvent', False)) + "\n")
         f.write(event_data.get('eventDate') + "\n")
         f.write(str(len(files)) + "\n")
     return os.path.splitext(os.path.basename(md_path))[0]
+
+@app.get("/all_events")
+async def get_all_events():
+    tags_folder = "page_data"
+    events = []
+
+    try:
+        files = [f for f in os.listdir(tags_folder) if f.endswith(".txt")]
+
+        for filename in files:
+            txt_path = os.path.join(tags_folder, filename)
+            try:
+                with open(txt_path, "r", encoding="utf-8") as f:
+                    lines = [line.strip() for line in f.readlines()]
+                    if len(lines) >= 6:
+                        post_name = lines[3]
+                        author = lines[2]
+                        is_event = lines[4].lower() == "true"
+                        event_date = lines[5] if lines[5] else None
+
+                        if is_event:
+                            events.append({
+                                "post_name": post_name,
+                                "event_date": event_date,
+                                "author": author,
+                                "txt_path": filename
+                            })
+                    else:
+                        print(f"Metadata format invalid in {txt_path}")
+            except Exception as e:
+                print(f"Failed to read metadata {txt_path}: {e}")
+
+        def parse_date(d):
+            try:
+                return datetime.fromisoformat(d)
+            except Exception:
+                return datetime.min
+
+        events.sort(key=lambda e: parse_date(e["event_date"]) if e["event_date"] else datetime.min, reverse=True)
+
+        return JSONResponse(content=events)
+
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
+
+
 
 @app.post("/pages_paginated")
 async def get_paginated_pages(index: int = 0):
@@ -334,6 +381,7 @@ async def get_paginated_pages(index: int = 0):
                 "tags": [],
                 "author": "",
                 "post_name": "",
+                "post_name_raw": "",
                 "is_event": False,
                 "event_date": None,
                 "num_of_images": 0,
@@ -347,11 +395,11 @@ async def get_paginated_pages(index: int = 0):
                             metadata["tags"] = [tag.strip() for tag in lines[0].split(",")]
                             post_date_str = lines[1]
                             metadata["author"] = lines[2]
-                            metadata["post_name"] = lines[3]
+                            metadata["post_name_raw"] = lines[3]
                             metadata["is_event"] = lines[4].lower() == "true"
                             metadata["event_date"] = lines[5] if lines[5] else None
                             metadata["num_of_images"] = lines[6] if lines[6] else None
-
+                            metadata['post_name'] = filename.replace('.txt', '')
                             try:
                                 post_date_dt = datetime.fromisoformat(post_date_str)
                             except ValueError:
@@ -397,13 +445,15 @@ async def get_paginated_pages(index: int = 0):
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
 
-# Login system
+
+
+
+
 
 security = HTTPBearer()
 
 USERS_FILE = "users.json"
 TOKENS_FILE = "tokens.json"
-
 os.makedirs("auth_data", exist_ok=True)
 USERS_PATH = os.path.join("auth_data", USERS_FILE)
 TOKENS_PATH = os.path.join("auth_data", TOKENS_FILE)
@@ -413,6 +463,7 @@ for path in [USERS_PATH, TOKENS_PATH]:
         with open(path, "w") as f:
             json.dump({}, f)
 
+TOKEN_EXPIRY = timedelta(weeks=2)
 
 def load_json(path):
     with open(path, "r") as f:
@@ -427,9 +478,7 @@ def save_json(path, data):
 def hash_password(password, salt=None):
     if not salt:
         salt = secrets.token_hex(16)
-    hashed = hashlib.pbkdf2_hmac(
-        "sha256", password.encode(), salt.encode(), 100_000
-    ).hex()
+    hashed = hashlib.pbkdf2_hmac("sha256", password.encode(), salt.encode(), 100_000).hex()
     return hashed, salt
 
 
@@ -438,19 +487,50 @@ def verify_password(password, salt, stored_hash):
     return new_hash == stored_hash
 
 
-def create_token():
-    return secrets.token_urlsafe(32)
+def create_token_entry():
+    return {
+        "token": secrets.token_urlsafe(32),
+        "created": datetime.utcnow().isoformat()
+    }
 
 
 def get_user_from_token(token: str):
     tokens = load_json(TOKENS_PATH)
-    return tokens.get(token)
+    now = datetime.utcnow()
+
+    for username, entries in tokens.items():
+        for entry in entries:
+            if entry["token"] == token:
+                created = datetime.fromisoformat(entry["created"])
+                if now - created < TOKEN_EXPIRY:
+                    return username
+    return None
 
 
-async def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
-):
+def cleanup_expired_tokens():
+    tokens = load_json(TOKENS_PATH)
+    now = datetime.utcnow()
+    updated = False
+
+    for username in list(tokens.keys()):
+        original = tokens[username]
+        tokens[username] = [
+            entry for entry in original
+            if now - datetime.fromisoformat(entry["created"]) < TOKEN_EXPIRY
+        ]
+        if not tokens[username]:
+            del tokens[username]
+            updated = True
+        elif tokens[username] != original:
+            updated = True
+
+    if updated:
+        save_json(TOKENS_PATH, tokens)
+
+
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
     token = credentials.credentials
+    cleanup_expired_tokens()
     username = get_user_from_token(token)
     if not username:
         raise HTTPException(status_code=401, detail="Invalid or expired token")
@@ -467,12 +547,13 @@ async def register(username: str = Form(...), password: str = Form(...)):
     users[username] = {"hash": hashed, "salt": salt, "admin": False}
     save_json(USERS_PATH, users)
 
-    token = create_token()
+    token_entry = create_token_entry()
     tokens = load_json(TOKENS_PATH)
-    tokens[token] = username
+    tokens.setdefault(username, [])
+    tokens[username].append(token_entry)
     save_json(TOKENS_PATH, tokens)
 
-    return {"status": "success", "message": "User registered", "token": token}
+    return {"status": "success", "message": "User registered", "token": token_entry["token"]}
 
 
 @app.post("/login")
@@ -485,12 +566,15 @@ async def login(username: str = Form(...), password: str = Form(...)):
     if not verify_password(password, user["salt"], user["hash"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    token = create_token()
+    cleanup_expired_tokens()
+
+    token_entry = create_token_entry()
     tokens = load_json(TOKENS_PATH)
-    tokens[token] = username
+    tokens.setdefault(username, [])
+    tokens[username].append(token_entry)
     save_json(TOKENS_PATH, tokens)
 
-    return {"status": "success", "token": token}
+    return {"status": "success", "token": token_entry["token"]}
 
 
 @app.post("/me")
@@ -507,10 +591,19 @@ async def read_me(user: str = Depends(get_current_user)):
 async def logout(credentials: HTTPAuthorizationCredentials = Depends(security)):
     token = credentials.credentials
     tokens = load_json(TOKENS_PATH)
-    if token in tokens:
-        del tokens[token]
+    updated = False
+
+    for username in list(tokens.keys()):
+        original = tokens[username]
+        tokens[username] = [entry for entry in original if entry["token"] != token]
+        if not tokens[username]:
+            del tokens[username]
+            updated = True
+        elif tokens[username] != original:
+            updated = True
+
+    if updated:
         save_json(TOKENS_PATH, tokens)
         return {"status": "success", "message": "Logged out"}
     else:
         return {"status": "error", "message": "Token not found"}
-

@@ -86,6 +86,17 @@ class Navbar {
         if (index === -1) return str;
         return str.substring(0, index) + replace + str.substring(index + search.length);
     }
+    static async loadCalendar(ele) {
+        const req = await fetch("/embeds/calender.html")
+        const htmlData = await req.text()
+        ele.innerHTML = htmlData
+        return htmlData
+    }
+    static async loadAllEvents() {
+        const req = await fetch(`${Navbar.url}/all_events`)
+        const json = await req.json()
+        return json
+    }
 }
 
 class Globals {

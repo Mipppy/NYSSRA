@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <title>NYSSRA Login & Register</title>
-  <meta charset="UTF-8" />
-  <link rel="shortcut icon" href="/images/nyssra-logo.jpg" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <head>
+    <title>NYSSRA Login & Register</title>
+    <meta charset="UTF-8" />
+    <link rel="shortcut icon" href="/images/nyssra-logo.jpg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <link rel="stylesheet" href="css/bootstrap.css" />
-  <link rel="stylesheet" href="css/bootstrap-icons.css" />
-  <link rel="stylesheet" href="css/global.css" />
-  <link rel="stylesheet" href="css/simplemde.css" />
-  <style>
+    <link rel="stylesheet" href="css/bootstrap.css" />
+    <link rel="stylesheet" href="css/bootstrap-icons.css" />
+    <link rel="stylesheet" href="css/global.css" />
+    <link rel="stylesheet" href="css/simplemde.css" />
+    <style>
     html, body {
       height: 100%;
       margin: 0;
@@ -38,67 +38,79 @@
       border-top: 2px solid #dee2e6;
     }
   </style>
-</head>
-<body>
-  <nav></nav>
+  </head>
+  <body>
+    <nav></nav>
 
-  <main style="background-color:#dee2e6">
-    <div class="container">
-      <div class="row justify-content-center g-4 align-items-center">
-        <!-- Login Form -->
-        <div class="col-12 col-md-6 d-flex justify-content-center">
-          <div class="card text-center">
-            <h3 class="mb-3">Welcome Back!</h3>
-            <hr />
-            <form id="loginForm" novalidate>
-              <h2 class="mb-4">Login</h2>
-              <div class="mb-3 text-start">
-                <label for="loginUsername" class="form-label fw-semibold">Username</label>
-                <input type="text" class="form-control" id="loginUsername" required />
-                <div class="invalid-feedback">Please enter your username.</div>
-              </div>
-              <div class="mb-4 text-start">
-                <label for="loginPassword" class="form-label fw-semibold">Password</label>
-                <input type="password" class="form-control" id="loginPassword" required />
-                <div class="invalid-feedback">Please enter your password.</div>
-              </div>
-              <button type="submit" id="loginButton" class="btn btn-success w-100">
-                Login
-              </button>
-            </form>
+    <main style="background-color:#dee2e6">
+      <div class="container">
+        <div class="row justify-content-center g-4 align-items-center">
+          <!-- Login Form -->
+          <div class="col-12 col-md-6 d-flex justify-content-center">
+            <div class="card text-center">
+              <h3 class="mb-3">Welcome Back!</h3>
+              <hr />
+              <form id="loginForm" novalidate>
+                <h2 class="mb-4">Login</h2>
+                <div class="mb-3 text-start">
+                  <label for="loginUsername"
+                    class="form-label fw-semibold">Username</label>
+                  <input type="text" class="form-control" id="loginUsername"
+                    required />
+                  <div class="invalid-feedback">Please enter your
+                    username.</div>
+                </div>
+                <div class="mb-4 text-start">
+                  <label for="loginPassword"
+                    class="form-label fw-semibold">Password</label>
+                  <input type="password" class="form-control" id="loginPassword"
+                    required />
+                  <div class="invalid-feedback">Please enter your
+                    password.</div>
+                </div>
+                <button type="submit" id="loginButton"
+                  class="btn btn-success w-100">
+                  Login
+                </button>
+              </form>
+            </div>
           </div>
-        </div>
 
-        <!-- Register Form -->
-        <div class="col-12 col-md-6 d-flex justify-content-center">
-          <div class="card text-center">
-            <h3 class="mb-3">Welcome to NYSSRA!</h3>
-            <hr />
-            <form id="registerForm" novalidate>
-              <h2 class="mb-4">Register</h2>
-              <div class="mb-3 text-start">
-                <label for="registerUsername" class="form-label fw-semibold">Username</label>
-                <input type="text" class="form-control" id="registerUsername" required />
-                <div class="invalid-feedback">Please enter a username.</div>
-              </div>
-              <div class="mb-4 text-start">
-                <label for="registerPassword" class="form-label fw-semibold">Password</label>
-                <input type="password" class="form-control" id="registerPassword" required />
-                <div class="invalid-feedback">Please enter a password.</div>
-              </div>
-              <button type="submit" id="registerButton" class="btn btn-primary w-100">
-                Register
-              </button>
-            </form>
+          <!-- Register Form -->
+          <div class="col-12 col-md-6 d-flex justify-content-center">
+            <div class="card text-center">
+              <h3 class="mb-3">Welcome to NYSSRA!</h3>
+              <hr />
+              <form id="registerForm" novalidate>
+                <h2 class="mb-4">Register</h2>
+                <div class="mb-3 text-start">
+                  <label for="registerUsername"
+                    class="form-label fw-semibold">Username</label>
+                  <input type="text" class="form-control" id="registerUsername"
+                    required />
+                  <div class="invalid-feedback">Please enter a username.</div>
+                </div>
+                <div class="mb-4 text-start">
+                  <label for="registerPassword"
+                    class="form-label fw-semibold">Password</label>
+                  <input type="password" class="form-control"
+                    id="registerPassword" required />
+                  <div class="invalid-feedback">Please enter a password.</div>
+                </div>
+                <button type="submit" id="registerButton"
+                  class="btn btn-primary w-100">
+                  Register
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </main>
+    </main>
 
-  <footer></footer>
+    <footer></footer>
 
-  <script type="module">
+    <script type="module">
     import { load } from './scripts/botd.js';
 
     (async () => {
@@ -108,10 +120,10 @@
     })();
   </script>
 
-  <script src="scripts/showdown.min.js"></script>
-  <script src="scripts/simplemde.js"></script>
-  <script src="scripts/navbar.js"></script>
-  <script src="scripts/bootstrap.js"></script>
-  <script src="scripts/register.js"></script>
-</body>
+    <script src="scripts/showdown.min.js"></script>
+    <script src="scripts/simplemde.js"></script>
+    <script src="scripts/navbar.js"></script>
+    <script src="scripts/bootstrap.js"></script>
+    <script src="scripts/register.js"></script>
+  </body>
 </html>

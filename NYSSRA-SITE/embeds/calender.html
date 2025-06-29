@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>NYSSRA - Calender</title>
+        <meta charset="UTF-8" />
+        <link rel="shortcut icon" href="/images/nyssra-logo.jpg" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    </head>
+    <body>
+
+        <div class="container p-5 shadow-lg rounded"
+            style="border: 2px darkgrey solid">
+            <div class="d-flex justify-content-end mb-3">
+                <button id="export-pdf-btn" class="btn btn-light">
+                    <i class="bi bi-download me-1"></i> Download as PDF
+                </button>
+            </div>
+            <input id="event-search" class="form-control mb-3" placeholder="Search events..." />
+            <div id="calendar" onload=""></div>
+        </div>
+    </body>
+</html>

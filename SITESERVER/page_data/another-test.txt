@@ -1,7 +1,0 @@
-skiing,uppercase,
-2025-06-28 15:14:10.853077-04:00
-tim
-another-test
-True
-2025-07-02
-1

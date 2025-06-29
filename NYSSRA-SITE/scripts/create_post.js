@@ -125,6 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
       tag_str += `${tag},`
     }
     formData.append("postName", slug);
+    formData.append("postNameRaw", postNameRaw)
     formData.append("markdown", markdownRaw);
     formData.append("tags", tag_str);
     formData.append("token", Navbar.login_token)
