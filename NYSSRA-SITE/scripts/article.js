@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
             window.location.replace('/404.html');
         }
         articleTitleEle.innerText = e.pd.postName;
-        articleDateEle.innerText = e.pd.date.trim();
+        articleDateEle.innerText = Navbar.turnToCorrectDate(e.pd.date).trim();
         articleAuthorEle.innerText = e.pd.author.trim();
 
         if (e.pd.isEvent) {
@@ -33,22 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         articleTagsContainer.innerHTML = '';
-        e.pd.tags.forEach(tag => {
-            articleTagsContainer.innerHTML += `
-                <a href="/search.html?tags=${tag}" style="
-                    display: inline-block;
-                    background-color: #d3d3d3;
-                    color: black;
-                    border-radius: 12px;
-                    padding: 4px 10px;
-                    margin: 2px 4px 2px 0;
-                    font-size: 0.9em;
-                    cursor: pointer;
-                    white-space: nowrap;
-                    text-decoration: none;">
-                    ${tag}
-                </a>`;
-        });
+        e.pd.tags.forEach(tag => articleTagsContainer.innerHTML += Navbar.generateTagFormat(tag));
 
         mdContentDiv.innerHTML = showdownInstance.makeHtml(e.md);
     });

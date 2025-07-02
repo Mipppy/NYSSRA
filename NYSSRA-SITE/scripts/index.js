@@ -8,7 +8,7 @@ const MDParentDiv = document.getElementById('md_parent_div');
 async function getPostMetadataPaginated(index) {
     const req = await fetch(`${Navbar.url}/pages_paginated`, {
         method: "POST",
-        body: index.toString(), 
+        body: index.toString(),
     });
     const returnData = await req.json();
     request_data.push(returnData);
@@ -19,7 +19,7 @@ async function renderPost(post_data) {
     const isEvent = req_data.pd.isEvent;
 
     const eventButtonHTML = isEvent
-        ? `<a href="/calendar?event=${encodeURIComponent(req_data.pd.postName)}" 
+        ? `<a href="/calendar.html?event=${encodeURIComponent(req_data.article)}" 
              class="btn btn-primary btn-sm d-flex align-items-center gap-1">
                 <i class="bi bi-calendar-event-fill"></i> View on Calendar
            </a>`
@@ -27,6 +27,7 @@ async function renderPost(post_data) {
 
     const newDiv = document.createElement('div');
     newDiv.classList = "col-12 mb-4";
+    const tagsHTML = req_data.pd.tags.map(tag => Navbar.generateTagFormat(tag)).join('');
 
     newDiv.innerHTML = `
         <div class="card shadow-lg rounded-3 border-2" style="cursor:pointer;" id="loaded_article">
@@ -40,12 +41,15 @@ async function renderPost(post_data) {
 
                 <p class="text-muted small mb-3">
                     Posted by <i class="bi bi-person-fill"></i> <b>${req_data.pd.author}</b> 
-                    on <i>${new Date(req_data.pd.date).toLocaleString()}</i>  
-                    <i class="bi bi-calendar-event ms-1"></i> 
+                    on <i>${Navbar.turnToCorrectDate(req_data.pd.date)}</i>  
+                    <i class="bi bi-calendar3 ms-1"></i> 
                 </p>
+                <div>
+                ${tagsHTML}
+                </div>
                 <hr>
-                <div class="markdown-body mb-2">${showdownInstance.makeHtml(req_data.md)}</div>
-
+                <div class="markdown-body mb-2">${showdownInstance.makeHtml(req_data.md.substring(0, 1000))}</div>
+                <i class="${req_data.md.length > 1000 ? 'bi bi-three-dots me-1' : ''}"></i>${req_data.md.length > 1000 ? '<br>' : ''}
                 <a href="/article.html?article=${encodeURIComponent(req_data.article)}" 
                    class="btn btn-outline-primary btn-sm mt-3">
                    Read More

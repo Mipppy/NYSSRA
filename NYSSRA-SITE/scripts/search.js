@@ -35,18 +35,13 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if (!inputTags.has(normalizedTag)) {
                     relatedTagSet.add(tag);
                 }
-                return `<span class="badge bg-primary me-1">${tag}</span>`;
+                return Navbar.generateTagFormat(tag)
             }).join("");
-
-            const eventInfo = article.is_event
-                ? `<p class="mb-1 text-muted"><i class="bi bi-calendar-event"></i> ${article.event_date}</p>`
-                : "";
-
             articleContainer.innerHTML += `
-                <div class="card shadow-sm border-0">
+                <div class="card shadow-lg border-0">
                     <div class="card-body">
                         <h5 class="card-title mb-1">${article.post_name_raw}</h5>
-                        ${eventInfo}
+                        <p class="mb-1 text-muted"><i class="bi bi-calendar-event"></i> ${Navbar.turnToCorrectDate(article.post_date)}</p>
                         <p class="mb-1 text-muted"><i class="bi bi-person"></i> ${article.author}</p>
                         <div>${tagBadges}</div>
                         <a href="/article.html?article=${article.post_name}" class="btn btn-sm btn-outline-primary mt-3">Read More</a>
@@ -58,7 +53,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const relatedTagsContainer = document.querySelector(".related_tags_container");
         if (relatedTagSet.size > 0) {
             relatedTagsContainer.innerHTML = [...relatedTagSet]
-                .map(tag => `<span class="badge bg-secondary">${tag}</span>`)
+                .map(tag => Navbar.generateTagFormat(tag))
                 .join("");
         } else {
             relatedTagsContainer.innerHTML = `<span class="text-muted">No related tags</span>`;

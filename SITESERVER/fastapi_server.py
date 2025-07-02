@@ -238,7 +238,7 @@ async def search(
     results = []
 
     search_tags = set(t.strip().lower() for t in tags.split(",") if t.strip())
-    query_lower = query.lower()
+    query_lower = query.lower().strip()
 
     try:
         files = [f for f in os.listdir(tags_folder) if f.endswith(".txt")]
@@ -259,6 +259,7 @@ async def search(
                     post_name_raw = lines[3]
                     is_event = lines[4].lower() == "true"
                     event_date = lines[5] if lines[5] else None
+                    post_date = lines[1]
 
                 if not os.path.exists(md_path):
                     continue
@@ -266,7 +267,10 @@ async def search(
                 with open(md_path, "r", encoding="utf-8") as f:
                     content = f.read().lower()
 
-                if query_lower not in content and query_lower not in post_name_raw.lower():
+                matches_tags = not search_tags or search_tags.intersection(metadata_tags)
+                matches_query = not query_lower or (query_lower in content or query_lower in post_name_raw.lower())
+
+                if not (matches_tags and matches_query):
                     continue
 
                 results.append({
@@ -276,6 +280,7 @@ async def search(
                     "author": author,
                     "is_event": is_event,
                     "event_date": event_date,
+                    "post_date": post_date
                 })
 
             except Exception as e:

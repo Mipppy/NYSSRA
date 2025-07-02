@@ -41,7 +41,7 @@ class Navbar {
         const date = new Date(lines[1]) || null
         return {
             tags: (lines[0] || '').split(',').map(s => s.trim()).filter(Boolean),
-            date:  `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}` || null,
+            date: `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}` || null,
             author: lines[2] || null,
             postName: lines[3] || null,
             isEvent: lines[4]?.toLowerCase().trim() === 'true',
@@ -97,6 +97,34 @@ class Navbar {
         const req = await fetch(`${Navbar.url}/all_events`)
         const json = await req.json()
         return json
+    }
+    static turnToCorrectDate(dateStr) {
+        const d = new Date(dateStr);
+        const month = d.getMonth() + 1;
+        const day = d.getDate();
+        const year = d.getFullYear();
+
+        let hour = d.getHours() % 12;
+        if (hour === 0) hour = 12;
+        const minute = d.getMinutes().toString().padStart(2, '0');
+        // FUCK TIME CODE
+        return `${day}/${month}/${year} ${hour}:${minute}`;
+    }
+    static generateTagFormat(tag) {
+        return `
+    <a href="/search.html?tags=${tag}" style="
+        display: inline-block;
+        background-color: #d3d3d3;
+        color: black;
+        border-radius: 12px;
+        padding: 2px 10px;
+        margin: 2px 4px 2px 0;
+        font-size: 0.9em;
+        cursor: pointer;
+        white-space: nowrap;
+        text-decoration: none;">
+        ${tag}
+    </a>`
     }
 }
 
