@@ -17,11 +17,9 @@ window.displayCalendar = (json_events) => {
 
   calendar.render();
 
-  // 🔍 State for cycling through matches
   let matchedEvents = [];
   let matchIndex = 0;
 
-  // 🧭 Handle query param jump
   const urlParams = new URLSearchParams(window.location.search);
   const targetEvent = urlParams.get("event");
   if (targetEvent) {
@@ -31,14 +29,12 @@ window.displayCalendar = (json_events) => {
     }
   }
 
-  // 🔍 On input: find matching events (don’t filter), reset index
   searchInput.addEventListener("input", (e) => {
     const query = e.target.value.toLowerCase();
     matchedEvents = events.filter(ev => ev.title.toLowerCase().includes(query));
     matchIndex = 0;
   });
 
-  // ⏩ On Enter: jump to next matching event
   searchInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter" && matchedEvents.length > 0) {
       const event = matchedEvents[matchIndex];
@@ -47,7 +43,6 @@ window.displayCalendar = (json_events) => {
     }
   });
 
-  // 📤 PDF export
   document.getElementById('export-pdf-btn').addEventListener('click', () => {
     const calendarTableEle = calendarEl.querySelector('table.fc-scrollgrid');
     html2canvas(calendarTableEle, { scale: 2 }).then(canvas => {

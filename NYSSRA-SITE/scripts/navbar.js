@@ -38,12 +38,13 @@ class Navbar {
     }
     static parsePageData(dataText) {
         const lines = dataText.trim().split('\n');
+        const date = new Date(lines[1]) || null
         return {
             tags: (lines[0] || '').split(',').map(s => s.trim()).filter(Boolean),
-            date: lines[1] || null,
+            date:  `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}` || null,
             author: lines[2] || null,
             postName: lines[3] || null,
-            isEvent: lines[4]?.toLowerCase() === 'true',
+            isEvent: lines[4]?.toLowerCase().trim() === 'true',
             eventDate: lines[5] || null,
             numOfImages: parseInt(lines[6]) || 0
         };
@@ -66,7 +67,7 @@ class Navbar {
         const article_data = await article_req.text();
         const parsed_data = this.parsePageData(article_data);
 
-        return { md: md_text, pd: parsed_data };
+        return { md: md_text, pd: parsed_data, article: article };
     }
 
     static async loadPageFromName(name) {

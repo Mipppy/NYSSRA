@@ -1,5 +1,5 @@
 # Copied from Pythonanywhere
-
+# Run: uvicorn fastapi_server:app --reload
 from fastapi import ( # type:ignore
     FastAPI,
     UploadFile,
@@ -31,6 +31,7 @@ app.mount(
     "/livetiming_data", StaticFiles(directory="livetiming_data"), name="livetiming_data"
 )
 app.mount("/page_data", StaticFiles(directory="page_data"), name="page_data")
+app.mount("/misc_data", StaticFiles(directory="misc_data"), name="misc_data")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -226,6 +227,76 @@ async def websocket_endpoint(websocket: WebSocket):
         if websocket.client_state != WebSocketState.DISCONNECTED:
             await websocket.close()
 
+@app.post('/search')
+async def search(
+    tags: str = Form(...),
+    query: str = Form(...)
+):
+    tags_folder = "page_data"
+    pages_folder = "pages"
+    results = []
+
+    # Normalize search inputs
+    search_tags = set(t.strip().lower() for t in tags.split(",") if t.strip())
+    query_lower = query.lower()
+
+    try:
+        # List all metadata files
+        files = [f for f in os.listdir(tags_folder) if f.endswith(".txt")]
+
+        for filename in files:
+            txt_path = os.path.join(tags_folder, filename)
+            base_name = os.path.splitext(filename)[0]
+            md_path = os.path.join(pages_folder, base_name + ".md")
+
+            try:
+                # Read metadata lines
+                with open(txt_path, "r", encoding="utf-8") as f:
+                    lines = [line.strip() for line in f.readlines()]
+                    if len(lines) < 6:
+                        continue
+
+                    # Extract metadata
+                    metadata_tags = set(t.strip().lower() for t in lines[0].split(",") if t.strip())
+                    author = lines[2]
+                    post_name_raw = lines[3]
+                    is_event = lines[4].lower() == "true"
+                    event_date = lines[5] if lines[5] else None
+
+                # Filter by tags: match if all search_tags are in metadata_tags
+                if search_tags and not search_tags.issubset(metadata_tags):
+                    continue
+
+                # Check if markdown file exists
+                if not os.path.exists(md_path):
+                    continue
+
+                # Read markdown content for query match
+                with open(md_path, "r", encoding="utf-8") as f:
+                    content = f.read().lower()
+
+                # Check if query is in markdown content or post name
+                if query_lower not in content and query_lower not in post_name_raw.lower():
+                    continue
+
+                # If passes all filters, add to results
+                results.append({
+                    "post_name": base_name,
+                    "post_name_raw": post_name_raw,
+                    "tags": list(metadata_tags),
+                    "author": author,
+                    "is_event": is_event,
+                    "event_date": event_date,
+                })
+
+            except Exception as e:
+                print(f"Failed to process search for {filename}: {e}")
+
+        return JSONResponse(content={"results": results})
+
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
+
 
 @app.post("/create-post")
 async def create_post(
@@ -238,26 +309,21 @@ async def create_post(
     files: list[UploadFile] = File(default=[]),
 ):
     def unique_filepath(directory, base_name, ext):
-        """
-        Generate a unique file path in directory, appending _1, _2, etc if needed.
-        """
         candidate = os.path.join(directory, base_name + ext)
         counter = 1
         while os.path.exists(candidate):
             candidate = os.path.join(directory, f"{base_name}_{counter}{ext}")
             counter += 1
         return candidate
+
     def unique_dirname(base_dir, base_name):
-        """
-        Generate a unique directory name by appending _1, _2, etc., if needed.
-        """
         candidate = os.path.join(base_dir, base_name)
         counter = 1
         while os.path.exists(candidate):
             candidate = os.path.join(base_dir, f"{base_name}_{counter}")
             counter += 1
         return candidate
-    
+
     images_dir = unique_dirname("static", postName)
     pages_dir = "pages"
     tags_dir = "page_data"
@@ -274,9 +340,9 @@ async def create_post(
     os.makedirs(images_dir, exist_ok=True)
     os.makedirs(pages_dir, exist_ok=True)
     os.makedirs(tags_dir, exist_ok=True)
+    os.makedirs("misc_data", exist_ok=True)
 
     saved_files = []
-
     for idx, file in enumerate(files):
         ext = os.path.splitext(file.filename)[1].lower()
         ext = ext if ext in [".png", ".jpg", ".jpeg", ".gif"] else ".png"
@@ -286,26 +352,12 @@ async def create_post(
         with open(file_path, "wb") as f:
             f.write(contents)
         saved_files.append(file_path)
-    
-    md_base_name = postName
-    md_ext = ".md"
-    md_path = unique_filepath(pages_dir, md_base_name, md_ext)
+
+    md_path = unique_filepath(pages_dir, postName, ".md")
     with open(md_path, "w", encoding="utf-8") as f:
         f.write(markdown)
 
-    tags_base_name = postName
-    tags_ext = ".txt"
-    tags_path = unique_filepath(tags_dir, tags_base_name, tags_ext)
-    """ 
-        Format:
-        Tags (comma separated)
-        Date (EST)
-        Author
-        Post Name
-        isEvent
-        eventDate
-        numOfImages
-    """
+    tags_path = unique_filepath(tags_dir, postName, ".txt")
     event_data = json.loads(eventData)
     with open(tags_path, "w", encoding="utf-8") as f:
         f.write(tags.lower() + "\n")
@@ -315,6 +367,20 @@ async def create_post(
         f.write(str(event_data.get('isEvent', False)) + "\n")
         f.write(event_data.get('eventDate') + "\n")
         f.write(str(len(files)) + "\n")
+
+    tag_list = [t.strip().lower() for t in tags.split(",") if t.strip()]
+    tag_file_path = "misc_data/tags.txt"
+
+    existing_tags = set()
+    if os.path.exists(tag_file_path):
+        with open(tag_file_path, "r", encoding="utf-8") as f:
+            existing_tags = set(line.strip().lower() for line in f if line.strip())
+
+    new_tags = existing_tags.union(tag_list)
+    with open(tag_file_path, "w", encoding="utf-8") as f:
+        for tag in sorted(new_tags):
+            f.write(tag + "\n")
+
     return os.path.splitext(os.path.basename(md_path))[0]
 
 @app.get("/all_events")

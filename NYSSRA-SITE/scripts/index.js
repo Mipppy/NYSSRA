@@ -32,7 +32,7 @@ async function renderPost(post_data) {
     <div class="card-body">
       <h2 class="card-title mb-3">${req_data.pd.postName}</h2>
       <p class="text-muted small mb-3">
-        Posted by <b>${req_data.pd.author}</b> on ${new Date(req_data.pd.date).toLocaleString()}
+        Posted by <b>${req_data.pd.author}</b> on <i>${new Date(req_data.pd.date).toLocaleString()}</i>
       </p>
       <hr>
       <div class="markdown-body mb-2">${showdownInstance.makeHtml(req_data.md)}</div>
