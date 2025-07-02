@@ -1,5 +1,6 @@
 # Copied from Pythonanywhere
 # Run: uvicorn fastapi_server:app --reload
+# Run - Linux: python3.13 -m uvicorn fastapi_server:app --reload
 from fastapi import ( # type:ignore
     FastAPI,
     UploadFile,
@@ -236,12 +237,10 @@ async def search(
     pages_folder = "pages"
     results = []
 
-    # Normalize search inputs
     search_tags = set(t.strip().lower() for t in tags.split(",") if t.strip())
     query_lower = query.lower()
 
     try:
-        # List all metadata files
         files = [f for f in os.listdir(tags_folder) if f.endswith(".txt")]
 
         for filename in files:
@@ -250,36 +249,26 @@ async def search(
             md_path = os.path.join(pages_folder, base_name + ".md")
 
             try:
-                # Read metadata lines
                 with open(txt_path, "r", encoding="utf-8") as f:
                     lines = [line.strip() for line in f.readlines()]
                     if len(lines) < 6:
                         continue
 
-                    # Extract metadata
                     metadata_tags = set(t.strip().lower() for t in lines[0].split(",") if t.strip())
                     author = lines[2]
                     post_name_raw = lines[3]
                     is_event = lines[4].lower() == "true"
                     event_date = lines[5] if lines[5] else None
 
-                # Filter by tags: match if all search_tags are in metadata_tags
-                if search_tags and not search_tags.issubset(metadata_tags):
-                    continue
-
-                # Check if markdown file exists
                 if not os.path.exists(md_path):
                     continue
 
-                # Read markdown content for query match
                 with open(md_path, "r", encoding="utf-8") as f:
                     content = f.read().lower()
 
-                # Check if query is in markdown content or post name
                 if query_lower not in content and query_lower not in post_name_raw.lower():
                     continue
 
-                # If passes all filters, add to results
                 results.append({
                     "post_name": base_name,
                     "post_name_raw": post_name_raw,

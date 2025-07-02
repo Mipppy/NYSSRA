@@ -1,27 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <title>NYSSRA - Search</title>
-        <link rel="shortcut icon" href="/images/nyssra-logo.jpg" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <link rel="stylesheet" href="css/global.css" />
-        <link rel="stylesheet" href="css/bootstrap.css" />
-        <link rel="stylesheet" href="css/bootstrap-icons.css" />
-    </head>
-    <body class="min-vh-100 d-flex flex-column">
+<head>
+    <meta charset="UTF-8" />
+    <title>NYSSRA - Search</title>
+    <link rel="shortcut icon" href="/images/nyssra-logo.jpg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <nav></nav>
+    <link rel="stylesheet" href="css/global.css" />
+    <link rel="stylesheet" href="css/bootstrap.css" />
+    <link rel="stylesheet" href="css/bootstrap-icons.css" />
+</head>
 
-        <main class="flex-grow-1 py-4">
+<body class="min-vh-100 d-flex flex-column bg-light">
 
-        </main>
+    <nav></nav>
 
-        <footer></footer>
+    <main class="flex-grow-1 py-4 container">
+        <div class="row gx-4 gy-3">
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="mb-0">Articles Found: <span id="articles_found">0</span></h4>
+                            <select id="article_sort_by" class="form-select w-auto">
+                                <option selected disabled>Sort by</option>
+                                <option>Newest</option>
+                                <option>Oldest</option>
+                                <option>Recently Updated</option>
+                            </select>
+                        </div>
+                        <div id="article_container" class="d-flex flex-column gap-3">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-        <script src="scripts/navbar.js"></script>
-        <script src="scripts/search.js"></script>
-        <script src="scripts/bootstrap.js"></script>
-    </body>
+            <div class="col-lg-4">
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-body">
+                        <h5>Related Tags</h5>
+                        <hr>
+                        <div class="related_tags_container d-flex flex-wrap gap-2">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <h5>All Tags</h5>
+                        <hr>
+                        <div class="other_tags_container d-flex flex-wrap gap-2">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+    </footer>
+
+    <script src="scripts/navbar.js"></script>
+    <script src="scripts/search.js"></script>
+    <script src="scripts/bootstrap.js"></script>
+</body>
+
 </html>

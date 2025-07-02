@@ -80,7 +80,7 @@ class Navbar {
         const article_data = await article_req.text();
         const parsed_data = this.parsePageData(article_data);
 
-        return { md: md_text, pd: parsed_data };
+        return { md: md_text, pd: parsed_data, article: new_name };
     }
     static replaceLast(str, search, replace) {
         const index = str.lastIndexOf(search);
