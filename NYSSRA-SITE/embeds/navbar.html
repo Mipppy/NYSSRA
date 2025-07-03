@@ -1,38 +1,141 @@
 <!DOCTYPE html>
-<html>
-<nav class="navbar navbar-expand-lg navbar-light bg-light pb-1 pt-1" logged-in="0">
-    <a class="navbar-brand ms-3" href="/" style="font-family: 'Libre Baskerville', serif;">NYSSRA Nordic</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse justify-content-between row" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto col-6">
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8" />
+    <title>NYSSRA Nordic</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="css/bootstrap.css" />
+
+    <style>
+    .navbar-nav {
+      gap: 0;
+    }
+
+    .nav-item {
+      margin: 0;
+    }
+
+    .nav-box {
+      border: 1px solid #ccc;
+      border-radius: 0;
+      padding: 0.5rem 1rem;
+      background-color: transparent;
+      color: white;
+      display: block;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .nav-box:hover {
+      background-color: #f8f9fa;
+      color: black !important;
+    }
+
+    .nav-item.dropdown:hover .dropdown-menu {
+      display: block;
+      margin-top: 0;
+      border-radius: 0 !important;
+    }
+
+    .dropdown-menu {
+      background-color: #474747;
+      border: none;
+    }
+
+    .dropdown-menu a.dropdown-item {
+      color: white;
+      padding: 0.5rem 1rem;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .dropdown-menu a.dropdown-item:hover {
+      background-color: #f8f9fa;
+      color: black;
+    }
+
+    .navbar-brand img {
+      max-height: 40px;
+    }
+  </style>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark"
+      style="background-color: #474747;" logged-in="0">
+      <div class="container d-flex justify-content-between align-items-center">
+        <a class="navbar-brand d-flex align-items-center" href="/"
+          style="font-family: 'Libre Baskerville', serif;">
+          <img src="images/nyssra-logo.jpg" alt="NYSSRA Logo" class="rounded">
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false"
+          aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-between"
+          id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex align-items-center">
             <li class="nav-item">
-                <a class="nav-link" href="/results.html">RESULTS</a>
+              <a class="nav-link nav-box" href="/calendar.html">Calendar</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/calender.html">UPCOMING EVENTS</a>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle nav-box" href="#"
+                id="navbarDropdown" role="button"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                Membership
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item"
+                    href="https://www.skireg.com/nyssra-nordic-membership-24">Join
+                    NYSSRA
+                    Nordic!</a></li>
+                <li><a class="dropdown-item"
+                    href="https://docs.google.com/forms/d/11mXeaTHV4GhCgOdnGB-YGqsVyYj1VmAvFZjjvVoLjzw/viewform">Membership
+                    survey</a></li>
+                <li><a class="dropdown-item"
+                    href="https://www.skireg.com/Confirmed/5335">List of
+                    members</a></li>
+              </ul>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/clubs.html">CLUBS</a>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle nav-box" href="#"
+                id="navbarDropdown" role="button"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                Information
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item"
+                    href="/article.html?article=our-mission">Our
+                    mission</a></li>
+                <li><a class="dropdown-item"
+                    href="images/bylaws.pdf">Bylaws</a></li>
+                <li><a class="dropdown-item"
+                    href="https://docs.google.com/document/d/1zPi1XYTr-2mcdRFDPEXY7uKkVGoC-BcradO2pxdiKSo/edit?tab=t.0">Organizational
+                    Structure</a></li>
+                <li><a class="dropdown-item"
+                    href="http://localhost:3000/article.html?article=contact">Contact</a></li>
+              </ul>
             </li>
-            <li class="nav-item">
-                <a class="nav-item"></a>
-            </li>
-            <!-- <li class="nav-item">
-                <a class="nav-link" href="/results.html"></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/races.html">Races</a>
-            </li> -->
-        </ul>
-        <div class="d-flex align-items-start justify-content-end align-items-center col-6">
-            <form class="d-flex col-8 me-3" onsubmit="event.preventDefault(); var ele = event.target.querySelector('#searchquery');if (ele.value == '') {return;}; location.href =`/search.html?q=${ele.value}`">
-                <input class="form-control me-2" placeholder="Search the site" aria-label="Search" id="searchquery">
-                <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
+          </ul>
+
+          <form class="d-flex" role="search"
+            onsubmit="event.preventDefault(); var ele = event.target.querySelector('#searchquery');if (ele.value == '') {return;}; location.href =`/search.html?query=${ele.value}`">
+            <input class="form-control me-2" type="search"
+              placeholder="Search the site" aria-label="Search"
+              id="searchquery">
+            <button class="btn btn-success" type="submit">Search</button>
+          </form>
         </div>
-    </div>
-</nav>
+      </div>
+    </nav>
+
+    <script src="scripts/bootstrap.js"></script>
+  </body>
+
 </html>

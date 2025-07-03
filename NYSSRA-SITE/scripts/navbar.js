@@ -4,6 +4,19 @@ class Navbar {
         : Globals.base_url;
 
     static login_token = localStorage?.getItem("nyssra_login_token");
+    static showdownParameters = {
+        tables: true,
+        openLinksInNewWindow: true,
+        extensions: [function () {
+            return [{
+                type: 'output',
+                filter: function (text) {
+                    return text.replace(/<table(\s*[^>]*)>/g, '<table$1 class="table table-striped table-bordered">');
+                }
+            }];
+        }]
+    }
+
 
     static async LoadExtraHTML() {
         await this.initUserData()
@@ -31,6 +44,11 @@ class Navbar {
 
     static async initUserData() {
         this.user_data = await this.getUserdata();
+        if (this.user_data?.admin === false) {
+            document.querySelectorAll('#admin_only').forEach(ele => {
+                ele.remove()
+            })
+        }
     }
 
     static isAdmin() {
@@ -98,18 +116,23 @@ class Navbar {
         const json = await req.json()
         return json
     }
+
     static turnToCorrectDate(dateStr) {
         const d = new Date(dateStr);
-        const month = d.getMonth() + 1;
         const day = d.getDate();
+        const month = d.getMonth() + 1;
         const year = d.getFullYear();
 
-        let hour = d.getHours() % 12;
-        if (hour === 0) hour = 12;
+        let hour = d.getHours();
         const minute = d.getMinutes().toString().padStart(2, '0');
-        // FUCK TIME CODE
-        return `${day}/${month}/${year} ${hour}:${minute}`;
+        const ampm = hour >= 12 ? 'PM' : 'AM';
+
+        hour = hour % 12;
+        if (hour === 0) hour = 12;
+
+        return `${day}/${month}/${year} ${hour}:${minute} ${ampm}`;
     }
+
     static generateTagFormat(tag) {
         return `
     <a href="/search.html?tags=${tag}" style="

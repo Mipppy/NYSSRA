@@ -348,8 +348,28 @@ async def create_post(
         saved_files.append(file_path)
 
     md_path = unique_filepath(pages_dir, postName, ".md")
+    def sanitize_tables(md: str) -> str:
+        lines = md.splitlines()
+        cleaned = []
+        in_table = False
+
+        for i, line in enumerate(lines):
+            stripped = line.strip()
+
+            if stripped.startswith("|") and stripped.endswith("|"):
+                if not in_table:
+                    in_table = True
+                cleaned.append(line)
+            elif stripped == "" and in_table:
+                continue
+            else:
+                in_table = False
+                cleaned.append(line)
+
+        return "\n".join(cleaned)
+
     with open(md_path, "w", encoding="utf-8") as f:
-        f.write(markdown)
+        f.write(sanitize_tables(markdown))
 
     tags_path = unique_filepath(tags_dir, postName, ".txt")
     event_data = json.loads(eventData)

@@ -1,7 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
     Navbar.LoadExtraHTML();
-
-    var showdownInstance = new showdown.Converter({ openLinksInNewWindow: true });
+    var showdownInstance = new showdown.Converter(Navbar.showdownParameters);
+    showdownInstance.setOption('tables', true);
+showdownInstance.setOption('openLinksInNewWindow', true);
     var mdContentDiv = document.getElementById('md-content');
     var articleTitleEle = document.getElementById('article_title');
     var articleDateEle = document.getElementById('article_date');
@@ -26,7 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
             articleEventContainer.classList.add('d-flex');
             articleEventDateEle.innerText = e.pd.eventDate;
 
-            // Ensure this element exists before setting href
             if (articleEventCalendarLink) {
                 articleEventCalendarLink.href = `/calendar.html?event=${e.article}`;
             }
@@ -37,4 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         mdContentDiv.innerHTML = showdownInstance.makeHtml(e.md);
     });
+    document.getElementById('edit_post_button').addEventListener('click', async () => {
+
+    })
 });

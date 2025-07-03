@@ -1,7 +1,7 @@
 Navbar.LoadExtraHTML();
 
 let request_data = [];
-const showdownInstance = new showdown.Converter({ openLinksInNewWindow: true });
+const showdownInstance = new showdown.Converter(Navbar.showdownParameters);
 
 const MDParentDiv = document.getElementById('md_parent_div');
 

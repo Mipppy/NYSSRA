@@ -1,0 +1,3 @@
+**NYSSRA-Nordic, Inc. is a not-for-profit 501 (c) (3) tax-exempt public charity organization under the Internal Revenue Code.**
+
+A contribution beyond membership fees paid is fully tax-deductible under Section 170 of the Code. NYSSRA-Nordic works in conjunction with state and national governing bodies to support the development of Nordic Skisport in New York State. NYSSRA currently supports programs and races for the Nordic disciplines of Biathlon, Cross Country Skiing and Ski Orienteering.

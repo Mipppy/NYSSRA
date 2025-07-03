@@ -13,8 +13,28 @@ document.addEventListener("DOMContentLoaded", () => {
     spellChecker: true,
     placeholder: "Write your Markdown content here...",
     showIcons: ["code", "table"],
+    toolbar: [
+      "bold", "italic", "heading","link" , "|",
+      "quote", "unordered-list", "ordered-list", "|",
+      {
+        name: "table",
+        action: function customTableInsert(editor) {
+          const cm = editor.codemirror;
+          const output =
+            `| Column 1 | Column 2 | Column 3 |
+| -------- | -------- | -------- |
+| Text     | Text     | Text     |`;
 
+          cm.replaceSelection(output);
+          cm.focus();
+        },
+        className: "fa fa-table",
+        title: "Insert Table"
+      },
+      "|", "preview", "side-by-side", "fullscreen", "guide"
+    ]
   });
+
 
   const imageInput = document.getElementById("image-upload");
   const previewContainer = document.getElementById("image-preview-container");
