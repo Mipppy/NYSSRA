@@ -23,6 +23,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials  # type: i
 import hashlib
 import secrets
 
+
 os.makedirs("livetiming_data", exist_ok=True)
 
 app = FastAPI()
