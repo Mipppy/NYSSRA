@@ -24,6 +24,7 @@ import hashlib
 import secrets
 
 
+
 os.makedirs("livetiming_data", exist_ok=True)
 
 app = FastAPI()
