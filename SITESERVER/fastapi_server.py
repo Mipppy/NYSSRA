@@ -339,7 +339,6 @@ async def create_post(
     saved_files = []
     for idx, file in enumerate(files):
         ext = os.path.splitext(file.filename)[1].lower()
-        ext = ext if ext in [".png", ".jpg", ".jpeg", ".gif"] else ".png"
         base_name = str(idx)
         file_path = unique_filepath(images_dir, base_name, ext)
         contents = await file.read()

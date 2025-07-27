@@ -30,7 +30,7 @@ async function renderPost(post_data) {
     const tagsHTML = req_data.pd.tags.map(tag => Navbar.generateTagFormat(tag)).join('');
 
     newDiv.innerHTML = `
-        <div class="card shadow-lg rounded-3 border-2" style="cursor:pointer;" id="loaded_article">
+        <div class="card shadow-lg rounded-3 border-2" style="cursor:default;" id="loaded_article">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h2 class="card-title mb-0">

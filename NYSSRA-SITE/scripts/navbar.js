@@ -11,7 +11,7 @@ class Navbar {
             return [{
                 type: 'output',
                 filter: function (text) {
-                    return text.replace(/<table(\s*[^>]*)>/g, '<table$1 class="table table-striped table-bordered">');
+                    return text.replace(/<table(\s*[^>]*)>/g, '<table$1 class="table table-striped table-bordered table-hover">');
                 }
             }];
         }]
