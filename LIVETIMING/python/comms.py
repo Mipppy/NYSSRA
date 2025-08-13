@@ -185,12 +185,6 @@ class LivetimingHandler:
                 self.logger.error(f"Error sending message to Livetiming WS: {e}")
 
     def send_auth_and_config(self, config: dict):
-        """
-        This function sends data to initialize a race and gets the Websocket ready to receive race results
-
-        Args:
-            config (dict): The config data, typically sent from the window and handled in `render.py`
-        """
         if not self.connection_ready.wait(timeout=self.timeout_wait_sec):
             self.reinit()
             self.logger.error("WebSocket not ready in time for sending auth/config.")
@@ -199,7 +193,15 @@ class LivetimingHandler:
         self.logger.debug("WebSocket ready — sending auth/config")
         self.config_password = config['password']
         self.send_json_message({"password": config['password']})
-        time.sleep(0.2)  
+
+        # ✅ Wait for authentication confirmation
+        auth_wait_start = time.time()
+        while not self.authenticated:
+            if time.time() - auth_wait_start > self.timeout_wait_sec:
+                self.logger.error("Timeout waiting for authentication success.")
+                return
+            time.sleep(0.1)
+
         self.send_json_message({'new_url': config['filename']})
         time.sleep(0.2)
         self.send_json_message(config['headers'])

@@ -29,6 +29,73 @@ class XC_TIMER_DLL:
         print(self.dll_path)
         self.dll = WinDLL(self.dll_path) # type: ignore
     
+    # Recreating the structures used within the DLL so we can send a pointer over for some function arguments.
+    class XC_TIMER_RECORD_STRUCTURE_TYPE(AutoDecodingStructure):
+        _fields_ = [
+            ("table_id", c_uint),
+            ("device_num", c_ushort),
+            ("record_num", c_uint),
+            ("event_num", c_ushort),
+            ("heat_num", c_ushort),
+            ("channel", c_ushort),
+            ("record_typ", c_char * 20),
+            ("userstring", c_char * 20),
+            ("userxfield", (c_char * 20) * 10),
+            ("bib_string", c_char * 20),
+            ("timer_time", c_char * 20),
+            ("pc_time", c_char * 20),
+            ("notes", c_char * 50),
+        ]
+
+
+    class XC_CONFIGURE_STRUCTURE_TYPE(AutoDecodingStructure):
+        _fields_ = [
+            ("serial_comm_port", c_uint),  
+            ("baud_rate", c_ulong),
+            ("number_of_devices_used", c_ushort),
+            ("talk_time", c_ushort),
+            ("string_delimiter", c_char),
+            ("left_justify_time_strings_flag", c_ubyte),
+            ("password", c_long),
+            ("diagnostic_flags", c_uint),
+            ("database_highest_record_number", c_ulong),
+            ("highest_record_received_array", c_ushort * 32),
+            ("timer_type_used", c_char * 100),
+            ("database_type", c_char * 100),
+            ("database_drive", c_char * 100),
+            ("database_directory", c_char * 400),
+            ("database_name", c_char * 400),
+            ("database_extension", c_char * 400),
+            ("database_table_name", c_char * 400),
+            ("odbc_user_dsn_flag", c_ubyte),
+            ("database_odbc_user_data_source_name", c_char * 400),
+            ("event_number", c_uint),
+            ("heat_number", c_uint),
+        ]
+    class GLOBAL_VARIABLE_STRUCTURE_TYPE(AutoDecodingStructure):
+        _fields_ = [
+            ("version_number_string", c_char * 200),
+            ("version_time_string", c_char * 200),
+            ("version_date_string", c_char * 200),
+
+            ("race_directory", c_char * 500),
+            ("database_path_and_file_name", c_char * 500),
+            ("current_working_directory", c_char * 500),
+            ("log_file_path_and_name", c_char * 500),
+            ("tx_file_path_and_name", c_char * 500),
+            ("rx_file_path_and_name", c_char * 100),
+            ("ini_file_path_and_name", c_char * 100),
+            ("backup_file_path_and_name", c_char * 100),
+
+            ("srt_1000_used_flag", c_ubyte),
+            ("tag_heuer_505_used_flag", c_ubyte),
+            ("tag_heuer_605_used_flag", c_ubyte),
+            ("hora_targets_used_flag", c_ubyte),
+
+            ("timer_event_interval", c_int),
+            ("timer_event_resolution", c_int),
+        ]
+        
     @ensure_dll_loaded
     def register_dll_functions(self) -> None:
         """
@@ -85,8 +152,16 @@ class XC_TIMER_DLL:
         self.dll.dll_stop_communicating_with_timers.argstypes = None
         self.dll.dll_stop_communicating_with_timers.restype = c_long
         
-        self.dll.dll_get_next_timer_record.argstypes = [POINTER(c_long), POINTER(c_long), POINTER(c_long), POINTER(c_long), POINTER(c_long), POINTER(c_long), POINTER(c_long), c_char_p,c_char_p,c_char_p,c_char_p,c_char_p,c_char_p,c_char_p,c_char_p,c_char_p,c_char_p]
-        self.dll.dll_get_next_timer_record.restype = c_long
+        # Within the DLL, this is actually just a wrapper for dll_get_next_timer_record, but it clearly a later version, as it uses the XC_TIMER_RECORD_STRUCTURE_TYPE, rather than doing each field of it individually.
+        # dll_get_next_timer_record is not needed (and really should never be used), so I'm not bothering implementing it here.
+        self.dll.dll_get_next_timer_structure.argstypes = [POINTER(c_long), POINTER(self.XC_TIMER_RECORD_STRUCTURE_TYPE)]
+        self.dll.dll_get_next_timer_structure.restype = c_long
+        
+        self.dll.dll_get_pointer_to_configuration_structure.argstypes = None
+        self.dll.dll_get_pointer_to_configuration_structure.restype = POINTER(self.XC_CONFIGURE_STRUCTURE_TYPE)
+        
+        self.dll.dll_get_pointer_to_global_variable_structure.argstypes = None
+        self.dll.dll_get_pointer_to_global_variable_structure.restype = POINTER(self.GLOBAL_VARIABLE_STRUCTURE_TYPE)
         
         self.dll.dll_set_baud_rate.argstypes = [POINTER(c_long)]
         self.dll.dll_set_baud_rate.restype = c_long
@@ -314,48 +389,43 @@ class XC_TIMER_DLL:
     
     @ensure_dll_loaded
     @ensure_ready_to_call_function
-    def dll_get_next_timer_record(self) -> Union[dict, None]:
-        """
-        Gets the recent timer record.
-        
-        Returns a dict with the values
-        """
-        XC_Struct = {
-            "app": c_long(),
-            "tableid": c_long(),
-            "devicenum": c_long(),
-            "recordnum": c_long(),
-            "eventnum": c_long(),
-            "heatnum": c_long(),
-            "channel": c_long(),
-            "record_typ": create_string_buffer(1),
-            "userstring": create_string_buffer(20),
-            "user1_string": create_string_buffer(20),
-            "user2_string": create_string_buffer(20),
-            "user3_string": create_string_buffer(20),
-            "user4_string": create_string_buffer(20),
-            "bib_string": create_string_buffer(20),
-            "timer_time": create_string_buffer(20),
-            "pc_time": create_string_buffer(20),
-            "notes": create_string_buffer(20)
-        }
-        res = self.dll.dll_get_next_timer_record(byref(XC_Struct["app"]), byref(XC_Struct["tableid"]), byref(XC_Struct['devicenum']), byref(XC_Struct['recordnum']), byref(XC_Struct['eventnum']), byref(XC_Struct['heatnum']), byref(XC_Struct['channel']), XC_Struct['record_typ'], XC_Struct['userstring'], XC_Struct['user1_string'], XC_Struct['user2_string'], XC_Struct['user3_string'], XC_Struct['user4_string'], XC_Struct['bib_string'], XC_Struct['timer_time'], XC_Struct['pc_time'], XC_Struct['notes'])
-        if res == 1:
-            converted_XC_Struct = {}
-            for key, item in XC_Struct.items():
-                if isinstance(item, (c_char_p, Array)):  
-                    try:
-                        raw_bytes = item.value if hasattr(item, 'value') else item.raw
-                        decoded_str = raw_bytes.decode('ascii', errors='ignore')
-                        converted_XC_Struct[key] = decoded_str if decoded_str else None
-                    except Exception as e:
-                        print(f"Failed to decode {key}: {e}")
-                        converted_XC_Struct[key] = None
-                else:
-                    converted_XC_Struct[key] = item.value
-            return converted_XC_Struct
-        return None
+    def dll_get_pointer_to_global_variable_structure(self) -> GLOBAL_VARIABLE_STRUCTURE_TYPE:
+        ptr = self.dll.dll_get_pointer_to_global_variable_structure()
+        struct_ptr = cast(ptr, POINTER(self.GLOBAL_VARIABLE_STRUCTURE_TYPE))
+        return struct_ptr.contents
     
+    @ensure_dll_loaded
+    @ensure_ready_to_call_function
+    def dll_get_pointer_to_configuration_structure(self) -> XC_CONFIGURE_STRUCTURE_TYPE:
+        ptr = self.dll.dll_get_pointer_to_configuration_structure()
+        struct_ptr = cast(ptr, POINTER(self.XC_CONFIGURE_STRUCTURE_TYPE))
+        return struct_ptr.contents 
+
+
+    @ensure_dll_loaded
+    @ensure_ready_to_call_function
+    def dll_get_next_timer_structure(self) -> Union[XC_TIMER_RECORD_STRUCTURE_TYPE, None]:
+        app = c_long(0)
+        rec = self.XC_TIMER_RECORD_STRUCTURE_TYPE()
+        res = self.dll.dll_get_next_timer_structure(byref(app), byref(rec))
+
+        if res != 1:
+            return None
+        return rec 
+    
+    @ensure_dll_loaded
+    @ensure_ready_to_call_function
+    def dll_get_pointer_to_configuration_structure(self) -> dict:
+        """
+        Gets the pointer to the XC_CONFIGURE_STRUCTURE_TYPE within the DLL.
+
+        Returns:
+            XC_CONFIGURE_STRUCTURE_TYPE: The structure type within the DLL. 
+        """
+        ptr = self.dll.dll_get_pointer_to_configuration_structure()
+        struct_ptr = cast(ptr, POINTER(self.XC_CONFIGURE_STRUCTURE_TYPE))
+        return struct_ptr.contents.as_dict()
+        
     @ensure_dll_loaded
     @ensure_ready_to_call_function
     def dll_set_baud_rate(self, baud_rate:Union[int,c_long]) -> None:
@@ -411,3 +481,13 @@ class XC_TIMER_DLL:
         """
         self.dll.dll_disable_timer_reset()
         return
+    
+    def dll_get_initialization_flag(self) -> bool:
+        """
+        This function exists within the DLL, but it is easier for us to track, and it saves a call to the DLL.
+
+        Returns:
+            bool: Whether or not the DLL has been initialized.
+        """
+        return self.dll_init_called
+    

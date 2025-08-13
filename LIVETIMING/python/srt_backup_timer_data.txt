@@ -1,0 +1,12 @@
+
+Summit Systems Timer Backup Text File Initialized  at 16:11:06  on 08/09/25:
+
+table_id	device_num	record_num	event_num	heat_num	channel	record_typ	total_user_string	bib_string	timer_time	pc_time	notes
+0	2	1	0	0	1	b	1	1	15:52:35.49	16:11:09	 
+0	2	2	0	0	1	b	26	26	15:52:48.10	16:11:09	 
+
+Summit Systems Timer Backup Text File Initialized  at 16:12:13  on 08/09/25:
+
+table_id	device_num	record_num	event_num	heat_num	channel	record_typ	total_user_string	bib_string	timer_time	pc_time	notes
+0	2	1	0	0	1	b	1	1	15:52:35.49	16:12:16	 
+0	2	2	0	0	1	b	26	26	15:52:48.10	16:12:16	 

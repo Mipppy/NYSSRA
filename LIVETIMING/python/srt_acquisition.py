@@ -54,6 +54,32 @@ class SRT_ACQUISITION_DLL:
         self.check_dll_loaded()
         return self.dll
     
+    class XC_TIMER_RECORD_STRUCTURE_TYPE(Structure):
+        """
+        A structure made very early into development that doesn't work, but is still important as it shows me what the structure looks like.
+
+        Args:
+            Structure (_type_): _description_
+        """
+        _fields_ = [
+            ('app', c_long),
+            ('table_id', c_long),
+            ('device_num', c_long),
+            ('record_num', c_long),
+            ('event_num', c_long),
+            ('heat_num', c_long),
+            ('channel', c_long),
+            ('record_typ', c_char),
+            ('userstring', c_char * 100),
+            ('user1_string', c_char * 100),
+            ('user2_string', c_char * 100),
+            ('user3_string', c_char * 100),
+            ('user4_string', c_char * 100),
+            ('bib_string', c_char * 100),
+            ('timer_time', c_char * 100),
+            ('pc_time', c_char * 100),
+            ('notes', c_char * 100)
+        ]
 
 
     @ensure_dll_loaded
@@ -68,58 +94,61 @@ class SRT_ACQUISITION_DLL:
         self.dll.dll_test_function_call_passing_long.restype = c_long  
 
         self.dll.dll_initialize_dll_task.argtypes = [c_int, c_char_p]
-        self.dll.dll_initialize_dll_task.restype = c_int
+        self.dll.dll_initialize_dll_task.restype = c_long
 
         self.dll.dll_set_number_of_timers.argtypes = [POINTER(c_int)]
-        self.dll.dll_set_number_of_timers.restype = None
+        self.dll.dll_set_number_of_timers.restype = c_long
 
         self.dll.dll_set_comm_port.argtypes = [POINTER(c_int)]
-        self.dll.dll_set_comm_port.restype = None
+        self.dll.dll_set_comm_port.restype = c_long
 
         self.dll.dll_assign_default_values.argtypes = None
-        self.dll.dll_assign_default_values.restype = None
+        self.dll.dll_assign_default_values.restype = c_long
 
         self.dll.dll_start_communicating_with_timers.argtypes = None
-        self.dll.dll_start_communicating_with_timers.restype = None
+        self.dll.dll_start_communicating_with_timers.restype = c_long
 
         self.dll.dll_stop_communicating_with_timers.argtypes = None
-        self.dll.dll_stop_communicating_with_timers.restype = None
+        self.dll.dll_stop_communicating_with_timers.restype = c_long
 
         self.dll.dll_reset_all_timer_record_counters_to_zero.argtypes = None
-        self.dll.dll_reset_all_timer_record_counters_to_zero.restype = None
+        self.dll.dll_reset_all_timer_record_counters_to_zero.restype = c_long
 
         self.dll.dll_exit_routine.argtypes = [c_char_p]
-        self.dll.dll_exit_routine.restype = None
+        self.dll.dll_exit_routine.restype = c_long
 
         self.dll.dll_initialize_dll_task.argstypes = [c_int, c_char_p]
-        self.dll.dll_initialize_dll_task.restype = c_int
+        self.dll.dll_initialize_dll_task.restype = c_long
 
         self.dll.dll_generate_dummy_record.argstypes = None
-        self.dll.dll_generate_dummy_record.restype = None
+        self.dll.dll_generate_dummy_record.restype = c_long
 
         self.dll.dll_reset_timers.argstypes = None
-        self.dll.dll_reset_timers.restype = None
+        self.dll.dll_reset_timers.restype = c_long
 
         self.dll.dll_synch_timers.argstypes = [c_int, c_char_p]
-        self.dll.dll_synch_timers.restype = None
+        self.dll.dll_synch_timers.restype = c_long
 
-        self.dll.dll_put_timer_structure_into_fifo.argtypes = [POINTER(self.XC_TIMER_RECORD_STRUCTURE_TYPE)]
-        self.dll.dll_put_timer_structure_into_fifo.restype = c_int
+        self.dll.dll_put_timer_structure_into_fifo.argstypes = [POINTER(self.XC_TIMER_RECORD_STRUCTURE_TYPE)]
+        self.dll.dll_put_timer_structure_into_fifo.restype = c_long
+        
+        self.dll.dll_get_next_timer_structure.argstypes = [POINTER(c_long), POINTER(self.XC_TIMER_RECORD_STRUCTURE_TYPE)]
+        self.dll.dll_get_next_timer_structure.restype = c_long
 
         self.dll.dll_disable_timer_reset.argstypes = None
-        self.dll.dll_disable_timer_reset.restype = None
+        self.dll.dll_disable_timer_reset.restype = c_long
 
         self.dll.dll_reset_all_timer_record_counters_to_zero.argstypes = None
-        self.dll.dll_reset_all_timer_record_counters_to_zero.restype = None
+        self.dll.dll_reset_all_timer_record_counters_to_zero.restype = c_long
 
         self.dll.dll_set_string_delimiter.argstypes = [POINTER(c_int)]
-        self.dll.dll_set_string_delimiter.restype = None
+        self.dll.dll_set_string_delimiter.restype = c_long
 
         self.dll.dll_delete_dll_fifo_records.argstypes = None
-        self.dll.dll_delete_dll_fifo_records.restype = None
+        self.dll.dll_delete_dll_fifo_records.restype = c_long
 
         self.dll.dll_set_diagnostic_flags.argstypes = [POINTER(c_int)]
-        self.dll.dll_set_diagnostic_flags.restype = None
+        self.dll.dll_set_diagnostic_flags.restype = c_long
 
         self.all_functions_loaded = True
 

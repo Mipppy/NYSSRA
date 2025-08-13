@@ -1,5 +1,7 @@
 contact
 information
 mission
+permanant
 permanent
+program
 test
