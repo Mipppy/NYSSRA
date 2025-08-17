@@ -51,32 +51,6 @@ def ensure_dll_loaded(func):
         return func(self, *args, **kwargs)
     return wrapper
     
-# class XC_TIMER_RECORD_STRUCTURE_TYPE(Structure):
-#     """
-#     A structure made very early into development that doesn't work, but is still important as it shows me what the structure looks like.
-
-#     Args:
-#         Structure (_type_): _description_
-#     """
-#     _fields_ = [
-#         ('app', c_long),
-#         ('table_id', c_long),
-#         ('device_num', c_long),
-#         ('record_num', c_long),
-#         ('event_num', c_long),
-#         ('heat_num', c_long),
-#         ('channel', c_long),
-#         ('record_typ', c_char),
-#         ('userstring', c_char * 100),
-#         ('user1_string', c_char * 100),
-#         ('user2_string', c_char * 100),
-#         ('user3_string', c_char * 100),
-#         ('user4_string', c_char * 100),
-#         ('bib_string', c_char * 100),
-#         ('timer_time', c_char * 100),
-#         ('pc_time', c_char * 100),
-#         ('notes', c_char * 100)
-#     ]
 
 class AutoDecodingStructure(Structure):
     def __getattribute__(self, name):
@@ -85,22 +59,20 @@ class AutoDecodingStructure(Structure):
 
         value = super().__getattribute__(name)
 
-        # Single c_char[] → decode to str
         if hasattr(value, "_type_") and value._type_ is c_char:
             return bytes(value).split(b"\x00", 1)[0].decode("utf-8", errors="ignore") or None
 
-        # Multi-dimensional: e.g., (c_char * N) * M
         if hasattr(value, "_type_") and hasattr(value._type_, "_type_") and value._type_._type_ is c_char:
             return [
                 bytes(item).split(b"\x00", 1)[0].decode("utf-8", errors="ignore") or None
                 for item in value
             ]
 
-        # Regular bytes
         if isinstance(value, bytes):
             return value.split(b"\x00", 1)[0].decode("utf-8", errors="ignore") or None
 
         return value
+        
 
     def as_dict(self):
         return {field[0]: getattr(self, field[0]) for field in self._fields_}

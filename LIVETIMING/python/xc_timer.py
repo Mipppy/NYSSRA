@@ -1,9 +1,11 @@
+from __future__ import annotations
 from ctypes import *
 from ctypes import _SimpleCData
 import os
-from typing import Type, TypeVar, Union
+from typing import Type, TypeVar, Union, TYPE_CHECKING, TypeAlias, Protocol
 from helpers import *
 import logging
+from datetime import datetime
 
 class XC_TIMER_DLL:
     def __init__(self):
@@ -31,6 +33,7 @@ class XC_TIMER_DLL:
     
     # Recreating the structures used within the DLL so we can send a pointer over for some function arguments.
     class XC_TIMER_RECORD_STRUCTURE_TYPE(AutoDecodingStructure):
+        table_id:int;device_num:int;record_num:int;event_num:int;heat_num:int;channel:int;record_typ:str;userstring:str;userxfield:List[str];bib_string:str;timer_time:str|datetime;pc_time:str|datetime;notes:str
         _fields_ = [
             ("table_id", c_uint),
             ("device_num", c_ushort),
@@ -46,7 +49,6 @@ class XC_TIMER_DLL:
             ("pc_time", c_char * 20),
             ("notes", c_char * 50),
         ]
-
 
     class XC_CONFIGURE_STRUCTURE_TYPE(AutoDecodingStructure):
         _fields_ = [
@@ -245,6 +247,7 @@ class XC_TIMER_DLL:
         """
         Reads from the terminal FIFO
         
+        From using this function, I believe it logs the raw data sent by the timers to the modem, such as pings.
         More information will be added as this function is used.
         """
         return self.dll.dll_get_character_from_terminal_fifo()
@@ -490,4 +493,66 @@ class XC_TIMER_DLL:
             bool: Whether or not the DLL has been initialized.
         """
         return self.dll_init_called
-    
+
+
+# # Expose for typing.
+# if TYPE_CHECKING:
+#     class XC_TIMER_RECORD_STRUCTURE_PROTOCOL(Protocol):
+#         table_id: int
+#         device_num: int
+#         record_num: int
+#         event_num: int
+#         heat_num: int
+#         channel: int
+#         record_typ: str
+#         userstring: str
+#         userxfield: list[str]  
+#         bib_string: str
+#         timer_time: str
+#         pc_time: str
+#         notes: str
+#     class XC_CONFIGURE_STRUCTURE_PROTOCOL(Protocol):
+#         serial_comm_port: int
+#         baud_rate: int
+#         number_of_devices_used: int
+#         talk_time: int
+#         string_delimiter: str
+#         left_justify_time_strings_flag: int
+#         password: int
+#         diagnostic_flags: int
+#         database_highest_record_number: int
+#         highest_record_received_array: list[int] 
+#         timer_type_used: str
+#         database_type: str
+#         database_drive: str
+#         database_directory: str
+#         database_name: str
+#         database_extension: str
+#         database_table_name: str
+#         odbc_user_dsn_flag: int
+#         database_odbc_user_data_source_name: str
+#         event_number: int
+#         heat_number: int
+
+
+#     class GLOBAL_VARIABLE_STRUCTURE_PROTOCOL(Protocol):
+#         version_number_string: str
+#         version_time_string: str
+#         version_date_string: str
+#         race_directory: str
+#         database_path_and_file_name: str
+#         current_working_directory: str
+#         log_file_path_and_name: str
+#         tx_file_path_and_name: str
+#         rx_file_path_and_name: str
+#         ini_file_path_and_name: str
+#         backup_file_path_and_name: str
+#         srt_1000_used_flag: int
+#         tag_heuer_505_used_flag: int
+#         tag_heuer_605_used_flag: int
+#         hora_targets_used_flag: int
+#         timer_event_interval: int
+#         timer_event_resolution: int
+#     XC_TIMER_RECORD_STRUCTURE_TYPE = XC_TIMER_RECORD_STRUCTURE_PROTOCOL
+#     XC_CONFIGURE_STRUCTURE_TYPE = XC_CONFIGURE_STRUCTURE_PROTOCOL
+#     GLOBAL_VARIABLE_STRUCTURE_TYPE = GLOBAL_VARIABLE_STRUCTURE_PROTOCOL

@@ -1,8 +1,10 @@
-[INFO] (2025-08-08 19:34:45) - Successfully loaded Logger.
-[DEBUG] (2025-08-08 19:34:45) - Loaded xc_timer_dll.dll's functions successfully.
-[INFO] (2025-08-08 19:34:45) - Successfully loaded xc_timer_dll.dll
-[INFO] (2025-08-08 19:34:45) - Successfully loaded all classes.
-[DEBUG] (2025-08-08 19:34:45) - Raw message from JS: {"message_type": "ready", "data": {}}
-[INFO] (2025-08-08 19:34:45) - JavaScript connection initialized
-[DEBUG] (2025-08-08 19:34:45) - Raw message from JS: {"message_type": "give_me_the_fucking_password", "data": {}}
-[DEBUG] (2025-08-08 19:34:45) - Sent saved password to window.
+[INFO] (2025-08-17 12:21:03) - Successfully loaded Logger.
+[DEBUG] (2025-08-17 12:21:03) - Loaded xc_timer_dll.dll's functions successfully.
+[INFO] (2025-08-17 12:21:03) - Successfully loaded xc_timer_dll.dll
+[DEBUG] (2025-08-17 12:21:04) - Raw message from JS: {"message_type": "ready", "data": {}}
+[INFO] (2025-08-17 12:21:04) - JavaScript connection initialized
+[DEBUG] (2025-08-17 12:21:04) - Raw message from JS: {"message_type": "give_me_the_fucking_password", "data": {}}
+[DEBUG] (2025-08-17 12:21:04) - Sent saved password to window.
+[INFO] (2025-08-17 12:21:04) - Successfully loaded all classes.
+[DEBUG] (2025-08-17 12:21:31) - Raw message from JS: {"message_type": "startlist_input", "data": [{"bib":"1","name":"John Smith","team":"Queensbury","":""},{"bib":"2","name":"Ralph John","team":"Queensbury","":""},{"bib":"3","name":"Fred Ralph","team":"Queensbury","":""},{"bib":"4","name":"Mike Fred","team":"Queensbury","":""},{"bib":"5","name":"Jeff Mike","team":"Queensbury","":""},{"bib":"6","name":"Gabe Jeff","team":"Queensbury","":""},{"bib":"7","name":"Milly Gabe","team":"Queensbury","":""},{"bib":"8","name":"Jones Milly","team":"Queensbury","":""},{"bib":"9","name":"Rider Jones","team":"Queensbury","":""},{"bib":"10","name":"Alex Rider","team":"Queensbury","":""}]}
+[DEBUG] (2025-08-17 12:21:31) - [{'bib': '1', 'name': 'John Smith', 'team': 'Queensbury', '': ''}, {'bib': '2', 'name': 'Ralph John', 'team': 'Queensbury', '': ''}, {'bib': '3', 'name': 'Fred Ralph', 'team': 'Queensbury', '': ''}, {'bib': '4', 'name': 'Mike Fred', 'team': 'Queensbury', '': ''}, {'bib': '5', 'name': 'Jeff Mike', 'team': 'Queensbury', '': ''}, {'bib': '6', 'name': 'Gabe Jeff', 'team': 'Queensbury', '': ''}, {'bib': '7', 'name': 'Milly Gabe', 'team': 'Queensbury', '': ''}, {'bib': '8', 'name': 'Jones Milly', 'team': 'Queensbury', '': ''}, {'bib': '9', 'name': 'Rider Jones', 'team': 'Queensbury', '': ''}, {'bib': '10', 'name': 'Alex Rider', 'team': 'Queensbury', '': ''}]

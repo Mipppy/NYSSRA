@@ -107,7 +107,7 @@
         <div class="col-3 d-flex flex-column">
             <div class="row flex-grow-1" style="height:100%;background-color:rgb(83, 97, 110) !important;">
                 <div class="col-12" style="height:30%; " id="side_ui_general">
-                    <h2 class="display-6">Timing System</h2>
+                    <h2 class="display-6"><b>Tim</b>ing System</h2>
                 </div>
                 <hr class="border border-light border-2 opacity-75">
                 <div class="col-12" style="height:30%" id="side_ui_active_race">
@@ -124,7 +124,7 @@
                                 <div class="row">
                                     <div class="col-6">
                                         <button type="button" class="btn btn-danger end-button"
-                                            id="side_ui_end_race_button"></button>
+                                            id="side_ui_end_race_button" disabled></button>
                                     </div>
                                     <div class="col-6">
 
@@ -149,7 +149,7 @@
             <div class="d-flex bg-dark text-white" style="height: 50px;">
                 <button class="btn btn-dark flex-fill" onclick="openTab('tab1')">Tab 1</button>
                 <button class="btn btn-dark flex-fill" onclick="openTab('tab2')">Tab 2</button>
-                <button class="btn btn-dark flex-fill" onclick="openTab('tab3')">Tab 3</button>
+                <button class="btn btn-dark flex-fill" onclick="openTab('tab3')">Race Handler</button>
                 <button class="btn btn-dark flex-fill" onclick="openTab('tab4')">Livetiming</button>
                 <button class="btn btn-dark flex-fill" onclick="openTab('tab5')">Startlist</button>
                 <button class="btn btn-primary flex-fill" onclick="openTab('tab6')">Debug</button>
@@ -164,17 +164,35 @@
             </div>
 
             <div id="tab3" class="content">
-                <div class="p-3">Tab 3 Content</div>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-6">
+                            
+                        </div>
+                        <div class="col-6">
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+
+                        </div>
+                        <div class="col-6">
+                            <div class="d-flex justify-content-between">
+                                <h5 class="align-self-right">Startlist preview</h5>
+                                <h6></h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div id="tab4" class="content">
                 <div class="container-fluid">
                     <div class="row">
-                        <!-- Scrollable Form Container -->
                         <div class="col-lg-6 p-4 bg-secondary scrollable-inner" style="height: 100vh; overflow-y: auto;"
                             id="live_config">
                             <form oninput="updateSubmitButton()" id="livetiming_form">
-                                <!-- Server Config Section -->
                                 <div class="row mb-4">
                                     <div class="col-12">
                                         <div class="card bg-dark text-white">
