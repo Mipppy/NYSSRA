@@ -2,11 +2,10 @@ import logging
 import threading
 import time
 from xc_timer import XC_TIMER_DLL
-import subprocess
 import csv 
 from datetime import datetime
 import serial.tools.list_ports #type:ignore
-from typing import List, Dict, TypeAlias, TYPE_CHECKING
+from typing import List
 
 class DLL_Race_Handler:
         # The class for overall timer records, with our startlist data + the timer record provided by the DLL.
@@ -85,6 +84,7 @@ class DLL_Race_Handler:
         return None         
     
     def generate_results_csv(self, verbose: bool = False) -> str | None:
+        
         if not self.currently_active_race_data:
             self.logger.error('There is no race data to generate the results file with.')
             return None

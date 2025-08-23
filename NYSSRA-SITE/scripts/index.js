@@ -19,10 +19,16 @@ async function renderPost(post_data) {
     const isEvent = req_data.pd.isEvent;
 
     const eventButtonHTML = isEvent
-        ? `<a href="/calendar.html?event=${encodeURIComponent(req_data.article)}" 
-             class="btn btn-primary btn-sm d-flex align-items-center gap-1">
-                <i class="bi bi-calendar-event-fill"></i> View on Calendar
-           </a>`
+        ? `<div class="d-flex flex-column gap-2">  
+            <a href="/calendar.html?event=${encodeURIComponent(req_data.article)}" 
+               class="btn btn-sm btn-outline-secondary text-nowrap px-3"> <!-- text-nowrap prevents wrapping -->
+               <i class="bi bi-calendar-event-fill me-2"></i> View on Calendar
+            </a>
+            <a target="_blank" id="event-google-calendar"
+               class="btn btn-sm btn-outline-secondary text-nowrap px-3">     
+               <i class="bi bi-google me-2"></i> Add on Google Calendar
+            </a>
+       </div>`
         : "";
 
     const newDiv = document.createElement('div');
@@ -30,7 +36,7 @@ async function renderPost(post_data) {
     const tagsHTML = req_data.pd.tags.map(tag => Navbar.generateTagFormat(tag)).join('');
 
     newDiv.innerHTML = `
-        <div class="card shadow-lg rounded-3 border-2" style="cursor:default;" id="loaded_article">
+        <div class="card shadow-lg rounded-3 border-2" style="cursor:default;" article-name="${req_data.article}" id="loaded_article">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h2 class="card-title mb-0">
@@ -59,6 +65,10 @@ async function renderPost(post_data) {
     `;
 
     MDParentDiv.appendChild(newDiv);
+    if (isEvent) {
+        Navbar.setGoogleCalendarLink(req_data.pd, document.getElementById('event-google-calendar'))
+    }
+
 }
 
 
@@ -67,10 +77,28 @@ async function renderPosts(data) {
     for (const post of sortedPosts) {
         await renderPost(post);
     }
+    for (const ele of document.querySelectorAll('#loaded_article')) {
+        ele.style.cursor = 'pointer';
+
+        ele.addEventListener('click', function (eve) {
+            if (!eve.target.closest('a, button')) {
+                ele.style.cursor = ''
+                location.href = `/article.html?article=${ele.getAttribute('article-name')}`;
+            }
+        });
+
+        const interactiveChildren = ele.querySelectorAll('a, button');
+        interactiveChildren.forEach(child => {
+            child.style.cursor = 'auto';
+        });
+    }
+
+
 }
 
 function loadAndDisplayPosts(index) {
     getPostMetadataPaginated(index).then(data => renderPosts(data));
 }
+
 
 loadAndDisplayPosts(0);

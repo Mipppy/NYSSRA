@@ -11,7 +11,17 @@ class Navbar {
             return [{
                 type: 'output',
                 filter: function (text) {
-                    return text.replace(/<table(\s*[^>]*)>/g, '<table$1 class="table table-striped table-bordered table-hover">');
+                    text = text.replace(/<year=(-?\d+)>/g, function (match, offset) {
+                        const currentYear = Globals.get_year()
+                        return currentYear + parseInt(offset);
+                    });
+
+                    text = text.replace(
+                        /<table(\s*[^>]*)>/g,
+                        '<table$1 class="table table-striped table-bordered table-hover">'
+                    );
+
+                    return text;
                 }
             }];
         }]
@@ -57,15 +67,61 @@ class Navbar {
     static parsePageData(dataText) {
         const lines = dataText.trim().split('\n');
         const date = new Date(lines[1]) || null
+        console.log(dataText)
         return {
             tags: (lines[0] || '').split(',').map(s => s.trim()).filter(Boolean),
-            date: `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}` || null,
+            date: `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}` || null,
             author: lines[2] || null,
             postName: lines[3] || null,
-            isEvent: lines[4]?.toLowerCase().trim() === 'true',
-            eventDate: lines[5] || null,
-            numOfImages: parseInt(lines[6]) || 0
+            isEvent: parseInt(lines[4]) == 1,
+            eventDate: lines[5] == 0 ? null : lines[5],
+            numOfImages: parseInt(lines[6]) || 0,
+            advancedEventData: JSON.parse(lines[7]) || {}
         };
+
+    }
+
+    static toGoogleCalDate(date) {
+        const pad = (n) => n.toString().padStart(2, '0');
+        return date.getUTCFullYear().toString() +
+            pad(date.getUTCMonth() + 1) +
+            pad(date.getUTCDate() + 1) + // Why I have to add one to the day is beyond me
+            'T' +
+            pad(date.getUTCHours()) +
+            pad(date.getUTCMinutes()) +
+            pad(date.getUTCSeconds()) +
+            'Z';
+    }
+
+
+    static setGoogleCalendarLink(postData, element) {
+        if (!postData.isEvent || !element) return;
+
+        const startDate = new Date(postData.eventDate);
+        startDate.setHours(postData.advancedEventData.eventStartHour || 0, 0, 0);
+
+        const endDate = new Date(startDate.getTime() + (postData.advancedEventData.eventLength || 0) * 60 * 60 * 1000);
+
+        const title = encodeURIComponent(postData.postName);
+        const details = encodeURIComponent(postData.advancedEventData.eventDescription || "");
+        const location = encodeURIComponent(postData.advancedEventData.eventLocation || "");
+        const recurrence = typeof postData.advancedEventData.eventRecurrence === "string" && postData.advancedEventData.eventRecurrence
+            ? `&recur=${encodeURIComponent(postData.advancedEventData.eventRecurrence)}`
+            : "";
+
+        const googleCalendarURL = `
+            https://www.google.com/calendar/render
+            ?action=TEMPLATE
+            &text=${title}
+            &dates=${Navbar.toGoogleCalDate(startDate)}/${Navbar.toGoogleCalDate(endDate)}
+            &details=${details}
+            &location=${location}
+            &ctz=America/New_York
+            ${recurrence}
+        `.replace(/\s/g, ''); 
+
+        element.href = googleCalendarURL;
+        element.target = "_blank";
     }
 
     static async loadPageFromURL() {
@@ -78,10 +134,10 @@ class Navbar {
             return;
         }
 
-        const md_request = await fetch(`${Navbar.url}/pages/${article}.md`);
+        const md_request = await fetch(`${Navbar.url}/pages/${article}.md?ts=${Date.now()}`); // Prevent Caching !!!
         const md_text = await md_request.text();
 
-        const article_req = await fetch(`${Navbar.url}/page_data/${article}.txt`);
+        const article_req = await fetch(`${Navbar.url}/page_data/${article}.txt?ts=${Date.now()}`); // Prevent caching!!!
         const article_data = await article_req.text();
         const parsed_data = this.parsePageData(article_data);
 
@@ -91,10 +147,10 @@ class Navbar {
     static async loadPageFromName(name) {
         let new_name = this.replaceLast(name, '.md', '');
 
-        const md_request = await fetch(`${Navbar.url}/pages/${new_name}.md`);
+        const md_request = await fetch(`${Navbar.url}/pages/${new_name}.md?ts=${Date.now()}`);
         const md_text = await md_request.text();
 
-        const article_req = await fetch(`${Navbar.url}/page_data/${new_name}.txt`);
+        const article_req = await fetch(`${Navbar.url}/page_data/${new_name}.txt?ts=${Date.now()}`);
         const article_data = await article_req.text();
         const parsed_data = this.parsePageData(article_data);
 
@@ -130,7 +186,7 @@ class Navbar {
         hour = hour % 12;
         if (hour === 0) hour = 12;
 
-        return `${day}/${month}/${year} ${hour}:${minute} ${ampm}`;
+        return `${month}/${day}/${year} ${hour}:${minute} ${ampm}`;
     }
 
     static generateTagFormat(tag) {

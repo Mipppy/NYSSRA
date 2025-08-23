@@ -1,11 +1,9 @@
-import copy
 import threading
 import json
 import logging
 import time
 from typing import Optional, Union
-from websocket import create_connection, WebSocket, WebSocketException # type:ignore
-
+from websocket import create_connection, WebSocket, WebSocketException
 class LivetimingHandler:
     """
     The way LivetimingHandler works is a little funny.
@@ -194,7 +192,6 @@ class LivetimingHandler:
         self.config_password = config['password']
         self.send_json_message({"password": config['password']})
 
-        # ✅ Wait for authentication confirmation
         auth_wait_start = time.time()
         while not self.authenticated:
             if time.time() - auth_wait_start > self.timeout_wait_sec:

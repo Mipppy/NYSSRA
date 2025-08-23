@@ -7,7 +7,7 @@ import sys
 import subprocess
 import logging
 from pathlib import Path
-from typing import Type, TypeVar, Union, Optional, List
+from typing import Type, TypeVar, Union, Optional
 
 T = TypeVar("T", bound=_SimpleCData)
 

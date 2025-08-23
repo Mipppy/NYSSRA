@@ -1,7 +1,3 @@
-import logging
-import pyttsx3
-import threading
-import time
 
 
 
@@ -9,7 +5,6 @@ class Announcer:
     """
     Announcer fails to run on Wine because of a comtypes error with it not being able to generate the correct bindings. 
     """
-    pass
     # def __init__(self):
     #     self.logger = logging.getLogger("BART2")
     #     self.logger.info("Successfully loaded Announcer.")

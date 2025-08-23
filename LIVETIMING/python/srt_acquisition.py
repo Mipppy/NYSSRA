@@ -5,10 +5,9 @@
 USE XC_TIMER.PY INSTEAD
 """
 from ctypes import *
-from ctypes import _SimpleCData
 import os
-from typing import Type, TypeVar, Union
-from helpers import convert_to_ctypes, ensure_dll_loaded, ensure_ready_to_call_function, XC_TIMER_RECORD_STRUCTURE_TYPE
+from typing import Union
+from helpers import convert_to_ctypes, ensure_dll_loaded, ensure_ready_to_call_function
 
 
 class SRT_ACQUISITION_DLL:

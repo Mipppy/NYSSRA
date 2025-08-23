@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
     Navbar.LoadExtraHTML();
     var showdownInstance = new showdown.Converter(Navbar.showdownParameters);
     showdownInstance.setOption('tables', true);
-showdownInstance.setOption('openLinksInNewWindow', true);
+    showdownInstance.setOption('openLinksInNewWindow', true);
     var mdContentDiv = document.getElementById('md-content');
     var articleTitleEle = document.getElementById('article_title');
     var articleDateEle = document.getElementById('article_date');
@@ -11,6 +11,7 @@ showdownInstance.setOption('openLinksInNewWindow', true);
     var articleEventContainer = document.getElementById('event_container');
     var articleTagsContainer = document.getElementById('article_tags');
     var articleEventCalendarLink = document.getElementById('event_calendar_link');
+    var articleGoogleEventCalendarLink = document.getElementById('event_google_calendar_link');
     let article_data = null;
 
     Navbar.loadPageFromURL().then(e => {
@@ -26,7 +27,7 @@ showdownInstance.setOption('openLinksInNewWindow', true);
             articleEventContainer.classList.remove('d-none');
             articleEventContainer.classList.add('d-flex');
             articleEventDateEle.innerText = e.pd.eventDate;
-
+            Navbar.setGoogleCalendarLink(e.pd, articleGoogleEventCalendarLink)
             if (articleEventCalendarLink) {
                 articleEventCalendarLink.href = `/calendar.html?event=${e.article}`;
             }
