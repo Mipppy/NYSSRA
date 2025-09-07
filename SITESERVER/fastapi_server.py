@@ -1,7 +1,7 @@
 # Copied from Pythonanywhere
 # Run: uvicorn fastapi_server:app --reload
 # Run - Linux: python3.13 -m uvicorn fastapi_server:app --reload
-from fastapi import ( 
+from fastapi import (
     FastAPI,
     UploadFile,
     File,
@@ -10,19 +10,18 @@ from fastapi import (
     Request,
     HTTPException,
     Depends,
-) 
-from fastapi.websockets import WebSocketDisconnect, WebSocketState  
-from fastapi.responses import JSONResponse  
+)
+from fastapi.websockets import WebSocketDisconnect, WebSocketState
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 import os
 import json
 from datetime import datetime, timedelta, timezone
-from fastapi.middleware.cors import CORSMiddleware 
+from fastapi.middleware.cors import CORSMiddleware
 from zoneinfo import ZoneInfo
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials  
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import hashlib
 import secrets
-
 
 
 os.makedirs("livetiming_data", exist_ok=True)
@@ -47,6 +46,26 @@ CORRECT_PASSWORD = "the password"
 BUFFER_SIZE = 100
 FLUSH_INTERVAL = 0.25
 ET = timezone(timedelta(hours=-4))
+
+
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    token = credentials.credentials
+    cleanup_expired_tokens()
+    username = get_user_from_token(token)
+    if not username:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+    return username
+
+
+def admin_required(user: str = Depends(get_current_user)):
+    users = load_json(USERS_PATH)
+    user_data = users.get(user)
+    if not user_data or not user_data.get("admin", False):
+        raise HTTPException(status_code=403, detail="Admin privileges required")
+    return user  
+
+
+
 
 
 @app.get("/")
@@ -123,13 +142,19 @@ async def websocket_endpoint(websocket: WebSocket):
 
             try:
                 json_data = json.loads(data)
+                if json_data.get("INFO_SERVER_PING") == "ping":
+                    await websocket.send_json(
+                        {"INFO_CLIENT_PONG": "bro got ponged fr fr"}
+                    )
+                    
+                    continue
                 message_count += 1
-
                 if not authenticated:
                     if json_data.get("password") == CORRECT_PASSWORD:
                         authenticated = True
                         await websocket.send_json(
                             {
+                                "type": "auth",
                                 "status": "success",
                                 "message": "Authentication successful",
                             }
@@ -144,7 +169,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
                 if message_count == 2 and "new_url" in json_data:
                     created_route = json_data["new_url"].replace(" ", "_")
-                    date_str = now_et.strftime("%d-%m-%Y_%H-%M")
+                    date_str = now_et.strftime("%d-%m-%Y_%H-%M") # FIXME: Wrong timezone (EDT -> EST/GMT).
                     log_file_path = f"livetiming_data/{created_route}_{date_str}.jsonl"
                     log_file = open(log_file_path, "w", buffering=1)
                     await websocket.send_json(
@@ -186,7 +211,8 @@ async def websocket_endpoint(websocket: WebSocket):
                         {"status": "success", "message": "Data received"}
                     )
 
-                    time_elapsed = (datetime.now() - last_flush_time).total_seconds()
+                    time_elapsed = (datetime.now() -
+                                    last_flush_time).total_seconds()
                     if (
                         len(write_buffer) >= BUFFER_SIZE
                         or time_elapsed >= FLUSH_INTERVAL
@@ -194,10 +220,7 @@ async def websocket_endpoint(websocket: WebSocket):
                         log_file.write("\n".join(write_buffer) + "\n")
                         write_buffer.clear()
                         last_flush_time = datetime.now()
-                if "INFO_SERVER_PING" in json_data:
-                    await websocket.send_json(
-                        {"INFO_CLIENT_PONG": "bro got ponged fr fr"}
-                    )
+
             except json.JSONDecodeError:
                 await websocket.send_json(
                     {"status": "error", "message": "Invalid JSON format"}
@@ -230,6 +253,87 @@ async def websocket_endpoint(websocket: WebSocket):
         if websocket.client_state != WebSocketState.DISCONNECTED:
             await websocket.close()
 
+
+@app.post('/editpost')
+async def edit_post(
+    primary_data: str = Form(...),
+    token: str = Form(...),
+    user: str = Depends(admin_required)
+):
+    try:
+        data = json.loads(primary_data)
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=400, detail="Invalid JSON in primary_data")
+
+    post_name = data.get("postName")
+    if not post_name:
+        raise HTTPException(status_code=400, detail="Missing postName")
+
+    md_path = os.path.join("pages", f"{post_name}.md")
+    txt_path = os.path.join("page_data", f"{post_name}.txt")
+
+    if not os.path.exists(md_path) or not os.path.exists(txt_path):
+        raise HTTPException(status_code=404, detail="Post not found")
+
+    markdown = data.get("markdown", "")
+    def sanitize_tables(md: str) -> str:
+        lines = md.splitlines()
+        cleaned = []
+        in_table = False
+        for line in lines:
+            stripped = line.strip()
+            if stripped.startswith("|") and stripped.endswith("|"):
+                if not in_table:
+                    in_table = True
+                cleaned.append(line)
+            elif stripped == "" and in_table:
+                continue
+            else:
+                in_table = False
+                cleaned.append(line)
+        return "\n".join(cleaned)
+
+    with open(md_path, "w", encoding="utf-8") as f:
+        f.write(sanitize_tables(markdown))
+
+    tags_str = ",".join([t.lower() for t in data.get("tags", [])])
+    event_data = data.get("eventData", {})
+    advanced_event_data = json.dumps(data.get("advancedEventData", {}))
+
+    username = user
+
+    with open(txt_path, "w", encoding="utf-8") as f:
+        f.write(tags_str + "\n")
+        f.write(f"{datetime.now(tz=ZoneInfo('America/New_York'))}\n")
+        f.write(username + "\n")
+        f.write(data.get("postNameRaw", post_name) + "\n")
+        f.write(str(event_data.get('isEvent', 0)) + "\n")
+        f.write(event_data.get('eventDate', 0) + "\n")
+        # keep number of images from previous file if exists
+        try:
+            with open(txt_path, "r", encoding="utf-8") as old:
+                old_lines = old.readlines()
+                num_images = old_lines[6].strip() if len(old_lines) > 6 else "0"
+        except:
+            num_images = "0"
+        f.write(str(num_images) + "\n")
+        f.write(advanced_event_data + "\n")
+
+    tag_file_path = "misc_data/tags.txt"
+    existing_tags = set()
+    if os.path.exists(tag_file_path):
+        with open(tag_file_path, "r", encoding="utf-8") as f:
+            existing_tags = set(line.strip().lower() for line in f if line.strip())
+
+    new_tags = existing_tags.union([t.lower() for t in data.get("tags", [])])
+    with open(tag_file_path, "w", encoding="utf-8") as f:
+        for tag in sorted(new_tags):
+            f.write(tag + "\n")
+
+    return {"status": "success", "message": f"Post '{post_name}' updated"}
+
+    
+
 @app.post('/search')
 async def search(
     tags: str = Form(...),
@@ -256,7 +360,8 @@ async def search(
                     if len(lines) < 6:
                         continue
 
-                    metadata_tags = set(t.strip().lower() for t in lines[0].split(",") if t.strip())
+                    metadata_tags = set(t.strip().lower()
+                                        for t in lines[0].split(",") if t.strip())
                     author = lines[2]
                     post_name_raw = lines[3]
                     is_event = lines[4].lower() == "true"
@@ -269,8 +374,10 @@ async def search(
                 with open(md_path, "r", encoding="utf-8") as f:
                     content = f.read().lower()
 
-                matches_tags = not search_tags or search_tags.intersection(metadata_tags)
-                matches_query = not query_lower or (query_lower in content or query_lower in post_name_raw.lower())
+                matches_tags = not search_tags or search_tags.intersection(
+                    metadata_tags)
+                matches_query = not query_lower or (
+                    query_lower in content or query_lower in post_name_raw.lower())
 
                 if not (matches_tags and matches_query):
                     continue
@@ -350,6 +457,7 @@ async def create_post(
         saved_files.append(file_path)
 
     md_path = unique_filepath(pages_dir, postName, ".md")
+
     def sanitize_tables(md: str) -> str:
         lines = md.splitlines()
         cleaned = []
@@ -392,7 +500,8 @@ async def create_post(
     existing_tags = set()
     if os.path.exists(tag_file_path):
         with open(tag_file_path, "r", encoding="utf-8") as f:
-            existing_tags = set(line.strip().lower() for line in f if line.strip())
+            existing_tags = set(line.strip().lower()
+                                for line in f if line.strip())
 
     new_tags = existing_tags.union(tag_list)
     with open(tag_file_path, "w", encoding="utf-8") as f:
@@ -400,6 +509,7 @@ async def create_post(
             f.write(tag + "\n")
 
     return os.path.splitext(os.path.basename(md_path))[0]
+
 
 @app.get("/all_events")
 async def get_all_events():
@@ -440,13 +550,13 @@ async def get_all_events():
             except Exception:
                 return datetime.min
 
-        events.sort(key=lambda e: parse_date(e["event_date"]) if e["event_date"] else datetime.min, reverse=True)
+        events.sort(key=lambda e: parse_date(
+            e["event_date"]) if e["event_date"] else datetime.min, reverse=True)
 
         return JSONResponse(content=events)
 
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
-
 
 
 @app.post("/pages_paginated")
@@ -478,17 +588,21 @@ async def get_paginated_pages(index: int = 0):
                     with open(txt_path, "r", encoding="utf-8") as f:
                         lines = [line.strip() for line in f.readlines()]
                         if len(lines) >= 6:
-                            metadata["tags"] = [tag.strip() for tag in lines[0].split(",")]
+                            metadata["tags"] = [tag.strip()
+                                                for tag in lines[0].split(",")]
                             post_date_str = lines[1]
                             metadata["author"] = lines[2]
                             metadata["post_name_raw"] = lines[3]
                             metadata["is_event"] = lines[4].lower() == "true"
                             metadata["event_date"] = lines[5] if lines[5] else None
                             metadata["num_of_images"] = lines[6] if lines[6] else None
-                            metadata['post_name'] = filename.replace('.txt', '')
-                            metadata['advancedEventData'] = lines[7] if len(lines) > 7 else '{}'
+                            metadata['post_name'] = filename.replace(
+                                '.txt', '')
+                            metadata['advancedEventData'] = lines[7] if len(
+                                lines) > 7 else '{}'
                             try:
-                                post_date_dt = datetime.fromisoformat(post_date_str)
+                                post_date_dt = datetime.fromisoformat(
+                                    post_date_str)
                             except ValueError:
                                 post_date_dt = datetime.min
                         else:
@@ -497,7 +611,8 @@ async def get_paginated_pages(index: int = 0):
                     print(f"Missing metadata file: {txt_path}")
 
                 file_path = os.path.join(pages_folder, filename)
-                update_date = datetime.fromtimestamp(os.path.getmtime(file_path))
+                update_date = datetime.fromtimestamp(
+                    os.path.getmtime(file_path))
 
                 results.append({
                     "filename": filename,
@@ -534,10 +649,6 @@ async def get_paginated_pages(index: int = 0):
         return JSONResponse(status_code=500, content={"error": str(e)})
 
 
-
-
-
-
 security = HTTPBearer()
 
 USERS_FILE = "users.json"
@@ -553,6 +664,7 @@ for path in [USERS_PATH, TOKENS_PATH]:
 
 TOKEN_EXPIRY = timedelta(weeks=2)
 
+
 def load_json(path):
     with open(path, "r") as f:
         return json.load(f)
@@ -566,7 +678,8 @@ def save_json(path, data):
 def hash_password(password, salt=None):
     if not salt:
         salt = secrets.token_hex(16)
-    hashed = hashlib.pbkdf2_hmac("sha256", password.encode(), salt.encode(), 100_000).hex()
+    hashed = hashlib.pbkdf2_hmac(
+        "sha256", password.encode(), salt.encode(), 100_000).hex()
     return hashed, salt
 
 
@@ -616,13 +729,6 @@ def cleanup_expired_tokens():
         save_json(TOKENS_PATH, tokens)
 
 
-async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    token = credentials.credentials
-    cleanup_expired_tokens()
-    username = get_user_from_token(token)
-    if not username:
-        raise HTTPException(status_code=401, detail="Invalid or expired token")
-    return username
 
 
 @app.post("/register")
@@ -683,7 +789,8 @@ async def logout(credentials: HTTPAuthorizationCredentials = Depends(security)):
 
     for username in list(tokens.keys()):
         original = tokens[username]
-        tokens[username] = [entry for entry in original if entry["token"] != token]
+        tokens[username] = [
+            entry for entry in original if entry["token"] != token]
         if not tokens[username]:
             del tokens[username]
             updated = True
@@ -695,5 +802,3 @@ async def logout(credentials: HTTPAuthorizationCredentials = Depends(security)):
         return {"status": "success", "message": "Logged out"}
     else:
         return {"status": "error", "message": "Token not found"}
-        
-    

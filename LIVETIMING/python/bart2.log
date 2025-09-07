@@ -1,10 +1,166 @@
-[INFO] (2025-08-17 12:21:03) - Successfully loaded Logger.
-[DEBUG] (2025-08-17 12:21:03) - Loaded xc_timer_dll.dll's functions successfully.
-[INFO] (2025-08-17 12:21:03) - Successfully loaded xc_timer_dll.dll
-[DEBUG] (2025-08-17 12:21:04) - Raw message from JS: {"message_type": "ready", "data": {}}
-[INFO] (2025-08-17 12:21:04) - JavaScript connection initialized
-[DEBUG] (2025-08-17 12:21:04) - Raw message from JS: {"message_type": "give_me_the_fucking_password", "data": {}}
-[DEBUG] (2025-08-17 12:21:04) - Sent saved password to window.
-[INFO] (2025-08-17 12:21:04) - Successfully loaded all classes.
-[DEBUG] (2025-08-17 12:21:31) - Raw message from JS: {"message_type": "startlist_input", "data": [{"bib":"1","name":"John Smith","team":"Queensbury","":""},{"bib":"2","name":"Ralph John","team":"Queensbury","":""},{"bib":"3","name":"Fred Ralph","team":"Queensbury","":""},{"bib":"4","name":"Mike Fred","team":"Queensbury","":""},{"bib":"5","name":"Jeff Mike","team":"Queensbury","":""},{"bib":"6","name":"Gabe Jeff","team":"Queensbury","":""},{"bib":"7","name":"Milly Gabe","team":"Queensbury","":""},{"bib":"8","name":"Jones Milly","team":"Queensbury","":""},{"bib":"9","name":"Rider Jones","team":"Queensbury","":""},{"bib":"10","name":"Alex Rider","team":"Queensbury","":""}]}
-[DEBUG] (2025-08-17 12:21:31) - [{'bib': '1', 'name': 'John Smith', 'team': 'Queensbury', '': ''}, {'bib': '2', 'name': 'Ralph John', 'team': 'Queensbury', '': ''}, {'bib': '3', 'name': 'Fred Ralph', 'team': 'Queensbury', '': ''}, {'bib': '4', 'name': 'Mike Fred', 'team': 'Queensbury', '': ''}, {'bib': '5', 'name': 'Jeff Mike', 'team': 'Queensbury', '': ''}, {'bib': '6', 'name': 'Gabe Jeff', 'team': 'Queensbury', '': ''}, {'bib': '7', 'name': 'Milly Gabe', 'team': 'Queensbury', '': ''}, {'bib': '8', 'name': 'Jones Milly', 'team': 'Queensbury', '': ''}, {'bib': '9', 'name': 'Rider Jones', 'team': 'Queensbury', '': ''}, {'bib': '10', 'name': 'Alex Rider', 'team': 'Queensbury', '': ''}]
+[INFO] (2025-08-23 18:37:30) - Successfully loaded Logger.
+[DEBUG] (2025-08-23 18:37:30) - Loaded xc_timer_dll.dll's functions successfully.
+[INFO] (2025-08-23 18:37:30) - Successfully loaded xc_timer_dll.dll
+[DEBUG] (2025-08-23 18:37:31) - Raw message from JS: {"message_type": "ready", "data": {}}
+[INFO] (2025-08-23 18:37:31) - JavaScript connection initialized
+[DEBUG] (2025-08-23 18:37:31) - Raw message from JS: {"message_type": "give_me_the_fucking_password", "data": {}}
+[DEBUG] (2025-08-23 18:37:31) - Sent saved password to window.
+[INFO] (2025-08-23 18:37:31) - Successfully loaded all classes.
+[DEBUG] (2025-08-23 18:38:01) - Raw message from JS: {"message_type":"livetiming_form", "data":{"password":"the password","filename":"test","headers":{"name":"test","place":"test"}}}
+[INFO] (2025-08-23 18:38:01) - Successfully created WS connection to ws://127.0.0.1:8000/livetiming-ws
+[DEBUG] (2025-08-23 18:38:01) - WebSocket ready — sending auth/config
+[DEBUG] (2025-08-23 18:38:01) - Sent PING to server
+[DEBUG] (2025-08-23 18:38:01) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:38:01) - Received Livetiming WS message: {'type': 'auth', 'status': 'success', 'message': 'Authentication successful'}
+[INFO] (2025-08-23 18:38:01) - Authentication successful.
+[DEBUG] (2025-08-23 18:38:01) - Received Livetiming WS message: {'status': 'success', 'new_route': 'test', 'log_file': 'livetiming_data/test_23-08-2025_18-38.jsonl'}
+[DEBUG] (2025-08-23 18:38:02) - the password
+[DEBUG] (2025-08-23 18:38:02) - Received Livetiming WS message: {'status': 'success', 'message': 'Header written with live:true'}
+[DEBUG] (2025-08-23 18:38:16) - Sent PING to server
+[DEBUG] (2025-08-23 18:38:16) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:38:31) - Sent PING to server
+[DEBUG] (2025-08-23 18:38:31) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:38:46) - Sent PING to server
+[DEBUG] (2025-08-23 18:38:46) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:39:01) - Sent PING to server
+[DEBUG] (2025-08-23 18:39:01) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:39:16) - Sent PING to server
+[DEBUG] (2025-08-23 18:39:16) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:39:31) - Sent PING to server
+[DEBUG] (2025-08-23 18:39:31) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:39:46) - Sent PING to server
+[DEBUG] (2025-08-23 18:39:46) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:40:01) - Sent PING to server
+[DEBUG] (2025-08-23 18:40:01) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:40:16) - Sent PING to server
+[DEBUG] (2025-08-23 18:40:16) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:40:31) - Sent PING to server
+[DEBUG] (2025-08-23 18:40:31) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:40:46) - Sent PING to server
+[DEBUG] (2025-08-23 18:40:46) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:41:01) - Sent PING to server
+[DEBUG] (2025-08-23 18:41:01) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:41:16) - Sent PING to server
+[DEBUG] (2025-08-23 18:41:16) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:41:31) - Sent PING to server
+[DEBUG] (2025-08-23 18:41:31) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:41:46) - Sent PING to server
+[DEBUG] (2025-08-23 18:41:46) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:42:01) - Sent PING to server
+[DEBUG] (2025-08-23 18:42:01) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:42:16) - Sent PING to server
+[DEBUG] (2025-08-23 18:42:16) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:42:31) - Sent PING to server
+[DEBUG] (2025-08-23 18:42:31) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:42:46) - Sent PING to server
+[DEBUG] (2025-08-23 18:42:46) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:43:01) - Sent PING to server
+[DEBUG] (2025-08-23 18:43:01) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:43:16) - Sent PING to server
+[DEBUG] (2025-08-23 18:43:16) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:43:31) - Sent PING to server
+[DEBUG] (2025-08-23 18:43:31) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:43:46) - Sent PING to server
+[DEBUG] (2025-08-23 18:43:46) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:44:01) - Sent PING to server
+[DEBUG] (2025-08-23 18:44:01) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:44:16) - Sent PING to server
+[DEBUG] (2025-08-23 18:44:16) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:44:31) - Sent PING to server
+[DEBUG] (2025-08-23 18:44:31) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:44:46) - Sent PING to server
+[DEBUG] (2025-08-23 18:44:46) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:45:01) - Sent PING to server
+[DEBUG] (2025-08-23 18:45:01) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:45:16) - Sent PING to server
+[DEBUG] (2025-08-23 18:45:16) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:45:31) - Sent PING to server
+[DEBUG] (2025-08-23 18:45:31) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:45:46) - Sent PING to server
+[DEBUG] (2025-08-23 18:45:46) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:46:01) - Sent PING to server
+[DEBUG] (2025-08-23 18:46:01) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:46:16) - Sent PING to server
+[DEBUG] (2025-08-23 18:46:16) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:46:31) - Sent PING to server
+[DEBUG] (2025-08-23 18:46:31) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:46:46) - Sent PING to server
+[DEBUG] (2025-08-23 18:46:46) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:47:01) - Sent PING to server
+[DEBUG] (2025-08-23 18:47:01) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:47:16) - Sent PING to server
+[DEBUG] (2025-08-23 18:47:16) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:47:31) - Sent PING to server
+[DEBUG] (2025-08-23 18:47:31) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:47:46) - Sent PING to server
+[DEBUG] (2025-08-23 18:47:46) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:48:01) - Sent PING to server
+[DEBUG] (2025-08-23 18:48:01) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:48:16) - Sent PING to server
+[DEBUG] (2025-08-23 18:48:16) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:48:31) - Sent PING to server
+[DEBUG] (2025-08-23 18:48:31) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:48:47) - Sent PING to server
+[DEBUG] (2025-08-23 18:48:47) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:49:02) - Sent PING to server
+[DEBUG] (2025-08-23 18:49:02) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:49:17) - Sent PING to server
+[DEBUG] (2025-08-23 18:49:17) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:49:32) - Sent PING to server
+[DEBUG] (2025-08-23 18:49:32) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:49:47) - Sent PING to server
+[DEBUG] (2025-08-23 18:49:47) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:50:02) - Sent PING to server
+[DEBUG] (2025-08-23 18:50:02) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:50:17) - Sent PING to server
+[DEBUG] (2025-08-23 18:50:17) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:50:32) - Sent PING to server
+[DEBUG] (2025-08-23 18:50:32) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:50:47) - Sent PING to server
+[DEBUG] (2025-08-23 18:50:47) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:51:02) - Sent PING to server
+[DEBUG] (2025-08-23 18:51:02) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:51:17) - Sent PING to server
+[DEBUG] (2025-08-23 18:51:17) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:51:32) - Sent PING to server
+[DEBUG] (2025-08-23 18:51:32) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:51:47) - Sent PING to server
+[DEBUG] (2025-08-23 18:51:47) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:52:02) - Sent PING to server
+[DEBUG] (2025-08-23 18:52:02) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:52:17) - Sent PING to server
+[DEBUG] (2025-08-23 18:52:17) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:52:32) - Sent PING to server
+[DEBUG] (2025-08-23 18:52:32) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:52:47) - Sent PING to server
+[DEBUG] (2025-08-23 18:52:47) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:53:02) - Sent PING to server
+[DEBUG] (2025-08-23 18:53:02) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:53:17) - Sent PING to server
+[DEBUG] (2025-08-23 18:53:17) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:53:32) - Sent PING to server
+[DEBUG] (2025-08-23 18:53:32) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:53:47) - Sent PING to server
+[DEBUG] (2025-08-23 18:53:47) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:54:02) - Sent PING to server
+[DEBUG] (2025-08-23 18:54:02) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:54:17) - Sent PING to server
+[DEBUG] (2025-08-23 18:54:17) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:54:32) - Sent PING to server
+[DEBUG] (2025-08-23 18:54:32) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:54:47) - Sent PING to server
+[DEBUG] (2025-08-23 18:54:47) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:55:02) - Sent PING to server
+[DEBUG] (2025-08-23 18:55:02) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:55:17) - Sent PING to server
+[DEBUG] (2025-08-23 18:55:17) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:55:32) - Sent PING to server
+[DEBUG] (2025-08-23 18:55:32) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:55:47) - Sent PING to server
+[DEBUG] (2025-08-23 18:55:47) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:56:02) - Sent PING to server
+[DEBUG] (2025-08-23 18:56:02) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-08-23 18:56:17) - Sent PING to server
+[DEBUG] (2025-08-23 18:56:17) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[ERROR] (2025-08-23 19:30:24) - No pong received in 20 seconds, shutting down Livetiming WS (Likely doesn't matter because if there is no ping, the server is dead).
+[INFO] (2025-08-23 19:30:24) - Livetiming WS connection closed successfully.

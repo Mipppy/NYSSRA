@@ -1,9 +1,15 @@
+// You might want to make an IIAFE to await it, or some functions might break
+// Notably, the isAdmin function will always output false if called shortly after LoadExtraHTML
+// Hence the existance of the isAdminRequest, which it itself can be await.
+// That function mostly exists for my convience, as I'dd rather not refactor some code to await LoadExtraHTML, and using the isAdminRequest is easier.
+
 class Navbar {
     static url = window.location.host.includes('localhost')
         ? 'http://127.0.0.1:8000'
         : Globals.base_url;
 
     static login_token = localStorage?.getItem("nyssra_login_token");
+
     static showdownParameters = {
         tables: true,
         openLinksInNewWindow: true,
@@ -27,17 +33,54 @@ class Navbar {
         }]
     }
 
+    static simpleMDEParameters = {
+        element: document.getElementById("markdown-editor"),
+        spellChecker: true,
+        placeholder: "Write your Markdown content here...",
+        showIcons: ["code", "table"],
+        toolbar: [
+            "bold", "italic", "heading", "link", "|",
+            "quote", "unordered-list", "ordered-list", "|",
+            {
+                name: "table",
+                action: function (editor) {
+                    const cm = editor.codemirror;
+                    cm.replaceSelection(
+                        `| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text     | Text     |`
+                    );
+                    cm.focus();
+                },
+                className: "fa fa-table",
+                title: "Insert Table",
+            },
+            {
+                name: "year",
+                action: function (editor) {
+                    const cm = editor.codemirror;
+                    var date_adjust = parseInt(prompt(`Enter the number of years back or forward you want to show.\nExample: -2 to show ${Globals.get_year() - 2}`, "0"))
+
+                    cm.replaceSelection(
+                        `<year=${date_adjust}>`
+                    )
+                    cm.focus()
+                },
+                className: "fa fa-clock-o",
+                title: "Insert year"
+            },
+            "|", "preview", "side-by-side", "fullscreen", "guide",
+        ],
+    }
 
     static async LoadExtraHTML() {
         await this.initUserData()
-        document.querySelector('nav').innerHTML = await (await fetch(`/embeds/navbar.html`)).text();
+        document.querySelector('nav').innerHTML = await (await fetch(`/embeds/navbar.html`)).text(); // These don't want the ts= param because they are safe to cache.
         document.querySelector('footer').innerHTML = await (await fetch('/embeds/footer.html')).text();
     }
 
     static async getUserdata() {
         if (!this.login_token) return null;
 
-        const res = await fetch(`${this.url}/me`, {
+        const res = await fetch(`${this.url}/me?ts=${Date.now()}`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${this.login_token}`
@@ -64,6 +107,14 @@ class Navbar {
     static isAdmin() {
         return this.user_data?.admin === true;
     }
+
+    static async isAdminRequest() {
+        const user = await this.getUserdata();
+        this.user_data = user
+        return user?.admin === true;
+    }
+
+
     static parsePageData(dataText) {
         const lines = dataText.trim().split('\n');
         const date = new Date(lines[1]) || null
@@ -118,7 +169,7 @@ class Navbar {
             &location=${location}
             &ctz=America/New_York
             ${recurrence}
-        `.replace(/\s/g, ''); 
+        `.replace(/\s/g, '');
 
         element.href = googleCalendarURL;
         element.target = "_blank";
@@ -156,19 +207,28 @@ class Navbar {
 
         return { md: md_text, pd: parsed_data, article: new_name };
     }
+
     static replaceLast(str, search, replace) {
         const index = str.lastIndexOf(search);
         if (index === -1) return str;
         return str.substring(0, index) + replace + str.substring(index + search.length);
     }
+
     static async loadCalendar(ele) {
-        const req = await fetch("/embeds/calender.html")
+        const req = await fetch(`/embeds/calender.html?ts=${Date.now()}`)
         const htmlData = await req.text()
         ele.innerHTML = htmlData
         return htmlData
     }
+
     static async loadAllEvents() {
-        const req = await fetch(`${Navbar.url}/all_events`)
+        const req = await fetch(`${Navbar.url}/all_events?ts=${Date.now()}`)
+        const json = await req.json()
+        return json
+    }
+
+    static async loadAllRaces() {
+        const req = await fetch(`${Navbar.url}/all_races?ts=${Date.now()}`)
         const json = await req.json()
         return json
     }
@@ -189,9 +249,28 @@ class Navbar {
         return `${month}/${day}/${year} ${hour}:${minute} ${ampm}`;
     }
 
-    static generateTagFormat(tag) {
+    static async loadRaceData(race_filename) {
+        const req = await fetch(`${Navbar.url}/livetiming_data/${race_filename}?ts=${Date.now()}`)
+        if (!req.ok) {
+            return []
+        }
+        const req_raw = await req.text()
+        const raw_lines = req_raw.split('\n')
+        var return_arr = []
+        for (let line of raw_lines) {
+            try {
+                return_arr.push(JSON.parse(line))
+            }
+            catch (err) {
+                console.log(`Line: {${line}} was not valid JSON. Skipping...`)
+            }
+        }
+        return return_arr
+    }
+
+    static generateTagFormat(tag, icon="") {
         return `
-    <a href="/search.html?tags=${tag}" style="
+    <a href="/search.html?tags=${tag}" _tag=${tag} id="tag" style="
         display: inline-block;
         background-color: #d3d3d3;
         color: black;
@@ -202,7 +281,7 @@ class Navbar {
         cursor: pointer;
         white-space: nowrap;
         text-decoration: none;">
-        ${tag}
+        ${tag}&nbsp;${icon}
     </a>`
     }
 }

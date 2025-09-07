@@ -3,47 +3,121 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>404 - Page Not Found</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NYSSRA - Edit Post</title>
     <link rel="shortcut icon" href="/images/nyssra-logo.jpg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <link rel="stylesheet" href="css/global.css" />
     <link rel="stylesheet" href="css/bootstrap.css" />
+    <link rel="stylesheet" href="css/simplemde.css" />
     <link rel="stylesheet" href="css/bootstrap-icons.css" />
-
-    <style>
-        html,
-        body {
-            height: 100%;
-            margin: 0;
-        }
-
-        body {
-            display: flex;
-            flex-direction: column;
-        }
-
-        main {
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            text-align: center;
-        }
-    </style>
 </head>
 
-<body>
+<body class="min-vh-100 d-flex flex-column">
+
     <nav></nav>
 
-    <main class="py-4">
+    <main class="flex-grow-1 py-4">
+        <div class="container">
+            <div class="row justify-content-between align-item-between">
+                <div class="col-md-8 bg-light rounded p-4 shadow-sm position-relative">
+                    <div class="row container gx-3">
+                        <div class="col-12 mb-3 d-flex justify-content-between align-items-start">
+                            <div>
+                                <h2 class="card-title">
+                                    <i class="bi bi-pencil-square me-2"></i>
+                                    Edit Post
+                                </h2>
+                                <p class="text-muted small mb-0">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Only administrators can edit posts.
+                                </p>
+                            </div>
+                            <div>
+                                <button id="save_post_button" class="btn btn-success">
+                                    <i class="bi bi-save me-1"></i> Save Changes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
+                    <hr>
+
+                    <div class="mt-3">
+                        <textarea id="markdown-editor"></textarea>
+                    </div>
+                </div>
+
+                <div class="col-md-3 bg-light rounded shadow-sm p-3">
+                    <aside>
+                        <h3 class="">Post data</h3>
+                        <hr>
+                        <div>
+                            <label class="form-label fw-bold">Post name</label>
+                            <input class="form-control form-control-sm" type="text" id="post-name"
+                                placeholder="Event name">
+                        </div>
+                        <hr>
+
+                        <h5 class="d-flex align-items-center gap-2">
+                            <i class="bi bi-tags-fill"></i>
+                            <span>Tags</span>
+                            <button id="addTag" class="btn btn-sm btn-light border rounded-circle ms-2" type="button"
+                                style="width: 28px; height: 28px; line-height: 1;">
+                                +
+                            </button>
+                        </h5>
+                        <div id="tags-container" class="mb-3"></div>
+                        <hr>
+
+                        <div id="eventdata" class="p-3 rounded border d-none"
+                            style="background-color: rgb(245, 245, 245)">
+                            <h5 class="mb-3"><i class="bi bi-calendar-event"></i> Event Data</h5>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Event Location</label>
+                                <textarea class="form-control form-control-sm" id="event-location"
+                                    placeholder="Enter new event location" rows="2"></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Event Description</label>
+                                <textarea class="form-control form-control-sm" id="event-description"
+                                    placeholder="Enter event description"></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Event Date</label>
+                                <input class="form-control form-control-sm" type="date" id="event-date">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Start Time (24h)</label>
+                                <div class="input-group input-group-sm">
+                                    <input class="form-control" type="number" min="0" max="23" step="1" value="9"
+                                        placeholder="0-23" id="event-start-time" autocomplete="off">
+                                    <span class="input-group-text">:00</span>
+                                </div>
+                                <small class="text-muted">Enter the start hour</small>
+                            </div>
+
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Event Length (hours)</label>
+                                <input class="form-control form-control-sm" type="number" min="1" id="event-length"
+                                    autocomplete="off">
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </div>
     </main>
 
     <footer></footer>
 
     <script src="scripts/bootstrap.js"></script>
+    <script src="scripts/simplemde.js"></script>
     <script src="scripts/navbar.js"></script>
     <script src="scripts/editpost.js"></script>
 </body>

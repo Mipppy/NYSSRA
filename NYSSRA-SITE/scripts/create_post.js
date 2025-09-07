@@ -5,46 +5,10 @@
     }
 })();
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 
-    const simplemde = new SimpleMDE({
-        element: document.getElementById("markdown-editor"),
-        spellChecker: true,
-        placeholder: "Write your Markdown content here...",
-        showIcons: ["code", "table"],
-        toolbar: [
-            "bold", "italic", "heading", "link", "|",
-            "quote", "unordered-list", "ordered-list", "|",
-            {
-                name: "table",
-                action: function (editor) {
-                    const cm = editor.codemirror;
-                    cm.replaceSelection(
-                        `| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text     | Text     |`
-                    );
-                    cm.focus();
-                },
-                className: "fa fa-table",
-                title: "Insert Table",
-            },
-            {
-                name: "year",
-                action: function (editor) {
-                    const cm = editor.codemirror;
-                    var date_adjust = parseInt(prompt(`Enter the number of years back or forward you want to show.\nExample: -2 to show ${Globals.get_year() - 2}`, "0"))
-
-                    cm.replaceSelection(
-                        `<year=${date_adjust}>`
-                    )
-                    cm.focus()
-                },
-                className: "fa fa-clock-o",
-                title: "Insert year"
-            },
-            "|", "preview", "side-by-side", "fullscreen", "guide",
-        ],
-    });
+    const simplemde = new SimpleMDE(Navbar.simpleMDEParameters);
 
     const imageInput = document.getElementById("image-upload");
     const previewContainer = document.getElementById("image-preview-container");

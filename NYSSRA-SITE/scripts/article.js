@@ -1,5 +1,5 @@
-document.addEventListener("DOMContentLoaded", () => {
-    Navbar.LoadExtraHTML();
+document.addEventListener("DOMContentLoaded", async () => {
+    await Navbar.LoadExtraHTML();
     var showdownInstance = new showdown.Converter(Navbar.showdownParameters);
     showdownInstance.setOption('tables', true);
     showdownInstance.setOption('openLinksInNewWindow', true);
@@ -12,16 +12,27 @@ document.addEventListener("DOMContentLoaded", () => {
     var articleTagsContainer = document.getElementById('article_tags');
     var articleEventCalendarLink = document.getElementById('event_calendar_link');
     var articleGoogleEventCalendarLink = document.getElementById('event_google_calendar_link');
+    var articleEditButton = document.getElementById('edit_post_button');
     let article_data = null;
 
-    Navbar.loadPageFromURL().then(e => {
+    Navbar.loadPageFromURL().then(async e => {
         article_data = e;
-        if (e.md == '{"detail":"Not Found"}') {
+        if (e.md == '{"detail":"Not Found"}' || !e) {
             window.location.replace('/404.html');
         }
         articleTitleEle.innerText = e.pd.postName;
         articleDateEle.innerText = Navbar.turnToCorrectDate(e.pd.date).trim();
         articleAuthorEle.innerText = e.pd.author.trim();
+
+        if (await Navbar.isAdmin()) {
+            articleEditButton.classList.remove('d-none')
+            articleEditButton.addEventListener('click', (ev) => {
+                window.location.replace(`/editpost.html?article=${e.article}`) 
+            })
+        }
+        else {
+            articleEditButton.remove();
+        }
 
         if (e.pd.isEvent) {
             articleEventContainer.classList.remove('d-none');
@@ -38,7 +49,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
         mdContentDiv.innerHTML = showdownInstance.makeHtml(e.md);
     });
-    document.getElementById('edit_post_button').addEventListener('click', async () => {
-
-    })
 });
