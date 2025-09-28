@@ -23,7 +23,9 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import hashlib
 import secrets
 
-
+security = HTTPBearer()
+NY_TZ = ZoneInfo("America/New_York")
+now_ny = datetime.now(NY_TZ)
 os.makedirs("livetiming_data", exist_ok=True)
 
 app = FastAPI()
@@ -45,7 +47,6 @@ app.add_middleware(
 CORRECT_PASSWORD = "the password"
 BUFFER_SIZE = 100
 FLUSH_INTERVAL = 0.25
-ET = timezone(timedelta(hours=-4))
 
 
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
@@ -138,7 +139,7 @@ async def websocket_endpoint(websocket: WebSocket):
     try:
         while True:
             data = await websocket.receive_text()
-            now_et = datetime.now(ET)
+            now_et = now_ny.now()
 
             try:
                 json_data = json.loads(data)
@@ -169,7 +170,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
                 if message_count == 2 and "new_url" in json_data:
                     created_route = json_data["new_url"].replace(" ", "_")
-                    date_str = now_et.strftime("%d-%m-%Y_%H-%M") # FIXME: Wrong timezone (EDT -> EST/GMT).
+                    date_str = now_et.strftime("%d-%m-%Y_%H-%M") 
                     log_file_path = f"livetiming_data/{created_route}_{date_str}.jsonl"
                     log_file = open(log_file_path, "w", buffering=1)
                     await websocket.send_json(
@@ -649,7 +650,6 @@ async def get_paginated_pages(index: int = 0):
         return JSONResponse(status_code=500, content={"error": str(e)})
 
 
-security = HTTPBearer()
 
 USERS_FILE = "users.json"
 TOKENS_FILE = "tokens.json"

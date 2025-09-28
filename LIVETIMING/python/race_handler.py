@@ -151,7 +151,6 @@ class DLL_Race_Handler:
             self.logger.error(f"Failed to generate results CSV: {e}")
             return None
 
-            
 
 
     def _rescan_comm_ports(self):

@@ -7,3 +7,6 @@
 #         print(self.jim)
 
 # f = test(john="John", jeff="Jeff", jim="Jim")
+import serial.tools.list_ports
+
+print(serial.tools.list_ports.comports())
