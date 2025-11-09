@@ -5,3 +5,42 @@
 [INFO] (2025-09-14 21:31:22) - JavaScript connection initialized
 [DEBUG] (2025-09-14 21:31:22) - Raw message from JS: {"message_type": "give_me_the_fucking_password", "data": {}}
 [DEBUG] (2025-09-14 21:31:22) - Sent saved password to window.
+[INFO] (2025-09-14 21:31:23) - Successfully loaded all classes.
+[DEBUG] (2025-09-14 21:31:41) - Raw message from JS: {"message_type":"livetiming_form", "data":{"password":"the password","filename":"test","headers":{"name":"test","place":"place"}}}
+[INFO] (2025-09-14 21:31:41) - Successfully created WS connection to ws://127.0.0.1:8000/livetiming-ws
+[DEBUG] (2025-09-14 21:31:41) - WebSocket ready — sending auth/config
+[DEBUG] (2025-09-14 21:31:41) - Sent PING to server
+[DEBUG] (2025-09-14 21:31:41) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-09-14 21:31:41) - Received Livetiming WS message: {'type': 'auth', 'status': 'success', 'message': 'Authentication successful'}
+[INFO] (2025-09-14 21:31:41) - Authentication successful.
+[DEBUG] (2025-09-14 21:31:41) - Received Livetiming WS message: {'status': 'success', 'new_route': 'test', 'log_file': 'livetiming_data/test_14-09-2025_21-31.jsonl'}
+[DEBUG] (2025-09-14 21:31:41) - the password
+[DEBUG] (2025-09-14 21:31:41) - Received Livetiming WS message: {'status': 'success', 'message': 'Header written with live:true'}
+[DEBUG] (2025-09-14 21:31:56) - Sent PING to server
+[DEBUG] (2025-09-14 21:31:56) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-09-14 21:32:11) - Sent PING to server
+[DEBUG] (2025-09-14 21:32:11) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-09-14 21:32:26) - Sent PING to server
+[DEBUG] (2025-09-14 21:32:26) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-09-14 21:32:41) - Sent PING to server
+[DEBUG] (2025-09-14 21:32:41) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-09-14 21:32:56) - Sent PING to server
+[DEBUG] (2025-09-14 21:32:56) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-09-14 21:33:11) - Sent PING to server
+[DEBUG] (2025-09-14 21:33:11) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-09-14 21:33:26) - Sent PING to server
+[DEBUG] (2025-09-14 21:33:26) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-09-14 21:33:41) - Sent PING to server
+[DEBUG] (2025-09-14 21:33:41) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-09-14 21:33:56) - Sent PING to server
+[DEBUG] (2025-09-14 21:33:56) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-09-14 21:34:11) - Sent PING to server
+[DEBUG] (2025-09-14 21:34:11) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-09-14 21:34:26) - Sent PING to server
+[DEBUG] (2025-09-14 21:34:26) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-09-14 21:34:41) - Sent PING to server
+[DEBUG] (2025-09-14 21:34:41) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[DEBUG] (2025-09-14 21:34:56) - Sent PING to server
+[DEBUG] (2025-09-14 21:34:56) - Received Livetiming WS message: {'INFO_CLIENT_PONG': 'bro got ponged fr fr'}
+[ERROR] (2025-09-14 21:35:09) - Unexpected Livetiming WS error: [WinError 10053] An established connection was aborted by the software in your host machine
+[INFO] (2025-09-14 21:35:09) - Livetiming WS connection closed successfully.
