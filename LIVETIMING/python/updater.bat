@@ -44,5 +44,4 @@ echo Update complete!
 
 :start_app
 echo Launching application...
-start "" run.bat
 exit
