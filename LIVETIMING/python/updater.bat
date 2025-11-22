@@ -44,4 +44,4 @@ echo Update complete!
 
 :start_app
 echo Launching application...
-exit
+endlocal
