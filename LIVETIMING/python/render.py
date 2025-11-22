@@ -1,8 +1,8 @@
 import sys
 from pathlib import Path
 from PyQt5.QtWidgets import QApplication, QMainWindow #type: ignore
-from PyQt5.QtWebEngineWidgets import QWebEngineView #type: ignore
-from PyQt5.QtCore import QUrl, QObject, pyqtSlot, pyqtSignal #type:ignore
+from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage #type: ignore
+from PyQt5.QtCore import QUrl, QObject, pyqtSlot, pyqtSignal, QTimer #type:ignore
 from PyQt5.QtWebChannel import QWebChannel #type: ignore
 import logging
 from typing import List
@@ -58,7 +58,7 @@ class Bridge(QObject):
                 password = Instances.settings.get_setting("SAVED_PASSWORD")
                 self.send_to_js(f"SAVED_PASSWORD|||{password}")
                 logger.debug("Sent saved password to window.")
-            elif message_type == "startlist_input":
+            elif message_type == "startlist_input2":
                 Instances.dll_interfacer.load_startlist(json_msg['data'])
             elif message_type == "open_file":
                 openFileInExplorer(json_msg['data'])
@@ -80,6 +80,10 @@ class Bridge(QObject):
         """
         self.js_message.emit(str(message))
 
+class MyWebEnginePage(QWebEnginePage):
+    def javaScriptConsoleMessage(self, level, message, lineNumber, sourceID):
+        print(f"[JS:{level}] {message} (line {lineNumber})")
+
 class HTMLWindow(QMainWindow):
     """
     The actual window class.
@@ -93,8 +97,8 @@ class HTMLWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("Timing System")
         self.browser = QWebEngineView()
+        self.browser.setPage(MyWebEnginePage(self.browser))
         self.setCentralWidget(self.browser)
-        
         self.channel = QWebChannel()
         self.bridge = Bridge()
         self.channel.registerObject('bridge', self.bridge)
@@ -104,7 +108,7 @@ class HTMLWindow(QMainWindow):
         self.resize(screen.width() , screen.height())  
         
         self.load_html(html_file)
-        
+        QTimer.singleShot(0, lambda: self.setGeometry(QApplication.primaryScreen().availableGeometry()))
     def closeEvent(self, a0):
         """
         When the window is closed, this closes the Websocket as well.  

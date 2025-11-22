@@ -6,7 +6,11 @@ import csv
 from datetime import datetime
 import serial.tools.list_ports #type:ignore
 from typing import List
-
+import base64
+import json
+from io import BytesIO,StringIO
+import openpyxl
+import csv
 class DLL_Race_Handler:
         # The class for overall timer records, with our startlist data + the timer record provided by the DLL.
     class BatchedTimerRecord:
@@ -25,16 +29,18 @@ class DLL_Race_Handler:
         # It feels a little wrong initializing the DLL here, but whatever.
         self.xc_timer_dll.dll_initialize_dll_task(0x100 | 0x40 | 0x10 | 2,'srt/')
         self.xc_timer_dll.dll_set_string_delimiter(0)
-        
+        self.startlist: List[dict] = []
+        self.currently_active_race_data: List[DLL_Race_Handler.BatchedTimerRecord] = []
+        self.serial_comm_ports = []
+        self.is_currently_racing = False
+        self.startlist_file_type = "csv"
+        self.startlist_file_name = "unknown"
         self.logger = logging.getLogger("BART2")
         self.race_results_thread = threading.Thread(target=self._race_results_worker, daemon=True)
         self.race_results_thread.start()
         # Startlist should always at least have one participant with at least this dict data
         # {"bib_num": int, "first_name": str, "last_name": str, "team": str}
-        self.startlist: List[dict] = []
-        self.currently_active_race_data: List[DLL_Race_Handler.BatchedTimerRecord] = []
-        self.serial_comm_ports = []
-        self.is_currently_racing = False
+
 
     def _race_results_worker(self):
         """
@@ -159,23 +165,37 @@ class DLL_Race_Handler:
         As I progress, the less feasible using Wine to develop the whole thing seems.
         """
         self.serial_comm_ports = serial.tools.list_ports.comports()
-        string_builder = ""
-        for port in self.serial_comm_ports:
-            string_builder += f"{port.device},"
+            
         from instances import Instances
-        Instances.window.bridge.send_to_js(f"SERIAL_COM_PORTS|||{string_builder}")
+        Instances.window.bridge.send_to_js(f"SERIAL_COM_PORTS|||{json.dumps({'ports': [[port.device, port.manufacturer] for port in self.serial_comm_ports]})}")
 
-    def load_startlist(self, startlist: list):
-        """
-        Loads a startlist into memory.  
+    def load_startlist(self, startlist_data: dict):
+        b64 = startlist_data.get("file_data", "")
+        file_bytes = base64.b64decode(b64)
 
-        Args:
-            startlist (list): The startlist, typically sent from the JS to `render.py`
-        """
-        self.logger.debug(startlist)
-        self.startlist = startlist
-        
-    
+        self.startlist_file_type = startlist_data.get("file_type", "")
+        self.startlist_file_name = startlist_data.get("file_name", "")
+
+
+        if self.startlist_file_name.endswith(".csv"):
+            decoded = file_bytes.decode("utf-8", errors="ignore")
+            reader = csv.DictReader(StringIO(decoded))
+            self.startlist = list(reader)
+
+        elif self.startlist_file_name.endswith(".xls") or self.startlist_file_name.endswith(".xlsx"):
+
+
+            buf = BytesIO(file_bytes)
+            wb = openpyxl.load_workbook(buf)
+            ws = wb.active
+
+            rows = []
+            for row in ws.iter_rows(values_only=True):
+                rows.append(row)
+
+            self.startlist = [list(row) for row in rows]
+        from instances import Instances
+        Instances.window.bridge.send_to_js(f"STARTLIST_DATA|||{json.dumps({'data': self.startlist})}")    
     def start_race(self, comm_port: int, event: int, heat: int) -> int:
         """
         Starts a race.

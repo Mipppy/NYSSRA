@@ -1,1 +1,2 @@
+./updater.bat
 py -3.13-32 main.py

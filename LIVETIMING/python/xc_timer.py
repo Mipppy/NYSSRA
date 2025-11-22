@@ -25,7 +25,8 @@ class XC_TIMER_DLL:
         be called directly.
         """
         dll_dir = os.path.abspath("includes")
-        self.dll_path = os.path.join(dll_dir, "xc_timer_dll.dll")
+        # Had to modify the DLL's assembly to prevent the stupid MessageBoxA from appearing when launching the program. 
+        self.dll_path = os.path.join(dll_dir, "xc_timer_dll_patched.dll")
         os.environ["PATH"] += f";{dll_dir}"
         print(self.dll_path)
         self.dll = WinDLL(self.dll_path) # type: ignore
