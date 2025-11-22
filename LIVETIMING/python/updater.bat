@@ -44,6 +44,6 @@ echo Update complete!
 
 :start_app
 echo Launching application...
-start "" py -3.13-32 main.py
+cscript //nologo run_hidden.vbs
 endlocal
 exit

@@ -1,2 +1,2 @@
 ./updater.bat
-py -3.13-32 main.py
+@REM py -3.13-32 main.py
