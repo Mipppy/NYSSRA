@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow #type: ignore
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage #type: ignore
 from PyQt5.QtCore import QUrl, QObject, pyqtSlot, pyqtSignal, QTimer #type:ignore
 from PyQt5.QtWebChannel import QWebChannel #type: ignore
+from PyQt5.QtGui import QIcon
 import logging
 from typing import List
 import json
@@ -50,20 +51,29 @@ class Bridge(QObject):
             if message_type == "ready":
                 logger.info("JavaScript connection initialized")
                 self.js_initialized = True  
+                self.initalBridgeMessages()
             elif message_type == "livetiming_form":
                 Instances.livetiming.reinit()
                 Instances.livetiming.connect_to_livetiming_ws()
                 Instances.livetiming.send_auth_and_config(json_msg['data'])
-            elif message_type == "give_me_the_fucking_password" and int(Instances.settings.get_setting("SAVE_PASSWORD")):
+            elif message_type == "give_me_the_fucking_password":
                 password = Instances.settings.get_setting("SAVED_PASSWORD")
+                if not int(Instances.settings.get_setting("SAVE_PASSWORD")):
+                    password = ''
                 self.send_to_js(f"SAVED_PASSWORD|||{password}")
                 logger.debug("Sent saved password to window.")
             elif message_type == "startlist_input2":
                 Instances.dll_interfacer.load_startlist(json_msg['data'])
             elif message_type == "open_file":
                 openFileInExplorer(json_msg['data'])
-            elif message_type == "change_setting":
-                Instances.settings.update_setting_from_window(json_msg['data'])
+            elif message_type == "change_settings":
+                Instances.settings.update_settings_from_window(json_msg['data'])
+            elif message_type == "gimmie_settings":
+                settings_dict = Instances.settings.get_all_settings()
+                self.send_to_js(f"SETTINGS|||{json.dumps(settings_dict)}")
+                logger.debug("Sent settings to window.")
+            elif message_type == "reset_settings":
+                Instances.settings.load_defaults()
             else:   
                 logger.warning(f"Unhandled message type: {message_type}")
                 
@@ -79,17 +89,34 @@ class Bridge(QObject):
             message (any): This can be anything, but it will be turned into a `str` regardless. It is the message to send.
         """
         self.js_message.emit(str(message))
-
+        
+    def initalBridgeMessages(self):
+        """
+        Creates messages to JS once the bridge is open.
+        """
+        from instances import Instances
+        self.send_to_js(f"VERSION_NUMBER|||{Instances.settings.VERSION_NUMBER}")
 class MyWebEnginePage(QWebEnginePage):
     def javaScriptConsoleMessage(self, level, message, lineNumber, sourceID):
-        print(f"[JS:{level}] {message} (line {lineNumber})")
-
+        # Just logging it crashes the program with no error.
+        QTimer.singleShot(0, lambda: (
+            (lambda log_func: log_func(f"[JS] {message} (line {lineNumber})"))(
+                {
+                    0: logging.getLogger("BART2").info,
+                    1: logging.getLogger("BART2").warning,
+                    2: logging.getLogger("BART2").error  
+                }.get(level, logging.getLogger("BART2").debug)
+            )
+        ))
 class HTMLWindow(QMainWindow):
     """
     The actual window class.
     It uses HTML/JS rendering because as much as I hate CSS, I greatly prefer it to working with 
     Qt's shitty formatting for it's elements.
 
+    7 Months later, I regret this choice.
+    Fuck 'em both
+    
     Args:
         QMainWindow : A QMainWindow
     """
@@ -103,7 +130,9 @@ class HTMLWindow(QMainWindow):
         self.bridge = Bridge()
         self.channel.registerObject('bridge', self.bridge)
         self.browser.page().setWebChannel(self.channel)
-        
+        icon_path = Path(__file__).parent / "icon.ico"
+        if icon_path.exists():
+            self.setWindowIcon(QIcon(str(icon_path)))
         screen = QApplication.primaryScreen().availableGeometry()
         self.resize(screen.width() , screen.height())  
         
@@ -141,6 +170,8 @@ class HTMLWindow(QMainWindow):
             message (any): Just never use this lets be real.
         """
         self.bridge.send_to_js(message)
+        
+
 
 def create_window() -> List[QApplication|HTMLWindow]:
     """
@@ -151,6 +182,11 @@ def create_window() -> List[QApplication|HTMLWindow]:
         List[QApplication|HTMLWindow]: Returns both because Qt decided to make the QApplication needed for one line of code outside this file.
     """
     app = QApplication(sys.argv)
+    icon_path = Path(__file__).parent / "icon.ico"
+    if icon_path.exists():
+        app.setWindowIcon(QIcon(str(icon_path)))
     window = HTMLWindow()
     window.show()
+    if icon_path.exists():
+        window.setWindowIcon(QIcon(str(icon_path)))
     return [app,window]

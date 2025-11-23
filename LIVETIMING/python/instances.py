@@ -5,6 +5,7 @@ from helpers import initialize_logger
 from comms import LivetimingHandler
 from race_handler import DLL_Race_Handler
 from announcer import Announcer
+from webserver import LocalWebServer
 # I WISH I HAD POINTERS
 
 class Instances:
@@ -17,6 +18,11 @@ class Instances:
     xc_timer_dll = None
     settings = None
     logger = None
+    local_web_server = None
+    livetiming = None
+    dll_interfacer = None
+    announcer = None
+    
     @classmethod
     def create_instances(cls):
             """
@@ -35,6 +41,7 @@ class Instances:
             cls.xc_timer_dll = XC_TIMER_DLL()
             cls.livetiming = LivetimingHandler()
             cls.dll_interfacer = DLL_Race_Handler()
+            cls.local_web_server = LocalWebServer()
             cls.announcer = Announcer()
             cls.logger.info("Successfully loaded all classes.")
 

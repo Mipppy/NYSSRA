@@ -42,7 +42,12 @@ rmdir /s /q update_tmp
 
 echo Update complete!
 
+
+
 :start_app
+
+
+
 echo Launching application...
 cscript //nologo run_hidden.vbs
 endlocal

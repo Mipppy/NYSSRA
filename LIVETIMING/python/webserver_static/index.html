@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>NYSSRA Live Timing</title>
+        <link rel="icon" href="icon.ico" type="image/x-icon" />
+        <link rel="stylesheet" href="bootstrap.css" />
+        <script src="bootstrap.js"></script>
+        <link rel="stylesheet" href="bootstrap-icons.css"> 
+    </head>
+    <body style="background-color: lightgrey">
+        <div class="m-1 rounded" id="results_container">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h2>NYSSRA Live Results</h2>
+                <label>
+                    <input type="checkbox" id="autoscroll_checkbox" checked />
+                    Autoscroll
+                </label>
+            </div>
+            <hr />
+
+            <table
+                class="table table-striped table-bordered table-hover w-100 rounded"
+            >
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Position</th>
+                        <th scope="col">Time</th>
+                        <th scope="col">Bib</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody id="results_body"></tbody>
+            </table>
+        </div>
+    </body>
+    <script>
+        const resultsContainer = document.getElementById("results_container");
+        const autoscrollCheckbox = document.getElementById(
+            "autoscroll_checkbox"
+        );
+
+        let lastManualScroll = 0;
+        let scrollSpeed = 1;
+        let scrollInterval = 30;
+
+        resultsContainer.addEventListener("scroll", () => {
+            lastManualScroll = Date.now();
+        });
+
+        function autoscrollLoop() {
+            if (autoscrollCheckbox.checked) {
+                const now = Date.now();
+                if (now - lastManualScroll > 5000) {
+                    resultsContainer.scrollTop += scrollSpeed;
+                    if (
+                        resultsContainer.scrollTop +
+                            resultsContainer.clientHeight >=
+                        resultsContainer.scrollHeight
+                    ) {
+                        resultsContainer.scrollTop = 0;
+                    }
+                }
+            }
+            requestAnimationFrame(autoscrollLoop);
+        }
+
+        autoscrollLoop();
+
+        function fetchResults() {
+            fetch("/results")
+                .then((response) => response.json())
+                .then((data) => {
+                    const resultsBody = document.getElementById("results_body");
+                    resultsBody.innerHTML = "";
+                    if (!data || data == {} || data == [] || data.length === 0) return;
+                    data.forEach((result) => {
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+                    <td>${result.name}</td>
+                    <td>${result.position}</td>
+                    <td>${result.time}</td>
+                    <td>${result.bib}</td>
+                    <td>${result.extra}</td>
+                `;
+                        resultsBody.appendChild(row);
+                    });
+                })
+                .catch((error) =>
+                    console.error("Error fetching results:", error)
+                );
+        }
+
+        setInterval(fetchResults, 5000);
+        fetchResults();
+    </script>
+</html>

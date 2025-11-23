@@ -30647,3 +30647,35 @@ table_id	device_num	record_num	event_num	heat_num	channel	record_typ	total_user_
 0	2	13	3	5	1	b	2	2	9:11:09.31	09:11:11	 
 0	2	14	3	5	1	b	7	7	9:11:12.56	09:11:13	 
 0	2	15	3	5	1	b	1	1	9:11:16.83	09:11:18	 
+
+Summit Systems Timer Backup Text File Initialized  at 23:22:26  on 11/22/25:
+
+table_id	device_num	record_num	event_num	heat_num	channel	record_typ	total_user_string	bib_string	timer_time	pc_time	notes
+0	2	1	3	5	0	e	EV  0   3   5	EV	23:22:26.98	23:22:28	 
+0	2	2	3	5	1	b	8	8	23:22:36.34	23:22:38	 
+0	2	3	3	5	1	b	7	7	23:22:46.43	23:22:48	 
+0	2	4	3	5	1	b	5	5	23:22:53.39	23:22:55	 
+0	2	5	3	5	1	b	1	1	23:22:55.54	23:22:57	 
+0	2	6	3	5	1	b	0	0	23:22:57.42	23:22:57	 
+0	2	7	3	5	1	b	45	45	23:23:06.82	23:23:07	 
+0	2	8	3	5	1	b	45	45	23:23:07.73	23:23:09	 
+0	2	9	3	5	1	b	43	43	23:23:16.56	23:23:17	 
+0	2	10	3	5	1	b	43	43	23:23:16.98	23:23:19	 
+
+Summit Systems Timer Backup Text File Initialized  at 23:23:31  on 11/22/25:
+
+table_id	device_num	record_num	event_num	heat_num	channel	record_typ	total_user_string	bib_string	timer_time	pc_time	notes
+0	2	1	3	5	0	e	EV  0   3   5	EV	23:22:27.12	23:23:33	 
+0	2	2	3	5	1	b	8	8	23:22:36.47	23:23:33	 
+0	2	3	3	5	1	b	7	7	23:22:46.57	23:23:33	 
+0	2	4	3	5	1	b	5	5	23:22:53.52	23:23:33	 
+0	2	5	3	5	1	b	1	1	23:22:55.68	23:23:33	 
+0	2	6	3	5	1	b	0	0	23:22:57.55	23:23:34	 
+0	2	7	3	5	1	b	45	45	23:23:06.96	23:23:34	 
+0	2	8	3	5	1	b	45	45	23:23:07.87	23:23:34	 
+0	2	9	3	5	1	b	43	43	23:23:16.69	23:23:34	 
+0	2	10	3	5	1	b	43	43	23:23:17.12	23:23:34	 
+0	2	11	3	5	0	e	EV  0   3   5	EV	23:23:31.98	23:23:36	 
+0	2	12	3	5	1	b	12	12	23:24:03.93	23:24:04	 
+0	2	13	3	5	1	b	13	13	23:24:04.97	23:24:07	 
+0	2	14	3	5	1	b	78	78	23:25:52.26	23:25:52	 

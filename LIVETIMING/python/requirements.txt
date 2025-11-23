@@ -4,6 +4,7 @@ cffi==1.17.1
 click==8.2.1
 colorama==0.4.6
 comtypes==1.4.11
+et_xmlfile==2.0.0
 fastapi==0.116.1
 future==1.0.0
 gevent==25.5.1
@@ -12,6 +13,7 @@ h11==0.16.0
 httptools==0.6.4
 idna==3.10
 iso8601==2.1.0
+openpyxl==3.1.5
 pycparser==2.22
 pydantic==2.11.7
 pydantic_core==2.33.2

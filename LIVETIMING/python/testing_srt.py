@@ -28,7 +28,7 @@ while True:
         d = instance.dll_get_character_from_terminal_fifo()
         if d == -1:
             break
-        print("Terminal char:", chr(d) if d < 128 else d)
+        # print("Terminal char:", chr(d) if d < 128 else d)
 
     while True:
         record = instance.dll_get_next_timer_structure()
