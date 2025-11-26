@@ -2,6 +2,7 @@ import logging
 import threading
 import time 
 import pyttsx3
+from race_handler import Alt_Race_Handler
 
 class Announcer:
     
@@ -22,21 +23,23 @@ class Announcer:
 
     def _run_tts(self):
         while True:
-            message = None
+            messages_to_process = []
             with self.lock:
                 if self.messages_to_speak:
-                    message = self.messages_to_speak.pop(0)
+                    messages_to_process = self.messages_to_speak[:]
+                    self.messages_to_speak.clear()
 
-            if message:
-                self.engine.say(message)
+            if messages_to_process:
+                for message in messages_to_process:
+                    self.engine.say(message)
                 self.engine.runAndWait()
             else:
-                time.sleep(0.25)
+                time.sleep(0.1)
 
-    def handle_incoming_result(self, result):
-        # TODO: Implement this later once we get data from DLLs
+    def handle_incoming_result(self, result:Alt_Race_Handler.BatchedTimerRecord):
+        message_to_speak = f"{result.first_name} {result.last_name}"
         with self.lock:
-            self.messages_to_speak.append(result)
+            self.messages_to_speak.append(message_to_speak)
 
     def load_settings(self):
         """

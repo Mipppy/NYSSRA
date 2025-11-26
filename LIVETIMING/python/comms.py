@@ -189,8 +189,7 @@ class LivetimingHandler:
             return
 
         self.logger.debug("WebSocket ready — sending auth/config")
-        self.config_password = config['password']
-        self.send_json_message({"password": config['password']})
+        self.send_json_message({"password": config['livetiming_password']})
 
         auth_wait_start = time.time()
         while not self.authenticated:
@@ -199,7 +198,6 @@ class LivetimingHandler:
                 return
             time.sleep(0.1)
 
-        self.send_json_message({'new_url': config['filename']})
+        self.send_json_message({'new_url': config['livetiming_filename']})
         time.sleep(0.2)
         self.send_json_message(config['headers'])
-        self.logger.debug(self.config_password)

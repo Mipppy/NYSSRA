@@ -39,3 +39,53 @@ while True:
     # !!!! ~50 MS CLOCK !!!!
     time.sleep(0.05)  
 
+# from xc_timer import XC_TIMER_DLL
+# import threading
+# import time
+
+# def poll_timer(instance: XC_TIMER_DLL):
+#     """
+#     Thread worker to continuously poll the timer DLL.
+#     """
+#     while True:
+#         # Drain terminal characters
+#         while True:
+#             d = instance.dll_get_character_from_terminal_fifo()
+#             if d == -1:
+#                 break
+#             # Optional: print("Terminal char:", chr(d) if d < 128 else d)
+
+#         # Drain timer records
+#         while True:
+#             record = instance.dll_get_next_timer_structure()
+#             if not record:
+#                 break
+#             print("Timer record:", record.as_dict())
+
+#         # Poll every ~50 ms
+#         time.sleep(0.05)
+
+
+# # --- Initialize the DLL as before ---
+# instance = XC_TIMER_DLL()
+# instance.dll_initialize_dll_task(0x100 | 0x40 | 0x10 | 2, 'srt/')
+# instance.dll_set_string_delimiter(0)
+
+# conf_data = instance.dll_get_pointer_to_configuration_structure()
+# global_struct = instance.dll_get_pointer_to_global_variable_structure()
+
+# instance.dll_set_comm_port(3)
+# instance.dll_start_communicating_with_timers()
+# instance.dll_set_event_and_heat(0, 3, 5)
+# instance.dll_synch_timers(0, "0")
+
+# # --- Start polling in a separate thread ---
+# poll_thread = threading.Thread(target=poll_timer, args=(instance,), daemon=True)
+# poll_thread.start()
+
+# # Main thread can do other things
+# while True:
+#     # Example: just sleep, main thread is free
+#     time.sleep(1)
+
+

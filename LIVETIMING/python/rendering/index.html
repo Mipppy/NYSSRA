@@ -99,14 +99,22 @@
             .end-button:not(.confirming)::after {
                 content: "End race";
             }
+            .input-error {
+                border: 2px solid red !important;
+            }
+            .disabled-div {
+                pointer-events: none;
+                opacity: 0.5;
+                filter: grayscale(60%);
+            }
         </style>
     </head>
 
     <body class="m-0 p-0">
         <div class="row m-0">
-            <div class="col-3 d-flex flex-column">
+            <div class="col-3">
                 <div
-                    class="row flex-grow-1"
+                    class="row"
                     style="
                         height: 100%;
                         background-color: rgb(83, 97, 110) !important;
@@ -114,11 +122,17 @@
                 >
                     <div
                         class="col-12"
-                        style="height: 30%"
+                        style="
+                            height: 30% !important;
+                            max-height: 30% !important;
+                        "
                         id="side_ui_general"
                     >
                         <h1 class="display-6"><b>Tim</b>ing System</h1>
-                        <h5 class="text-primary-emphasis" id="versionNumber"></h5>
+                        <h5
+                            class="text-primary-emphasis"
+                            id="versionNumber"
+                        ></h5>
                         <button
                             class="btn btn-info w-100 mb-2"
                             data-bs-toggle="modal"
@@ -127,70 +141,131 @@
                             <i class="bi bi-gear-fill"></i
                             >&nbsp;&nbsp;&nbsp;Settings
                         </button>
+                        <button
+                            class="btn btn-danger w-100 mb-2"
+                            onclick="location.reload()"
+                        >
+                            <i class="bi bi-sign-stop-fill"></i>
+                            &nbsp;&nbsp;&nbsp;Reload (Effective Restart)
+                        </button>
                     </div>
-                    <hr class="border border-light border-2 opacity-75" />
+                    <hr
+                        class="border border-light border-2 opacity-75 m-0 p-0"
+                        style="max-height: 2px !important"
+                    />
                     <div
-                        class="col-12"
-                        style="height: 30%"
+                        class="col-12 m-0 bg-black"
+                        style="
+                            height: 30% !important;
+                            max-height: 30% !important;
+                        "
                         id="side_ui_active_race"
                     >
-                        <h5 class="mb-2 text-white">Active Race</h5>
                         <div id="side_ui_race_details_container">
                             <div
                                 class="row scrollable-inner"
                                 id="side_ui_race_details_part"
                             >
-                                <div class="col-12">
-                                    <h6 class="d-inline-block text-white">
-                                        Time elapsed:
-                                    </h6>
-                                    <h6 class="d-inline-block text-white">
-                                        NA
-                                    </h6>
-                                    <br />
+                                <div
+                                    style="overflow-x: hidden"
+                                    class="col-12 text-center d-flex align-items-center justify-content-center flex-column"
+                                >
+                                    <div
+                                        class="w-100 text-center bg-black p-2 m-0"
+                                    >
+                                        <h1
+                                            class="d-inline-block"
+                                            style="
+                                                color: rgb(190, 190, 13);
+                                                letter-spacing: 5px;
+                                            "
+                                            id="race_time_clock"
+                                        >
+                                            00:00:00.00
+                                        </h1>
+                                    </div>
+                                    <div
+                                        class="w-100 text-center bg-black p-0 m-0"
+                                    >
+                                        <h4
+                                            class="d-inline-block"
+                                            style="color: white"
+                                        >
+                                            Starting in:
+                                        </h4>
+                                        <h4
+                                            class="d-inline-block"
+                                            style="color: green"
+                                            id="race_starting_in_clock"
+                                        >
+                                            00:00:00
+                                        </h4>
+                                    </div>
                                     <h6 class="d-inline-block text-white">
                                         Livetiming:
+                                        <span
+                                            id="is-race-livetiming"
+                                            class="text-danger"
+                                            >No</span
+                                        >
                                     </h6>
-                                    <h6 class="d-inline-block text-danger">
-                                        NA
+                                    <h6 class="d-inline-block text-white">
+                                        Local Web Server:
+                                        <span
+                                            id="race-local-webserver"
+                                            class="text-"
+                                            >No</span
+                                        >
                                     </h6>
-                                    <br />
+
                                     <div class="row">
-                                        <div class="col-6">
+                                        <div class="col-12">
                                             <button
                                                 type="button"
-                                                class="btn btn-danger end-button"
+                                                class="btn btn-danger end-button w-100 btn-large"
                                                 id="side_ui_end_race_button"
                                                 disabled
                                             ></button>
                                         </div>
-                                        <div class="col-6"></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <hr class="border border-light border-2 opacity-75" />
+                    <hr
+                        class="border border-light border-2 opacity-75 m-0 p-0"
+                        style="max-height: 2px !important"
+                    />
                     <div
                         class="col-12 text-white p-2"
-                        style="height: 40%"
-                        id="side_ui_log"
+                        style="
+                            height: 35% !important;
+                            max-height: 35% !important;
+                            display: flex;
+                            flex-direction: column;
+                        "
                     >
-                        <div class="d-flex justify-content-between">
+                        <div
+                            class="d-flex justify-content-between flex-shrink-0"
+                        >
                             <h5 class="mb-2">Log</h5>
-                            <small style="font-size: smaller" class="text-white"
-                                >Saved to
+                            <small
+                                style="font-size: smaller"
+                                class="text-white"
+                            >
+                                Saved to
                                 <a
                                     href="#"
                                     onclick="open_file('bart2.log')"
                                     style="color: aliceblue; font-size: smaller"
                                     >bart2.log</a
-                                ></small
-                            >
+                                >
+                            </small>
                         </div>
                         <div
                             id="log_div"
-                            class="bg-dark p-2 rounded flex-grow-1 scrollable-inner nice_scrollbar"
+                            class="bg-dark p-2 rounded nice_scrollbar"
+                            style="overflow-y: auto"
                         ></div>
                     </div>
                 </div>
@@ -231,22 +306,85 @@
                                     max-width: 50%;
                                     width: 50%;
                                 "
+                                id="main-race-cfg"
                             >
-                                <label for="commPortSelection"
-                                    >Communication Port Selection</label
+                                <label
+                                    for="commPortSelection"
+                                    class="form-label fw-bold"
+                                    >Communication Port</label
                                 >
                                 <select
                                     id="commPortSelection"
                                     name="commPortSelection"
-                                ></select>
-                                <br />
+                                    class="form-select mb-3"
+                                >
+                                    <option disabled selected>
+                                        Communication ports are being detected,
+                                        please wait...
+                                    </option>
+                                </select>
+
+                                <div class="form-check mb-3">
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        id="enable_livetiming_checkbox"
+                                    />
+                                    <label
+                                        class="form-check-label"
+                                        for="enable_livetiming_checkbox"
+                                    >
+                                        Enable Server Livetiming
+                                    </label>
+                                </div>
+
+                                <label
+                                    for="startlist_file_input"
+                                    class="form-label fw-bold"
+                                    >Start List File</label
+                                >
                                 <input
                                     type="file"
-                                    class="form-control mb-2"
+                                    class="form-control mb-3"
                                     id="startlist_file_input"
                                     accept=".csv, .xls, .xlsx"
                                 />
-                                <br />
+
+                                <label
+                                    class="form-label fw-bold"
+                                    for="race-cfg-name"
+                                    >Race Name</label
+                                >
+                                <input
+                                    type="text"
+                                    class="form-control mb-3"
+                                    id="race-cfg-name"
+                                    placeholder="Enter the race name"
+                                />
+
+                                <label
+                                    class="form-label fw-bold"
+                                    for="race-cfg-location"
+                                    >Race Location</label
+                                >
+                                <input
+                                    type="text"
+                                    class="form-control mb-3"
+                                    id="race-cfg-location"
+                                    placeholder="Enter the race location"
+                                />
+                                <label class="form-label" for="first-start-time"
+                                    >Start Time</label
+                                >
+                                <input
+                                    type="time"
+                                    class="form-control mb-3"
+                                    id="first-start-time"
+                                />
+
+                                <label class="form-label fw-bold mt-2"
+                                    >Race Type</label
+                                ><br />
                                 <div class="form-check form-check-inline">
                                     <input
                                         class="form-check-input race-type-radio"
@@ -278,7 +416,7 @@
                                     >
                                 </div>
 
-                                <div class="form-check form-check-inline">
+                                <div class="form-check form-check-inline mb-3">
                                     <input
                                         class="form-check-input race-type-radio"
                                         type="radio"
@@ -294,74 +432,67 @@
                                 </div>
 
                                 <div id="race-type-div-1" class="mt-3">
-                                    <h5>Interval Start Options</h5>
+                                    <h5 class="fw-bold">
+                                        Interval Start Options
+                                    </h5>
                                     <hr />
-                                    <div class="mb-3">
-                                        <label
-                                            for="interval-start-start-interval"
-                                            class="form-label"
-                                            >Start Interval</label
-                                        >
-                                        <select
-                                            id="interval-start-start-interval"
-                                            class="form-select"
-                                        >
-                                            <option value="15">
-                                                15 seconds
-                                            </option>
-                                            <option value="20">
-                                                20 seconds
-                                            </option>
-                                            <option value="30">
-                                                30 seconds
-                                            </option>
-                                            <option value="60">1 minute</option>
-                                            <option value="90">
-                                                1 1/2 minutes
-                                            </option>
-                                            <option value="120">
-                                                2 minutes
-                                            </option>
-                                        </select>
-                                    </div>
 
-                                    <div class="mb-3">
-                                        <label
-                                            for="interval-start-wave-athlete-count"
-                                            class="form-label"
-                                            >Number of Athletes Per Wave</label
-                                        >
-                                        <input
-                                            type="number"
-                                            class="form-control"
-                                            id="interval-start-wave-athlete-count"
-                                            min="1"
-                                        />
-                                    </div>
+                                    <label
+                                        class="form-label"
+                                        for="interval-start-start-interval"
+                                        >Start Interval</label
+                                    >
+                                    <select
+                                        id="interval-start-start-interval"
+                                        class="form-select mb-3"
+                                    >
+                                        <option value="15">15 seconds</option>
+                                        <option value="20">20 seconds</option>
+                                        <option value="30">30 seconds</option>
+                                        <option value="60">1 minute</option>
+                                        <option value="90">
+                                            1 1/2 minutes
+                                        </option>
+                                        <option value="120">2 minutes</option>
+                                    </select>
 
-                                    <div class="mb-3">
-                                        <label
-                                            for="interval-start-first-start-time"
-                                            class="form-label"
-                                            >First Start Time</label
-                                        >
-                                        <input
-                                            type="time"
-                                            class="form-control"
-                                            id="interval-start-first-start-time"
-                                        />
-                                    </div>
+                                    <label
+                                        class="form-label"
+                                        for="interval-start-wave-athlete-count"
+                                        >Athletes Per Wave</label
+                                    >
+                                    <input
+                                        type="number"
+                                        class="form-control mb-3"
+                                        id="interval-start-wave-athlete-count"
+                                        min="1"
+                                        value="1"
+                                    />
                                 </div>
 
                                 <div id="race-type-div-2" class="mt-3 d-none">
-                                    <h5>Mass Start Options</h5>
+                                    <h5 class="fw-bold">Mass Start Options</h5>
                                     <hr />
+                                    <p class="text-muted">
+                                        No additional options needed.
+                                    </p>
                                 </div>
 
                                 <div id="race-type-div-3" class="mt-3 d-none">
-                                    <h5>Relay Options</h5>
+                                    <h5 class="fw-bold">Relay Options</h5>
                                     <hr />
+                                    <p class="text-muted">
+                                        Relay configuration coming soon.
+                                    </p>
                                 </div>
+
+                                <button
+                                    class="btn btn-success btn-lg mt-4 w-100 mb-3"
+                                    id="start-race-btn"
+                                >
+                                    <i class="bi bi-play-fill me-2"></i>
+                                    Start Race
+                                </button>
 
                                 <script>
                                     document
@@ -403,13 +534,14 @@
                             </div>
                             <!--LIVETIMING CONTAINER (TOP RIGHT)-->
                             <div
-                                class="col-6 border"
+                                class="col-6 border disabled-div"
                                 style="
                                     overflow: auto;
                                     max-height: 100%;
                                     max-width: 50%;
                                     width: 50%;
                                 "
+                                id="livetiming-cfg-container"
                             >
                                 <div class="container-fluid d-flex flex-column">
                                     <div
@@ -572,7 +704,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="row mt-4">
+                                                <!-- <div class="row mt-4">
                                                     <div class="col-12">
                                                         <button
                                                             class="btn btn-primary btn-lg w-100 py-3"
@@ -587,7 +719,7 @@
                                                             Configuration
                                                         </button>
                                                     </div>
-                                                </div>
+                                                </div> -->
                                             </form>
                                             <!-- HACK: I hate styling and without these the submit button gets awkwardly cut off. -->
                                             <br />
@@ -605,7 +737,7 @@
                                 class="row"
                                 style="height: 50vh; max-height: 50vh"
                             >
-							<!-- RACE RESULT (BOTTOM LEFT)-->
+                                <!-- RACE RESULT (BOTTOM LEFT)-->
                                 <div
                                     class="col-6 border"
                                     style="
@@ -615,9 +747,32 @@
                                         max-width: 50%;
                                     "
                                 >
-								<table class="table table-striped table-bordered table-hover w-100" id="race_results_table">
-									
-								</table>
+                                    <button
+                                        id="race-results-control-panel-button"
+                                        class="mt-1 w-100 bg-secondary-subtle"
+                                        style="
+                                            border-top-left-radius: 15px;
+                                            border-top-right-radius: 15px;
+                                        "
+                                    >
+                                        Results control panel
+                                    </button>
+                                    <table
+                                        class="table table-striped table-bordered table-hover w-100"
+                                        id="race-results-table"
+                                    >
+                                        <thead>
+                                            <tr>
+                                                <td>PL</td>
+                                                <td>BIB</td>
+                                                <td>NAME</td>
+                                                <td>TEAM</td>
+                                                <td>TIME</td>
+                                                <td>PTS</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
                                 </div>
                                 <!-- STARTLIST CONTAINER (BOTTOM RIGHT)-->
                                 <div
@@ -644,11 +799,11 @@
                             </div>
                         </div>
                     </div>
-                    <div id="tab4" class="content">
-                        <div class="container-fluid">
+                    <!-- <div id="tab4" class="content" >
+                        <div class="container-fluid" >
                             <div class="row">
                                 <div
-                                    class="col-lg-6 p-4 bg-secondary scrollable-inner"
+                                    class="col-lg-6 p-4 bg-secondary "
                                     style="height: 100vh; overflow-y: auto"
                                     id="live_config"
                                 >
@@ -713,7 +868,6 @@
                                             </div>
                                         </div>
 
-                                        <!-- Headers Section -->
                                         <div class="row mb-4">
                                             <div class="col-12">
                                                 <div
@@ -725,7 +879,6 @@
                                                         </h5>
                                                     </div>
                                                     <div class="card-body">
-                                                        <!-- Fixed header -->
                                                         <table
                                                             class="table table-dark table-striped table-hover mb-0"
                                                         >
@@ -800,116 +953,27 @@
                                             </div>
                                         </div>
                                     </form>
-                                    <!-- HACK: I hate styling and without these the submit button gets awkwardly cut off. -->
+                                     HACK: I hate styling and without these the submit button gets awkwardly cut off
                                     <br />
                                     <br />
                                 </div>
-                                <!-- <div class="col-lg-6 p-4 bg-secondary rounded scrollable-inner" style="height: 100vh; overflow-y: auto; display: none" id="livetiming_request_log">
+                                 <div class="col-lg-6 p-4 bg-secondary rounded scrollable-inner" style="height: 100vh; overflow-y: auto; display: none" id="livetiming_request_log">
                     <div class="">
 
                     </div>
-                </div> -->
+                </div> 
                             </div>
                         </div>
 
                         <script>
-                            function addKeyValueRow(
-                                key = "",
-                                value = "",
-                                isRequired = false
-                            ) {
-                                const table =
-                                    document.getElementById(
-                                        "livetiming_headers"
-                                    );
-                                const newRow = document.createElement("tr");
-
-                                newRow.innerHTML = `
-                    <td>
-                        <input type="text" class="form-control key-input LIVETIMING_KEY" 
-                               placeholder="Enter header key" value="${key}" 
-                               ${isRequired ? "readonly" : ""}
-                               required oninput="updateSubmitButton() ">
-                    </td>
-                    <td>
-                        <input type="text" class="form-control value-input LIVETIMING_VALUE" 
-                               placeholder="Enter header value" value="${value}" key-value="${key}"
-                               oninput="updateSubmitButton()">
-                    </td>
-                    <td class="text-center align-items-center">
-                        ${
-                            isRequired
-                                ? '<span class="text-light">Required</span>'
-                                : `<button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)">
-                                 <i class="bi bi-trash"></i>
-                               </button>`
-                        }
-                    </td>
-                `;
-
-                                table.appendChild(newRow);
-                                updateSubmitButton();
-                            }
-
-                            function deleteRow(button) {
-                                const row = button.closest("tr");
-                                row.remove();
-                                updateSubmitButton();
-                            }
-
-                            function updateSubmitButton() {
-                                const password = document.querySelector(
-                                    'input[name="password"]'
-                                ).value;
-                                const filename = document.querySelector(
-                                    'input[name="filename"]'
-                                ).value;
-                                const keyInputs =
-                                    document.querySelectorAll(".key-input");
-                                const valueInputs =
-                                    document.querySelectorAll(".value-input");
-
-                                let hasNameKey = false;
-                                let hasPlaceKey = false;
-                                let allValuesValid = true;
-
-                                keyInputs.forEach((input, index) => {
-                                    const key = input.value.trim();
-                                    const value =
-                                        valueInputs[index].value.trim();
-
-                                    if (key === "name" && value)
-                                        hasNameKey = true;
-                                    if (key === "place" && value)
-                                        hasPlaceKey = true;
-                                    if (!value && input.required)
-                                        allValuesValid = false;
-                                });
-
-                                const submitButton = document.querySelector(
-                                    'button[name="btnSubmit"]'
-                                );
-                                const isValid =
-                                    password &&
-                                    filename &&
-                                    hasNameKey &&
-                                    hasPlaceKey &&
-                                    allValuesValid;
-
-                                submitButton.disabled = !isValid;
-                            }
-
-                            window.onload = function () {
-                                addKeyValueRow("race_name", "", true);
-                                addKeyValueRow("race_location", "", true);
-                            };
+  
                         </script>
-                    </div>
+                    </div> -->
 
-                    <div id="tab5" class="content">
+                    <!-- <div id="tab5" class="content">
                         <div class="row g-0 h-100">
                             <div class="col-12 bg-light p-3">
-                                <!-- <input type="file" class="form-control mb-2"
+                                <input type="file" class="form-control mb-2"
                                     id="startlist_file_input2"
                                     accept=".csv, .xls, .xlsx">
 
@@ -918,7 +982,7 @@
 
                                     <table id="startlist_table2"
                                         class="table table-striped table-bordered table-hover w-100">
-                                    </table> -->
+                                    </table> 
                             </div>
                         </div>
 
@@ -927,7 +991,7 @@
                                 <option value="ALL" selected>All</option>
                             </select>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
 
                 <div id="tab6" class="content"></div>
@@ -1144,6 +1208,80 @@
                             );
                             bootstrap.Modal.getInstance(settingsModal).hide();
                         });
+
+                    function addKeyValueRow(
+                        key = "",
+                        value = "",
+                        isRequired = false
+                    ) {
+                        const table =
+                            document.getElementById("livetiming_headers");
+                        const newRow = document.createElement("tr");
+
+                        newRow.innerHTML = `
+                    <td>
+                        <input type="text" class="form-control key-input LIVETIMING_KEY" 
+                               placeholder="Enter header key" value="${key}" 
+                               ${isRequired ? "readonly" : ""}
+                               required oninput="updateSubmitButton() ">
+                    </td>
+                    <td>
+                        <input type="text" class="form-control value-input LIVETIMING_VALUE" 
+                               placeholder="Enter header value" value="${value}" key-value="${key}"
+                               oninput="updateSubmitButton()">
+                    </td>
+                    <td class="text-center align-items-center">
+                        ${
+                            isRequired
+                                ? '<span class="text-light">Required</span>'
+                                : `<button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)">
+                                 <i class="bi bi-trash"></i>
+                               </button>`
+                        }
+                    </td>
+                `;
+
+                        table.appendChild(newRow);
+                        updateSubmitButton();
+                    }
+
+                    function deleteRow(button) {
+                        const row = button.closest("tr");
+                        row.remove();
+                        updateSubmitButton();
+                    }
+
+                    function updateSubmitButton() {
+                        const password = document.querySelector(
+                            'input[name="password"]'
+                        ).value;
+                        const filename = document.querySelector(
+                            'input[name="filename"]'
+                        ).value;
+                        const keyInputs =
+                            document.querySelectorAll(".key-input");
+                        const valueInputs =
+                            document.querySelectorAll(".value-input");
+
+                        let hasNameKey = false;
+                        let hasPlaceKey = false;
+                        let allValuesValid = true;
+
+                        keyInputs.forEach((input, index) => {
+                            const key = input.value.trim();
+                            const value = valueInputs[index].value.trim();
+
+                            if (key === "name" && value) hasNameKey = true;
+                            if (key === "place" && value) hasPlaceKey = true;
+                            if (!value && input.required)
+                                allValuesValid = false;
+                        });
+                    }
+
+                    window.onload = function () {
+                        addKeyValueRow("race_name", "", true);
+                        addKeyValueRow("race_location", "", true);
+                    };
                 </script>
             </div>
             <script>
@@ -1154,6 +1292,9 @@
                 window.commPorts;
                 window.pySettings;
                 window.versionNumber;
+                window.raceConfig;
+                let countdownInterval;
+                let raceClockInterval;
 
                 function openTab(tabId) {
                     //document.querySelectorAll('.content').forEach(content => {
@@ -1188,7 +1329,8 @@
                             p.classList.add(
                                 log_message_type_color[match[1]] || "text-light"
                             );
-                        logDiv.prepend(p);
+                        logDiv.appendChild(p);
+                        logDiv.scrollTop = logDiv.scrollHeight;
                     }
                 }
 
@@ -1279,17 +1421,17 @@
                             "table table-striped table-bordered table-hover table-sm align-middle w-100";
                         window.startlistData = dataObj.data;
                         window.startlistHeaders = Object.keys(dataObj.data[0]);
-                        var selectOptionClassSort = document.getElementById(
-                            "startlist_class_sort"
-                        );
-                        [...new Set(dataObj.data.map((r) => r.CLASS))]
-                            .sort()
-                            .forEach((className) => {
-                                const option = document.createElement("option");
-                                option.value = className;
-                                option.textContent = className;
-                                selectOptionClassSort.appendChild(option);
-                            });
+                        //    var selectOptionClassSort = document.getElementById(
+                        //        "startlist_class_sort"
+                        //    );
+                        //    [...new Set(dataObj.data.map((r) => r.CLASS))]
+                        //        .sort()
+                        //        .forEach((className) => {
+                        //            const option = document.createElement("option");
+                        //            option.value = className;
+                        //            option.textContent = className;
+                        //            selectOptionClassSort.appendChild(option);
+                        //        });
                         // document.getElementById("startlist_table2").innerHTML = table.innerHTML
                     } else if (msg_type === "SETTINGS") {
                         console.log(msg_body);
@@ -1314,10 +1456,324 @@
                         document.getElementById(
                             "versionNumber"
                         ).innerText = `Version: ${window.versionNumber}`;
+                    } else if (msg_type === "STARTED_RACE_SUCCESSFULLY") {
+                        startRaceClientSide(msg_body);
+                    } else if (msg_type === "LOCAL_WEB_SERVER") {
+                        document.getElementById(
+                            "race-local-webserver"
+                        ).innerText = msg_body;
+                    } else if (msg_type === "RACE_STARTED") {
+                        clearInterval(countdownInterval);
+                        document.getElementById(
+                            "race_starting_in_clock"
+                        ).innerText = "00:00:00";
+                        window.isRaceActive = true;
+                        document.getElementById(
+                            "side_ui_end_race_button"
+                        ).disabled = false;
+                        startClock();
+                    } else if (msg_type === "UPDATED_RESULTS") {
+                        function formatTime(totalSeconds) {
+                            const hours = Math.floor(totalSeconds / 3600);
+                            const minutes = Math.floor(
+                                (totalSeconds % 3600) / 60
+                            );
+                            const seconds = Math.floor(totalSeconds % 60);
+                            const ms = Math.floor(
+                                (totalSeconds - Math.floor(totalSeconds)) * 10
+                            ); 
+
+                            const hStr = hours > 0 ? `${hours}:` : ":";
+                            const mStr = minutes.toString().padStart(2, "0");
+                            const sStr = seconds.toString().padStart(2, "0");
+
+                            return `${hStr}${mStr}:${sStr}.${ms}`;
+                        }
+
+                        const results = JSON.parse(msg_body);
+
+                        results.sort(
+                            (a, b) =>
+                                a.timing_data.corrected_time -
+                                b.timing_data.corrected_time
+                        );
+
+                        const raceTable =
+                            document.getElementById("race-results-table");
+
+                        raceTable
+                            .querySelectorAll("tbody tr")
+                            .forEach((tr) => tr.remove());
+
+                        results.forEach((res, index) => {
+                            const tr = document.createElement("tr");
+
+                            const tdPlace = document.createElement("td");
+                            tdPlace.innerText = index + 1;
+                            tr.appendChild(tdPlace);
+
+                            const tdBib = document.createElement("td");
+                            tdBib.innerText = res.bib_num;
+                            tr.appendChild(tdBib);
+
+                            const tdName = document.createElement("td");
+                            tdName.innerText = `${res.first_name} ${res.last_name}`;
+                            tr.appendChild(tdName);
+
+                            const tdTeam = document.createElement("td");
+                            tdTeam.innerText = res.team;
+                            tr.appendChild(tdTeam);
+
+                            const tdTime = document.createElement("td");
+                            tdTime.innerText = formatTime(
+                                res.timing_data.corrected_time
+                            );
+                            tr.appendChild(tdTime);
+
+                            const tdPoints = document.createElement("td");
+                            tdPoints.innerText = (index + 1).toFixed(2);
+                            tr.appendChild(tdPoints);
+
+                            raceTable.querySelector("tbody").appendChild(tr);
+                        });
                     }
                 }
+
+                async function startRaceClientSide(msg_body) {
+                    console.log(msg_body);
+                    document
+                        .getElementById("main-race-cfg")
+                        .classList.add("disabled-div");
+                    document
+                        .getElementById("livetiming-cfg-container")
+                        .classList.add("disabled-div");
+                    if (window.raceConfig.useLivetiming) {
+                        document.getElementById(
+                            "is-race-livetiming"
+                        ).innerText = "Yes. Loading URL...";
+                    }
+                    startRaceTimerCountdown(window.raceConfig);
+                }
+
+                document
+                    .getElementById("start-race-btn")
+                    .addEventListener("click", () => {
+                        document
+                            .getElementById("start-race-btn")
+                            .addEventListener("click", () => {
+                                const markError = (element, condition) => {
+                                    if (condition) {
+                                        element.classList.add("input-error");
+                                        return true;
+                                    } else {
+                                        element.classList.remove("input-error");
+                                        return false;
+                                    }
+                                };
+
+                                let hasError = false;
+
+                                const commPortEl =
+                                    document.getElementById(
+                                        "commPortSelection"
+                                    );
+                                const startlistEl = document.getElementById(
+                                    "startlist_file_input"
+                                );
+                                const raceNameEl =
+                                    document.getElementById("race-cfg-name");
+                                const raceLocationEl =
+                                    document.getElementById(
+                                        "race-cfg-location"
+                                    );
+                                const useLivetimingEl = document.getElementById(
+                                    "enable_livetiming_checkbox"
+                                );
+
+                                const raceStartTimeEl =
+                                    document.getElementById("first-start-time");
+
+                                hasError |= markError(
+                                    commPortEl,
+                                    !commPortEl.value
+                                );
+                                hasError |= markError(
+                                    startlistEl,
+                                    !startlistEl.value
+                                );
+                                hasError |= markError(
+                                    raceNameEl,
+                                    raceNameEl.value.trim() === ""
+                                );
+                                hasError |= markError(
+                                    raceLocationEl,
+                                    raceLocationEl.value.trim() === ""
+                                );
+                                hasError |= markError(
+                                    raceStartTimeEl,
+                                    (() => {
+                                        const value = raceStartTimeEl.value;
+                                        if (!value) return true;
+                                        const [hours, minutes] = value
+                                            .split(":")
+                                            .map(Number);
+                                        const now = new Date();
+                                        const raceStart = new Date();
+                                        raceStart.setHours(
+                                            hours,
+                                            minutes,
+                                            0,
+                                            0
+                                        );
+                                        return raceStart < now;
+                                    })()
+                                );
+
+                                const raceType = document.querySelector(
+                                    "input[name='raceType']:checked"
+                                ).value;
+
+                                if (raceType === "1") {
+                                    const intervalEl = document.getElementById(
+                                        "interval-start-start-interval"
+                                    );
+                                    const perWaveEl = document.getElementById(
+                                        "interval-start-wave-athlete-count"
+                                    );
+
+                                    hasError |= markError(
+                                        intervalEl,
+                                        !intervalEl.value
+                                    );
+                                    hasError |= markError(
+                                        perWaveEl,
+                                        !perWaveEl.value || perWaveEl.value <= 0
+                                    );
+                                }
+
+                                const raceConfig = {
+                                    commPort: commPortEl.value,
+                                    raceName: raceNameEl.value.trim(),
+                                    raceLocation: raceLocationEl.value.trim(),
+                                    raceType: raceType,
+                                    useLivetiming: useLivetimingEl.checked,
+                                    raceStartTime: raceStartTimeEl.value,
+                                };
+                                if (raceType === "1") {
+                                    raceConfig.intervalStart = {
+                                        startInterval: parseInt(
+                                            document.getElementById(
+                                                "interval-start-start-interval"
+                                            ).value
+                                        ),
+                                        athletesPerWave: parseInt(
+                                            document.getElementById(
+                                                "interval-start-wave-athlete-count"
+                                            ).value
+                                        ),
+                                    };
+                                }
+
+                                if (useLivetimingEl.checked) {
+                                    const passwordEl = document.getElementById(
+                                        "livetiming_password"
+                                    );
+                                    const filenameEl = document.getElementById(
+                                        "livetiming_filename"
+                                    );
+
+                                    hasError |= markError(
+                                        passwordEl,
+                                        passwordEl.value.trim() === ""
+                                    );
+                                    hasError |= markError(
+                                        filenameEl,
+                                        filenameEl.value.trim() === ""
+                                    );
+
+                                    const headerRaceNameEl =
+                                        document.querySelector(
+                                            ".LIVETIMING_VALUE[key-value='race_name']"
+                                        );
+                                    const headerRaceLocationEl =
+                                        document.querySelector(
+                                            ".LIVETIMING_VALUE[key-value='race_location']"
+                                        );
+
+                                    hasError |= markError(
+                                        headerRaceNameEl,
+                                        !headerRaceNameEl ||
+                                            headerRaceNameEl.value.trim() === ""
+                                    );
+                                    hasError |= markError(
+                                        headerRaceLocationEl,
+                                        !headerRaceLocationEl ||
+                                            headerRaceLocationEl.value.trim() ===
+                                                ""
+                                    );
+                                    raceConfig.livetimingCfg = {
+                                        password: document
+                                            .getElementById(
+                                                "livetiming_password"
+                                            )
+                                            .value.trim(),
+                                        filename: document
+                                            .getElementById(
+                                                "livetiming_filename"
+                                            )
+                                            .value.trim(),
+                                        headers: (() => {
+                                            const h = {};
+                                            document
+                                                .querySelectorAll(
+                                                    ".LIVETIMING_VALUE"
+                                                )
+                                                .forEach((input) => {
+                                                    const key =
+                                                        input.getAttribute(
+                                                            "key-value"
+                                                        );
+                                                    const value =
+                                                        input.value.trim();
+                                                    if (key && value)
+                                                        h[key] = value;
+                                                });
+                                            return h;
+                                        })(),
+                                    };
+                                }
+
+                                if (hasError) {
+                                    return;
+                                }
+                                window.raceConfig = raceConfig;
+                                bridge.py_message(
+                                    JSON.stringify({
+                                        message_type: "start_race",
+                                        data: raceConfig,
+                                    })
+                                );
+                            });
+                    });
+
+                document
+                    .getElementById("enable_livetiming_checkbox")
+                    .addEventListener("change", (ev) => {
+                        const livetimingCfgContainer = document.getElementById(
+                            "livetiming-cfg-container"
+                        );
+                        if (!ev.target.checked) {
+                            livetimingCfgContainer.classList.add(
+                                "disabled-div"
+                            );
+                        } else {
+                            livetimingCfgContainer.classList.remove(
+                                "disabled-div"
+                            );
+                        }
+                    });
+
                 function handleCommPorts(available_arr) {
-                    // Add to selection later
                     const select = document.getElementById("commPortSelection");
                     select.innerHTML = "";
                     window.commPorts = JSON.parse(available_arr).ports;
@@ -1346,31 +1802,31 @@
                     }
                 }
 
-                document
-                    .getElementById("startlist_class_sort")
-                    .addEventListener("change", function (ele) {
-                        const selectedClass = this.value;
-                        const table =
-                            document.getElementById("startlist_table");
-                        const tbody = table.getElementsByTagName("tbody")[0];
-                        const rows = tbody.getElementsByTagName("tr");
-
-                        for (let i = 0; i < rows.length; i++) {
-                            const classCell =
-                                rows[i].getElementsByTagName("td")[
-                                    window.startlistHeaders.indexOf("CLASS")
-                                ];
-
-                            if (
-                                selectedClass === "ALL" ||
-                                classCell.textContent === selectedClass
-                            ) {
-                                rows[i].style.display = "";
-                            } else {
-                                rows[i].style.display = "none";
-                            }
-                        }
-                    });
+                //document
+                //    .getElementById("startlist_class_sort")
+                //    .addEventListener("change", function (ele) {
+                //        const selectedClass = this.value;
+                //        const table =
+                //            document.getElementById("startlist_table");
+                //        const tbody = table.getElementsByTagName("tbody")[0];
+                //        const rows = tbody.getElementsByTagName("tr");
+                //
+                //        for (let i = 0; i < rows.length; i++) {
+                //            const classCell =
+                //                rows[i].getElementsByTagName("td")[
+                //                    window.startlistHeaders.indexOf("CLASS")
+                //                ];
+                //
+                //            if (
+                //                selectedClass === "ALL" ||
+                //                classCell.textContent === selectedClass
+                //            ) {
+                //                rows[i].style.display = "";
+                //            } else {
+                //                rows[i].style.display = "none";
+                //            }
+                //        }
+                //    });
                 document
                     .getElementById("startlist_file_input")
                     .addEventListener("change", function () {
@@ -1545,57 +2001,57 @@
                     }
                 }
 
-                document
-                    .getElementById("livetiming_form")
-                    .addEventListener("submit", (ev) => {
-                        ev.preventDefault();
-                        // FIXME: Livetiming window not showing up once Websocket is closed
-                        try {
-                            document.getElementById(
-                                "livetiming_submit"
-                            ).disabled = true;
-                            document.getElementById(
-                                "live_config"
-                            ).style.display = "none";
-                            const password = document
-                                .getElementById("livetiming_password")
-                                .value.trim();
-                            const filename = document
-                                .getElementById("livetiming_filename")
-                                .value.trim();
-
-                            if (!password || !filename) {
-                                throw new Error(
-                                    "Password and filename are required"
-                                );
-                            }
-
-                            const headers = {};
-                            const headerInputs =
-                                document.querySelectorAll(".LIVETIMING_VALUE");
-
-                            headerInputs.forEach((input) => {
-                                const key = input.getAttribute("key-value");
-                                const value = input.value.trim();
-                                if (key && value) {
-                                    headers[key] = value;
-                                }
-                            });
-                            const formData = {
-                                password: password,
-                                filename: filename,
-                                headers: headers,
-                            };
-
-                            bridge.py_message(
-                                `{"message_type":"livetiming_form", "data":${JSON.stringify(
-                                    formData
-                                )}}`
-                            );
-                        } catch (error) {
-                            alert(`Form error: ${error}`);
-                        }
-                    });
+                // document
+                //     .getElementById("livetiming_form")
+                //     .addEventListener("submit", (ev) => {
+                //         ev.preventDefault();
+                //         // FIXME: Livetiming window not showing up once Websocket is closed
+                //         try {
+                //             document.getElementById(
+                //                 "livetiming_submit"
+                //             ).disabled = true;
+                //             document.getElementById(
+                //                 "live_config"
+                //             ).style.display = "none";
+                //             const password = document
+                //                 .getElementById("livetiming_password")
+                //                 .value.trim();
+                //             const filename = document
+                //                 .getElementById("livetiming_filename")
+                //                 .value.trim();
+                //
+                //             if (!password || !filename) {
+                //                 throw new Error(
+                //                     "Password and filename are required"
+                //                 );
+                //             }
+                //
+                //             const headers = {};
+                //             const headerInputs =
+                //                 document.querySelectorAll(".LIVETIMING_VALUE");
+                //
+                //             headerInputs.forEach((input) => {
+                //                 const key = input.getAttribute("key-value");
+                //                 const value = input.value.trim();
+                //                 if (key && value) {
+                //                     headers[key] = value;
+                //                 }
+                //             });
+                //             const formData = {
+                //                 password: password,
+                //                 filename: filename,
+                //                 headers: headers,
+                //             };
+                //
+                //             bridge.py_message(
+                //                 `{"message_type":"livetiming_form", "data":${JSON.stringify(
+                //                     formData
+                //                 )}}`
+                //             );
+                //         } catch (error) {
+                //             alert(`Form error: ${error}`);
+                //         }
+                //     });
 
                 document
                     .getElementById("side_ui_end_race_button")
@@ -1613,6 +2069,102 @@
                             }, 5000);
                         }
                     });
+                function startRaceTimerCountdown(msg_body) {
+                    if (countdownInterval) clearInterval(countdownInterval);
+
+                    const [hour, minute] = msg_body.raceStartTime
+                        .split(":")
+                        .map(Number);
+                    const now = new Date();
+                    let targetTime = new Date(
+                        now.getFullYear(),
+                        now.getMonth(),
+                        now.getDate(),
+                        hour,
+                        minute,
+                        0
+                    ).getTime();
+
+                    if (targetTime < now.getTime()) {
+                        console.warn("Race start time already passed!");
+                        targetTime = now.getTime();
+                    }
+
+                    countdownInterval = setInterval(() => {
+                        const nowMs = new Date().getTime();
+                        const distance = targetTime - nowMs;
+
+                        if (distance <= 0) {
+                            clearInterval(countdownInterval);
+                            document.getElementById(
+                                "race_starting_in_clock"
+                            ).innerText = "00:00:00";
+                            return;
+                        }
+
+                        const hours = Math.floor(
+                            (distance / (1000 * 60 * 60)) % 24
+                        );
+                        const minutes = Math.floor(
+                            (distance / (1000 * 60)) % 60
+                        );
+                        const seconds = Math.floor((distance / 1000) % 60);
+
+                        document.getElementById(
+                            "race_starting_in_clock"
+                        ).innerText = `${String(hours).padStart(
+                            2,
+                            "0"
+                        )}:${String(minutes).padStart(2, "0")}:${String(
+                            seconds
+                        ).padStart(2, "0")}`;
+                    }, 1000);
+                }
+                function stopRaceTimerCountdown() {
+                    if (countdownInterval) {
+                        clearInterval(countdownInterval);
+                        countdownInterval = null;
+                    }
+                }
+                function formatTime(ms) {
+                    const totalSeconds = Math.floor(ms / 1000);
+                    const hours = Math.floor(totalSeconds / 3600);
+                    const minutes = Math.floor((totalSeconds % 3600) / 60);
+                    const seconds = totalSeconds % 60;
+                    const hundredths = Math.floor((ms % 1000) / 10);
+                    return `${String(hours).padStart(2, "0")}:${String(
+                        minutes
+                    ).padStart(2, "0")}:${String(seconds).padStart(
+                        2,
+                        "0"
+                    )}.${String(hundredths).padStart(2, "0")}`;
+                }
+                let raceClockStartTime = null;
+                let raceClockElapsedTime = null;
+                function updateClockDisplay() {
+                    document.getElementById("race_time_clock").innerText =
+                        formatTime(raceClockElapsedTime);
+                }
+
+                function startClock() {
+                    if (raceClockInterval) return;
+                    raceClockStartTime = Date.now() - raceClockElapsedTime;
+                    raceClockInterval = setInterval(() => {
+                        raceClockElapsedTime = Date.now() - raceClockStartTime;
+                        updateClockDisplay();
+                    }, 10);
+                }
+
+                function stopClock() {
+                    clearInterval(raceClockInterval);
+                    raceClockInterval = null;
+                }
+
+                function resetClock() {
+                    stopClock();
+                    raceClockElapsedTime = 0;
+                    updateClockDisplay();
+                }
             </script>
         </div>
     </body>

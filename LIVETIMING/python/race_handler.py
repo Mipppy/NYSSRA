@@ -1,220 +1,367 @@
-import logging
+from datetime import datetime, timedelta
+import math
 import threading
-import time
 from xc_timer import XC_TIMER_DLL
-import csv 
-from datetime import datetime
-import serial.tools.list_ports #type:ignore
+import time
+import random
 from typing import List
-import base64
+import serial.tools.list_ports
 import json
-from io import BytesIO,StringIO
-import openpyxl
 import csv
-class DLL_Race_Handler:
-        # The class for overall timer records, with our startlist data + the timer record provided by the DLL.
+from io import StringIO, BytesIO
+import openpyxl
+import logging
+import base64
+
+
+
+class Alt_Race_Handler:
     class BatchedTimerRecord:
-        def __init__(self, bib_num: str | None, first_name: str | None, last_name: str | None, team:str | None, dll_record_structure: XC_TIMER_DLL.XC_TIMER_RECORD_STRUCTURE_TYPE, additional_startlist_data: dict | None):
+        def __init__(self, bib_num: str | None, first_name: str | None, last_name: str | None, team:str | None,  dll_record_structure: dict, additional_startlist_data: dict | None, timing_data: dict):
             self.bib_num = bib_num
             self.first_name = first_name
             self.last_name = last_name
             self.team = team
             self.dll_record_structure = dll_record_structure
             self.additional_startlist_data = additional_startlist_data
+            self.timing_data = timing_data
+        def __str__(self):
+            return f"BatchedTimerRecord({self.__dict__})"
+        def to_dict(self):
+            def serialize_td(td):
+                if isinstance(td, timedelta):
+                    return td.total_seconds() 
+                return td
 
-    def __init__(self):
+            return {
+                "bib_num": self.bib_num,
+                "first_name": self.first_name,
+                "last_name": self.last_name,
+                "team": self.team,
+                "dll_record_structure": self.dll_record_structure,
+                "additional_startlist_data": self.additional_startlist_data,
+                "timing_data": {k: serialize_td(v) for k, v in self.timing_data.items()},
+            }
         
-        from instances import Instances 
-        self.xc_timer_dll = Instances.xc_timer_dll
-        # It feels a little wrong initializing the DLL here, but whatever.
+    def __init__(self):
+        self.xc_timer_dll = XC_TIMER_DLL()
+        self.startlist: List[dict] = []
+        self.startlist_parsed: List[dict] = []
+        self.logger = logging.getLogger('BART2')
+        self.conf_data = None
+        self.race_cfg_data = None
+        self.global_struct = None
+        self.race_officially_start = False
+        self.race_loop_thread: threading.Thread = None
+        self.comm_port_thread: threading.Thread = None
+        self.event_heat: List[int, int] = []
+        self.saved_parsed_results: List[Alt_Race_Handler.BatchedTimerRecord] = []
+        self.saved_raw_results: List[dict] = []
+        self.thread_shutdown_signal: bool = False
+        
+        self.comm_port_thread = threading.Thread(target=self._comm_port_scan_loop, daemon=True)
+        self.comm_port_thread.start()
+    
+    def _comm_port_scan_loop(self):
+        while True:
+            self.serial_comm_ports = serial.tools.list_ports.comports()
+            
+            from instances import Instances
+            Instances.window.bridge.send_to_js(f"SERIAL_COM_PORTS|||{json.dumps({'ports': [[port.device, port.manufacturer] for port in self.serial_comm_ports]})}")
+            
+            time.sleep(3)
+    
+    def _race_loop(self):
+        race_start_str = self.race_cfg_data.get("raceStartTime", "00:00")
+        now = datetime.now()
+        hour, minute = map(int, race_start_str.split(":"))
+        race_start_dt = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
+
+        if race_start_dt < now:
+            race_start_dt = now
+        self.race_officially_start = False
+        while not self.thread_shutdown_signal:
+            if not self.race_officially_start and datetime.now() >= race_start_dt:
+                self.race_officially_start = True
+                from instances import Instances
+                Instances.window.bridge.send_to_js("RACE_STARTED|||Race has started!")
+        
+            while True:
+                d = self.xc_timer_dll.dll_get_character_from_terminal_fifo()
+                if d == -1:
+                    break
+                # print("Terminal char:", chr(d) if d < 128 else d)
+
+            while True:
+                record = self.xc_timer_dll.dll_get_next_timer_structure()
+                if not record:
+                    break
+                record_as_dict = record.as_dict()
+                if record.record_typ == 'b':
+                    self.saved_raw_results.append(record_as_dict)
+                    self.parse_new_record(record_as_dict)
+
+            # !!!! ~50 MS CLOCK !!!!
+            time.sleep(0.05)  
+        
+    def start_race(self, cfg: dict):
+        self.thread_shutdown_signal = True
+        self.race_cfg_data:dict  = cfg
+        
         self.xc_timer_dll.dll_initialize_dll_task(0x100 | 0x40 | 0x10 | 2,'srt/')
         self.xc_timer_dll.dll_set_string_delimiter(0)
-        self.startlist: List[dict] = []
-        self.currently_active_race_data: List[DLL_Race_Handler.BatchedTimerRecord] = []
-        self.serial_comm_ports = []
-        self.is_currently_racing = False
-        self.startlist_file_type = "csv"
-        self.startlist_file_name = "unknown"
-        self.logger = logging.getLogger("BART2")
-        self.race_results_thread = threading.Thread(target=self._race_results_worker, daemon=True)
-        self.race_results_thread.start()
-        # Startlist should always at least have one participant with at least this dict data
-        # {"bib_num": int, "first_name": str, "last_name": str, "team": str}
 
+        self.conf_data = self.xc_timer_dll.dll_get_pointer_to_configuration_structure()
+        self.global_struct = self.xc_timer_dll.dll_get_pointer_to_global_variable_structure()
 
-    def _race_results_worker(self):
-        """
-        Handles the race results from the DLL. This will be a much larger function in the future.
-        Because why not, this function also happens to scan the comm ports every 5 seconds
-        """
-        last_scan = time.monotonic()
-
-        while True:
-            # Rescanning for serial communication ports
-            current_time = time.monotonic()
-            if current_time - last_scan >= 5:
-                self._rescan_comm_ports()
-                last_scan = current_time
-                
-            if self.is_currently_racing:
-                while True:
-                    timer_record = self.xc_timer_dll.dll_get_next_timer_structure()
-                    if not timer_record:
-                        break
-                    print(timer_record)
-
-            # !!! ~50ms clock !!!
-            time.sleep(0.05)
-
-    def _handle_timer_record(self, record: XC_TIMER_DLL.XC_TIMER_RECORD_STRUCTURE_TYPE) -> BatchedTimerRecord | None:
-        if self.startlist == []:
-            self.logger.error("Attempted to handle incoming timer record without startlist!")
-    
-        from instances import Instances
-        if Instances.settings.get_setting("USE_PC_TIME") == 1:
-            if record.record_typ == 'b':
-                racer = next((p for p in self.startlist if p["bib_num"] == record.bib_string), None)
-                racer.pop('bib_num', None)
-                active_batched_record = self.BatchedTimerRecord(
-                    bib_num=record.bib_string,
-                    first_name=racer.pop('first_name', None),
-                    last_name=racer.pop('last_name', None), 
-                    team=racer.pop('team', None),
-                    dll_record_structure=record,
-                    additional_startlist_data=racer
-                )
-                record.timer_time = datetime.strptime(record.timer_time, "%H:%M:%S.%f")
-                record.pc_time = datetime.strptime(record.pc_time, "%H:%M:%S")
-                self.currently_active_race_data.append(active_batched_record)
-                return active_batched_record
-        return None         
-    
-    def generate_results_csv(self, verbose: bool = False) -> str | None:
+        self.xc_timer_dll.dll_set_comm_port(3)
+        self.xc_timer_dll.dll_start_communicating_with_timers()
         
-        if not self.currently_active_race_data:
-            self.logger.error('There is no race data to generate the results file with.')
-            return None
+        self.event_heat = random.sample(range(1, 8), 2)
+        self.xc_timer_dll.dll_set_event_and_heat(0, self.event_heat[0], self.event_heat[1])
+        self.xc_timer_dll.dll_synch_timers(0, "0")
+        
+        self.thread_shutdown_signal = False
+        self.race_loop_thread = threading.Thread(target=self._race_loop, daemon=True)
+        self.race_loop_thread.start()
+        
+        
+        if self.race_cfg_data.get('useLivetiming'):
+            from instances import Instances
+            Instances.livetiming.reinit()
+            Instances.livetiming.connect_to_livetiming_ws()
+            Instances.livetiming.send_auth_and_config(self.race_cfg_data.get('livetimingCfg'))
 
-        if self.is_currently_racing:
-            self.logger.error('Cannot generate a results file while a race is still going.')
-            return None
 
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"race_results_{timestamp}.csv"
+
+    def parse_new_record(self, record: dict):
+        self.logger.debug(record)
+        race_start_str = self.race_cfg_data.get("raceStartTime", "00:00") 
+        today = datetime.today()
+        hour, minute = map(int, race_start_str.split(":"))
+        race_start_dt = today.replace(hour=hour, minute=minute, second=0, microsecond=0)
+
+        now = datetime.now()
+        if now < race_start_dt:
+            self.logger.warning(f"Received early record for bib {record.get('bib_string')} at {now.time()} before race start {race_start_dt.time()}")
+            return  
+
+        bib_num = record.get('bib_string', None)
+        if bib_num is None:
+            self.logger.warning("Received record without bib_string")
+            return
+
+        bib_data = self.get_racerdata_from_bib(bib_num)
+        racer_data = bib_data['racer_data']
+        additional_data = bib_data['additional']
+
+        racer_time_data = {}
+
+        pc = datetime.strptime(record.get("pc_time"), "%H:%M:%S")
+        racer_time_data['pc_time'] = timedelta(
+            hours=pc.hour, minutes=pc.minute, seconds=pc.second
+        )
+
+        tt = datetime.strptime(record.get("timer_time"), "%H:%M:%S.%f")
+        racer_time_data['timer_time'] = timedelta(
+            hours=tt.hour,
+            minutes=tt.minute,
+            seconds=tt.second,
+            microseconds=tt.microsecond,
+        )
+
+        if self.race_cfg_data.get('raceType') == "1":
+            bib_index = additional_data['bib_index']
+            athletes_per_wave = self.race_cfg_data['intervalStart']['athletesPerWave']
+            interval_seconds = self.race_cfg_data['intervalStart']['startInterval']
+
+            wave_index = bib_index // athletes_per_wave
+            interval_time_offset = wave_index * interval_seconds
+
+            hour, minute = map(int, self.race_cfg_data.get("raceStartTime", "00:00").split(":"))
+            race_start_td = timedelta(hours=hour, minutes=minute)
+
+            corrected_time = racer_time_data["timer_time"] - race_start_td - timedelta(seconds=interval_time_offset)
+            if corrected_time < timedelta(0):
+                corrected_time = timedelta(0)
+
+            racer_time_data["interval_time_offset"] = interval_time_offset
+            racer_time_data["corrected_time"] = corrected_time
+        new_parsed_record = self.BatchedTimerRecord(
+            bib_num,
+            racer_data.get('first_name', 'Unknown'),
+            racer_data.get('last_name','Unknown'),
+            racer_data.get('team', "Unknown"),
+            record,
+            additional_data,
+            timing_data=racer_time_data
+        )
+        self.logger.debug(new_parsed_record)
+        self.saved_parsed_results.append(new_parsed_record)
+        self.alert_other_systems_of_record(new_parsed_record)
+
+
+
+    
+    def alert_other_systems_of_record(self, parsed_record: BatchedTimerRecord):
+        from instances import Instances
+        dictified = [r.to_dict() for r in self.saved_parsed_results]
+        Instances.window.bridge.send_to_js(
+            f"UPDATED_RESULTS|||{json.dumps(dictified)}"
+        )
+        Instances.announcer.handle_incoming_result(parsed_record)
+        Instances.local_web_server.update_results(dictified)
+        Instances.livetiming.send_json_message(dictified)
+            
+    
+    def get_racerdata_from_bib(self, bib_num: str) -> dict:
+        if not self.startlist or not self.startlist_parsed:
+            return {}
 
         try:
-            with open(filename, mode="w", newline="", encoding="utf-8") as csvfile:
-                writer = csv.writer(csvfile)
+            bib_num_norm = str(int(str(bib_num).strip()))
+        except:
+            bib_num_norm = str(bib_num).strip()
 
-                if not verbose:
-                    writer.writerow(["PLACE", "BIB", "NAME", "AGE", "TEAM", "PC_TIME"])
-                    for place, record in enumerate(self.currently_active_race_data, start=1):
-                        dll_rec = record.dll_record_structure
-                        pc_time = (
-                            dll_rec.pc_time.strftime("%H:%M:%S")
-                            if isinstance(dll_rec.pc_time, datetime)
-                            else dll_rec.pc_time
-                        )
-                        name = f"{record.last_name}, {record.first_name}".strip(", ")
-                        age = None
-                        if record.additional_startlist_data:
-                            age = record.additional_startlist_data.get("age")
-                        writer.writerow([
-                            place,
-                            record.bib_num or "",
-                            name,
-                            age if age is not None else "",
-                            record.team or "",
-                            pc_time
-                        ])
+        matched_index = 0
+        racer_data = None
 
-                else:
-                    header_written = False
-                    for place, record in enumerate(self.currently_active_race_data, start=1):
-                        dll_rec = record.dll_record_structure
-                        row_dict = dll_rec.as_dict()
+        for idx, racer in enumerate(self.startlist_parsed):
+            if racer.get("bib") is None:
+                continue
 
-                        row_dict = {
-                            "place": place,
-                            "bib_num": record.bib_num,
-                            "first_name": record.first_name,
-                            "last_name": record.last_name,
-                            "team": record.team,
-                            **(record.additional_startlist_data or {}),
-                            **row_dict,
-                        }
+            try:
+                r_bib_norm = str(int(str(racer["bib"]).strip()))
+            except:
+                r_bib_norm = str(racer["bib"]).strip()
 
-                        if not header_written:
-                            writer.writerow(row_dict.keys())
-                            header_written = True
+            if r_bib_norm == bib_num_norm:
+                matched_index = idx
+                racer_data = dict(racer)  
+                break
 
-                        writer.writerow(row_dict.values())
+        header = self.startlist[0]
+        row = self.startlist[matched_index]
 
-            self.logger.info(f"Results CSV generated: {filename}")
-            return filename
+        USED_KEYS = {"bib", "first_name", "last_name", "sex", "class", "alt_class", "team"}
 
-        except Exception as e:
-            self.logger.error(f"Failed to generate results CSV: {e}")
-            return None
+        def normalize(s):
+            if not s:
+                return ""
+            return "".join(ch for ch in str(s).upper() if ch.isalnum())
 
+        EXPECTED_MAP = {
+            "BIB": "bib", "BIBNUMBER": "bib", "BIBNO": "bib", "BIB#": "bib",
+            "LASTNAME": "last_name", "SURNAME": "last_name",
+            "FIRSTNAME": "first_name", "GIVENNAME": "first_name",
+            "SEX": "sex", "GENDER": "sex",
+            "CLASS": "class",
+            "ALTCLASS": "alt_class", "ALTERNATECLASS": "alt_class",
+            "TEAM": "team"
+        }
 
+        def map_header(h):
+            n = normalize(h)
+            return EXPECTED_MAP.get(n)
 
-    def _rescan_comm_ports(self):
-        """
-        This will always return an empty list when using Wine.
-        As I progress, the less feasible using Wine to develop the whole thing seems.
-        """
-        self.serial_comm_ports = serial.tools.list_ports.comports()
-            
-        from instances import Instances
-        Instances.window.bridge.send_to_js(f"SERIAL_COM_PORTS|||{json.dumps({'ports': [[port.device, port.manufacturer] for port in self.serial_comm_ports]})}")
+        additional = {}
 
+        for i, col_name in enumerate(header):
+            internal_key = map_header(col_name)
+
+            if internal_key not in USED_KEYS:
+                if i < len(row):
+                    additional[col_name] = row[i]
+        additional['bib_index'] =  matched_index if matched_index else 0
+        data = {'racer_data': racer_data, 'additional': additional}
+
+        return data
     def load_startlist(self, startlist_data: dict):
         b64 = startlist_data.get("file_data", "")
         file_bytes = base64.b64decode(b64)
 
         self.startlist_file_type = startlist_data.get("file_type", "")
-        self.startlist_file_name = startlist_data.get("file_name", "")
+        self.startlist_file_name = startlist_data.get("file_name", "")  
 
 
         if self.startlist_file_name.endswith(".csv"):
             decoded = file_bytes.decode("utf-8", errors="ignore")
-            reader = csv.DictReader(StringIO(decoded))
-            self.startlist = list(reader)
+            reader = csv.reader(StringIO(decoded))
+            self.startlist = [row for row in reader]
 
         elif self.startlist_file_name.endswith(".xls") or self.startlist_file_name.endswith(".xlsx"):
-
-
             buf = BytesIO(file_bytes)
             wb = openpyxl.load_workbook(buf)
             ws = wb.active
+            self.startlist = [list(row) for row in ws.iter_rows(values_only=True)]
 
-            rows = []
-            for row in ws.iter_rows(values_only=True):
-                rows.append(row)
+        if not self.startlist:
+            return
 
-            self.startlist = [list(row) for row in rows]
+
+        header_row = self.startlist[0]
+
+        def normalize(s):
+            """str → normalized key (remove spaces, #, punctuation, uppercase)."""
+            if not s:
+                return ""
+            return "".join(ch for ch in s.upper() if ch.isalnum())
+
+        normalized_header_map = {normalize(h): i for i, h in enumerate(header_row)}
+
+        EXPECTED = {
+            "BIB": "bib",
+            "BIBNUMBER": "bib",
+            "BIBNO": "bib",
+            "BIB#": "bib",
+
+            "LASTNAME": "last_name",
+            "SURNAME": "last_name",
+
+            "FIRSTNAME": "first_name",
+            "GIVENNAME": "first_name",
+
+            "SEX": "sex",
+            "GENDER": "sex",
+
+            "CLASS": "class",
+            "ALTCLASS": "alt_class",
+            "ALTERNATECLASS": "alt_class",
+
+            "TEAM": "team"
+        }
+
+        def match_key(nkey):
+            for norm_compare, internal in EXPECTED.items():
+                if nkey == norm_compare:
+                    return internal
+            return None 
+
+
+        self.startlist_parsed = []
+
+        for row in self.startlist[1:]:  
+            racer = {
+                "bib": None,
+                "last_name": None,
+                "first_name": None,
+                "sex": None,
+                "class": None,
+                "alt_class": None,
+                "team": None,
+            }
+
+            for norm_header, col_index in normalized_header_map.items():
+                internal = match_key(norm_header)
+                if internal and col_index < len(row):
+                    racer[internal] = row[col_index]
+
+            self.startlist_parsed.append(racer)
+
         from instances import Instances
-        Instances.window.bridge.send_to_js(f"STARTLIST_DATA|||{json.dumps({'data': self.startlist})}")    
-    def start_race(self, comm_port: int, event: int, heat: int) -> int:
-        """
-        Starts a race.
-
-        Args:
-            comm_port (int): The communication port where the modem is plugged in.
-            event (int) / heat (int): Both aren't needed, and can really be set it whatever value, it doesn't matter.
-        """
-        if self.startlist:
-            self.xc_timer_dll.dll_set_comm_port(comm_port)
-            self.xc_timer_dll.dll_start_communicating_with_timers()
-            self.xc_timer_dll.dll_set_event_and_heat(0, event, heat)
-            self.xc_timer_dll.dll_synch_timers(0,"0")
-            self.is_currently_racing = True
-            return 0
-        else:
-            # If you don't have a startlist, we aren't letting you start a race.
-            return -1
-        
-    def end_race(self):
-        self.xc_timer_dll.dll_stop_communicating_with_timers()
-        # Other cleanup later.
+        Instances.window.bridge.send_to_js(
+            f"STARTLIST_DATA|||{json.dumps({'data': self.startlist})}"
+        )
+    
+    def kill_race(self):
+        pass

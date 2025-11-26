@@ -3,9 +3,9 @@ from xc_timer import XC_TIMER_DLL
 from settings import BART2_SETTINGS
 from helpers import initialize_logger
 from comms import LivetimingHandler
-from race_handler import DLL_Race_Handler
 from announcer import Announcer
 from webserver import LocalWebServer
+from race_handler import Alt_Race_Handler
 # I WISH I HAD POINTERS
 
 class Instances:
@@ -15,7 +15,7 @@ class Instances:
     # Set to None here to enable autocomplete on Visual Studio Code, as it doesn't autocomplete for @classmethods for some reason.
     window = None
     window_app = None
-    xc_timer_dll = None
+    # xc_timer_dll = None
     settings = None
     logger = None
     local_web_server = None
@@ -38,9 +38,9 @@ class Instances:
                 window_provider=cls.window
             )
             cls.window_app = window_list[0]
-            cls.xc_timer_dll = XC_TIMER_DLL()
+            # cls.xc_timer_dll = XC_TIMER_DLL()
             cls.livetiming = LivetimingHandler()
-            cls.dll_interfacer = DLL_Race_Handler()
+            cls.dll_interfacer = Alt_Race_Handler()
             cls.local_web_server = LocalWebServer()
             cls.announcer = Announcer()
             cls.logger.info("Successfully loaded all classes.")

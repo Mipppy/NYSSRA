@@ -34,7 +34,7 @@ class Bridge(QObject):
                 logger.warning(f"Received empty or invalid message: {msg}")
                 return
 
-            logger.debug(f"Raw message from JS: {msg}")
+            # logger.debug(f"Raw message from JS: {msg}")
             
             try:
                 json_msg = json.loads(msg)
@@ -52,10 +52,6 @@ class Bridge(QObject):
                 logger.info("JavaScript connection initialized")
                 self.js_initialized = True  
                 self.initalBridgeMessages()
-            elif message_type == "livetiming_form":
-                Instances.livetiming.reinit()
-                Instances.livetiming.connect_to_livetiming_ws()
-                Instances.livetiming.send_auth_and_config(json_msg['data'])
             elif message_type == "give_me_the_fucking_password":
                 password = Instances.settings.get_setting("SAVED_PASSWORD")
                 if not int(Instances.settings.get_setting("SAVE_PASSWORD")):
@@ -74,6 +70,11 @@ class Bridge(QObject):
                 logger.debug("Sent settings to window.")
             elif message_type == "reset_settings":
                 Instances.settings.load_defaults()
+            elif message_type == "start_race":
+                Instances.dll_interfacer.start_race(json_msg["data"])
+                self.send_to_js(f'STARTED_RACE_SUCCESSFULLY|||{json_msg['data']}')
+            elif message_type == "kill_race":
+                Instances.dll_interfacer.kill_race()
             else:   
                 logger.warning(f"Unhandled message type: {message_type}")
                 
@@ -102,7 +103,7 @@ class MyWebEnginePage(QWebEnginePage):
         QTimer.singleShot(0, lambda: (
             (lambda log_func: log_func(f"[JS] {message} (line {lineNumber})"))(
                 {
-                    0: logging.getLogger("BART2").info,
+                    0: logging.getLogger("BART2").debug,
                     1: logging.getLogger("BART2").warning,
                     2: logging.getLogger("BART2").error  
                 }.get(level, logging.getLogger("BART2").debug)
@@ -120,6 +121,7 @@ class HTMLWindow(QMainWindow):
     Args:
         QMainWindow : A QMainWindow
     """
+    bridge: Bridge
     def __init__(self, html_file='rendering/index.html'):
         super().__init__()
         self.setWindowTitle("Timing System")

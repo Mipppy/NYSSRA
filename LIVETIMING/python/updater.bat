@@ -9,6 +9,16 @@ if not exist version.txt (
 set /p local_ver=<version.txt
 echo Local version: %local_ver%
 
+echo Checking internet connection...
+
+powershell -command "Invoke-WebRequest 'https://example.com' -UseBasicParsing" >nul 2>&1
+if %errorlevel% neq 0 (
+    echo No internet connection detected. Skipping update.
+    goto start_app
+)
+
+echo Internet OK.
+
 echo Fetching remote version...
 powershell -command "(Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/Mipppy/NYSSRA/main/LIVETIMING/python/version.txt' -UseBasicParsing).Content" > remote_version.txt
 
@@ -49,6 +59,7 @@ echo Update complete!
 
 
 echo Launching application...
-cscript //nologo run_hidden.vbs
+@REM cscript //nologo run_hidden.vbs
+py -3.13-32 main.py
 endlocal
 exit

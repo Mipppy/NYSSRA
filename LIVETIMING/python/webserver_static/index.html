@@ -1,50 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>NYSSRA Live Timing</title>
-        <link rel="icon" href="icon.ico" type="image/x-icon" />
-        <link rel="stylesheet" href="bootstrap.css" />
-        <script src="bootstrap.js"></script>
-        <link rel="stylesheet" href="bootstrap-icons.css"> 
-    </head>
-    <body style="background-color: lightgrey">
-        <div class="m-1 rounded" id="results_container">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <h2>NYSSRA Live Results</h2>
-                <label>
-                    <input type="checkbox" id="autoscroll_checkbox" checked />
-                    Autoscroll
-                </label>
-            </div>
-            <hr />
-
-            <table
-                class="table table-striped table-bordered table-hover w-100 rounded"
-            >
-                <thead class="thead-dark">
-                    <tr>
-                        <th scope="col">Name</th>
-                        <th scope="col">Position</th>
-                        <th scope="col">Time</th>
-                        <th scope="col">Bib</th>
-                        <th scope="col"></th>
-                    </tr>
-                </thead>
-                <tbody id="results_body"></tbody>
-            </table>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NYSSRA Live Timing</title>
+    <link rel="icon" href="icon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="bootstrap.css" />
+    <script src="bootstrap.js"></script>
+    <link rel="stylesheet" href="bootstrap-icons.css"> 
+</head>
+<body style="background-color: lightgrey">
+    <div class="m-1 rounded" id="results_container">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h2>NYSSRA Live Results</h2>
+            <p>To view results, connect to Wi-Fi and go to: <span class="fw-bold" id="local_ip">loading...</span></p>
+            <label>
+                <input type="checkbox" id="autoscroll_checkbox" checked />
+                Autoscroll
+            </label>
         </div>
-    </body>
+        <hr />
+
+        <table class="table table-striped table-bordered table-hover w-100 rounded">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">PL</th>
+                    <th scope="col">BIB</th>
+                    <th scope="col">NAME</th>
+                    <th scope="col">TEAM</th>
+                    <th scope="col">TIME</th>
+                    <th scope="col">PTS</th>
+                </tr>
+            </thead>
+            <tbody id="results_body">
+                <tr>
+                    <td colspan="6" class="text-center">Race Results will appear here!</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
     <script>
         const resultsContainer = document.getElementById("results_container");
-        const autoscrollCheckbox = document.getElementById(
-            "autoscroll_checkbox"
-        );
+        const autoscrollCheckbox = document.getElementById("autoscroll_checkbox");
 
         let lastManualScroll = 0;
-        let scrollSpeed = 1;
-        let scrollInterval = 30;
+        const scrollSpeed = 1;
 
         resultsContainer.addEventListener("scroll", () => {
             lastManualScroll = Date.now();
@@ -55,11 +56,7 @@
                 const now = Date.now();
                 if (now - lastManualScroll > 5000) {
                     resultsContainer.scrollTop += scrollSpeed;
-                    if (
-                        resultsContainer.scrollTop +
-                            resultsContainer.clientHeight >=
-                        resultsContainer.scrollHeight
-                    ) {
+                    if (resultsContainer.scrollTop + resultsContainer.clientHeight >= resultsContainer.scrollHeight) {
                         resultsContainer.scrollTop = 0;
                     }
                 }
@@ -69,31 +66,94 @@
 
         autoscrollLoop();
 
-        function fetchResults() {
-            fetch("/results")
-                .then((response) => response.json())
-                .then((data) => {
-                    const resultsBody = document.getElementById("results_body");
-                    resultsBody.innerHTML = "";
-                    if (!data || data == {} || data == [] || data.length === 0) return;
-                    data.forEach((result) => {
-                        const row = document.createElement("tr");
-                        row.innerHTML = `
-                    <td>${result.name}</td>
-                    <td>${result.position}</td>
-                    <td>${result.time}</td>
-                    <td>${result.bib}</td>
-                    <td>${result.extra}</td>
-                `;
-                        resultsBody.appendChild(row);
-                    });
-                })
-                .catch((error) =>
-                    console.error("Error fetching results:", error)
-                );
+        async function fetchLocalIP() {
+            try {
+                const res = await fetch('/ip');
+                const data = await res.json();
+                document.getElementById('local_ip').innerText = data.local_ip + ':80';
+            } catch (err) {
+                console.error("Error fetching local IP:", err);
+            }
+        }
+        fetchLocalIP();
+
+        function formatCorrectedTime(secondsTotal) {
+            const hours = Math.floor(secondsTotal / 3600);
+            const minutes = Math.floor((secondsTotal % 3600) / 60);
+            const seconds = secondsTotal % 60;
+
+            let timeStr = "";
+            if (hours > 0) {
+                timeStr += hours + ":";
+            }
+            timeStr += (hours > 0 && minutes < 10 ? "0" : "") + minutes + ":";
+            timeStr += seconds.toFixed(1).padStart(4, "0"); // 1 digit of ms
+            return timeStr;
         }
 
-        setInterval(fetchResults, 5000);
+        async function fetchResults() {
+            try {
+                const response = await fetch("/results");
+                const data = await response.json();
+
+                const resultsBody = document.getElementById("results_body");
+                resultsBody.innerHTML = "";
+
+                if (!data || data.length === 0) {
+                    resultsBody.innerHTML = `<tr><td colspan="6" class="text-center">No results yet</td></tr>`;
+                    return;
+                }
+
+                // Sort by corrected_time
+                data.sort((a, b) => a.timing_data.corrected_time - b.timing_data.corrected_time);
+
+                data.forEach((res, index) => {
+                    const row = document.createElement("tr");
+
+                    // Place
+                    const tdPlace = document.createElement("td");
+                    tdPlace.innerText = index + 1;
+                    row.appendChild(tdPlace);
+
+                    // Bib
+                    const tdBib = document.createElement("td");
+                    tdBib.innerText = res.bib_num;
+                    row.appendChild(tdBib);
+
+                    // Name
+                    const tdName = document.createElement("td");
+                    tdName.innerText = `${res.first_name} ${res.last_name}`;
+                    row.appendChild(tdName);
+
+                    // Team
+                    const tdTeam = document.createElement("td");
+                    tdTeam.innerText = res.team;
+                    row.appendChild(tdTeam);
+
+                    // Time
+                    const tdTime = document.createElement("td");
+                    tdTime.innerText = formatCorrectedTime(res.timing_data.corrected_time);
+                    row.appendChild(tdTime);
+
+                    // Points
+                    const tdPts = document.createElement("td");
+                    tdPts.innerText = (index + 1).toFixed(2); // 1.00, 2.00, etc.
+                    row.appendChild(tdPts);
+
+                    resultsBody.appendChild(row);
+                });
+
+                // Auto-scroll
+                if (autoscrollCheckbox.checked) {
+                    resultsContainer.scrollTop = resultsContainer.scrollHeight;
+                }
+            } catch (err) {
+                console.error("Error fetching results:", err);
+            }
+        }
+
+        setInterval(fetchResults, 1000); // refresh every second
         fetchResults();
     </script>
+</body>
 </html>
