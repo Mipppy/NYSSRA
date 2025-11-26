@@ -1,6 +1,7 @@
 from typing import Union
 import logging
 from pathlib import Path
+from helpers import get_system_internals_folder
 
 class BART2_SETTINGS:
     def __init__(self):
@@ -17,13 +18,13 @@ class BART2_SETTINGS:
         SETTING_NAME=SETTING_VALUE,SETTING_DEFAULT
         """
         try:
-            with open('bart2_settings.txt', 'r') as file:
+            with open(f'{get_system_internals_folder()}/bart2_settings.txt', 'r') as file:
                 for line in file:
                     s_line = line.strip().split('=')
                     self.loaded_data[s_line[0]] = s_line[1].split(',')[0]
 
         except FileNotFoundError:
-            open('bart2_settings.txt','w')
+            open(f'{get_system_internals_folder()}/bart2_settings.txt','w')
             self.loaded_data = {}
         
         try:
@@ -87,11 +88,11 @@ class BART2_SETTINGS:
         if setting_name in self.loaded_data:
             self.loaded_data[setting_name] = new_value
         try:
-            with open('bart2_settings.txt', 'r') as file:
+            with open(f'{get_system_internals_folder()}/bart2_settings.txt', 'r') as file:
                 lines = file.readlines()
             
             found = False
-            with open('bart2_settings.txt', 'w') as file:
+            with open(f'{get_system_internals_folder()}/bart2_settings.txt', 'w') as file:
                 for line in lines:
                     if line.strip().startswith(setting_name + '='):
                         file.write(f"{setting_name}={new_value}\n")

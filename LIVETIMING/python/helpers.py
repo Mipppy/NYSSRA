@@ -162,9 +162,11 @@ def initialize_logger(verbose: bool = False,
     reset_loggers()
     
     if log_file is None:
-        log_file = get_system_internals_folder() / f"{datetime.now().strftime('%m-%d-%Y_%H-%M')}_bart2.log"
+        log_file = get_system_internals_folder() / 'Logs' / f"{datetime.now().strftime('%m-%d-%Y_%H-%M')}_bart2.log"
     log_file_str = str(log_file).replace("\\", "/")
-
+    log_dir = os.path.dirname(log_file)
+    if log_dir and not os.path.exists(log_dir):
+        os.makedirs(log_dir, exist_ok=True)
     
     logging.config.fileConfig(
         'bart2_logging.conf',
