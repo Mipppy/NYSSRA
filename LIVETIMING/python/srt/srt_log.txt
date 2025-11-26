@@ -1,5 +1,5 @@
 SRT Data Acquisition Module Runtime Log Here
-  at 09:50:39  on 11/26/25:
+  at 10:03:24  on 11/26/25:
   1.6.2 at 9:54 on 6/04/09
 
 
@@ -7,13 +7,13 @@ SRT Data Acquisition Module Has Been Initialized
 
 Set COMM Port to 3
 
-DLL Call: Creating Backup Text File at 09:50:39 
-Initializing COMM    3 Port with Baud Rate of   9600  at 09:50:39 
+DLL Call: Creating Backup Text File at 10:03:24 
+Initializing COMM    3 Port with Baud Rate of   9600  at 10:03:24 
 COM Port Initialized
 
-Started Successfully Communicating with Timers at 09:50:40
+Started Successfully Communicating with Timers at 10:03:26
 
-Sent Event and Heat: at 09:50:40  Packet: EV  0   5   2 
+Sent Event and Heat: at 10:03:26  Packet: EV  0   3   5 
 
-Synching Timers: at 09:50:40  Synch Packet: SY 09:50:40 
+Synching Timers: at 10:03:26  Synch Packet: SY 10:03:26 
 

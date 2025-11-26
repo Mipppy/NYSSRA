@@ -1,5 +1,6 @@
 from ctypes import *
 from ctypes import _SimpleCData
+from datetime import datetime
 import logging.config
 import os
 import io
@@ -161,15 +162,13 @@ def initialize_logger(verbose: bool = False,
     reset_loggers()
     
     if log_file is None:
-        log_file = 'bart2.log'
-    
-    log_dir = os.path.dirname(log_file)
-    if log_dir and not os.path.exists(log_dir):
-        os.makedirs(log_dir, exist_ok=True)
+        log_file = get_system_internals_folder() / f"{datetime.now().strftime('%m-%d-%Y_%H-%M')}_bart2.log"
+    log_file_str = str(log_file).replace("\\", "/")
+
     
     logging.config.fileConfig(
         'bart2_logging.conf',
-        defaults={'logfilename': log_file},
+        defaults={'logfilename': log_file_str},
         disable_existing_loggers=False
     )
     

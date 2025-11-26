@@ -34,28 +34,36 @@ class LocalWebServer:
 
             def log_message(self, format, *args):
                 return
-
             def do_GET(self):
-                if self.path == "/results":
-                    self.send_response(200)
-                    self.send_header("Content-Type", "application/json")
-                    self.end_headers()
-                    self.wfile.write(
-                        json.dumps(parent_instance.results_data).encode("utf-8")
-                    )
-                elif self.path == "/ip":
-                    self.send_response(200)
-                    self.send_header("Content-Type", "application/json")
-                    self.end_headers()
-                    self.wfile.write(
-                        json.dumps(
-                            {
-                                "local_ip": parent_instance.get_local_ip(),
-                            }
-                        ).encode("utf-8")
-                    )
-                else:
-                    super().do_GET()
+                try:
+                    if self.path == "/results":
+                        self.send_response(200)
+                        self.send_header("Content-Type", "application/json")
+                        self.end_headers()
+                        try:
+                            self.wfile.write(
+                                json.dumps(parent_instance.results_data).encode("utf-8")
+                            )
+                        except ConnectionAbortedError:
+                            parent_instance.logger.warning("Client disconnected before sending results.")
+                    elif self.path == "/ip":
+                        self.send_response(200)
+                        self.send_header("Content-Type", "application/json")
+                        self.end_headers()
+                        try:
+                            self.wfile.write(
+                                json.dumps(
+                                    {
+                                        "local_ip": parent_instance.get_local_ip(),
+                                    }
+                                ).encode("utf-8")
+                            )
+                        except ConnectionAbortedError:
+                            parent_instance.logger.warning("Client disconnected before sending IP info.")
+                    else:
+                        super().do_GET()
+                except Exception as e:
+                    parent_instance.logger.error(f"Error handling GET {self.path}: {e}")
 
         httpd = HTTPServer(server_address, LocalRequestHandler)
         self.logger.info(f"Serving HTTP on port {server_address[1]}...")
