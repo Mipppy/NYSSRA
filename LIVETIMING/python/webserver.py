@@ -18,6 +18,7 @@ class LocalWebServer:
         self.server_thread = threading.Thread(target=self._run_server, daemon=True)
         self.server_thread.start()
         self.logger.info("Local web server started.")
+        self.local_ip_addr = self.get_local_ip()
 
     def update_results(self, results: List[dict]) -> None:
         self.results_data = results
@@ -54,7 +55,7 @@ class LocalWebServer:
                             self.wfile.write(
                                 json.dumps(
                                     {
-                                        "local_ip": parent_instance.get_local_ip(),
+                                        "local_ip": parent_instance.local_ip_addr,
                                     }
                                 ).encode("utf-8")
                             )
@@ -65,18 +66,17 @@ class LocalWebServer:
                 except Exception as e:
                     parent_instance.logger.error(f"Error handling GET {self.path}: {e}")
 
-        httpd = HTTPServer(server_address, LocalRequestHandler)
+        self.httpd = HTTPServer(server_address, LocalRequestHandler)
         self.logger.info(f"Serving HTTP on port {server_address[1]}...")
-        httpd.serve_forever()
+        self.httpd.serve_forever()
+
 
     def get_local_ip(self):
         """Get the local IP address of the computer."""
         try:
             hostname = socket.gethostname()
             local_ip = socket.gethostbyname(hostname)
-            from instances import Instances
 
-            Instances.window.bridge.send_to_js(f"LOCAL_WEB_SERVER|||{local_ip}")
             return local_ip
         except Exception:
             return None

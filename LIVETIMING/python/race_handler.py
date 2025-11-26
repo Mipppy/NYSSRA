@@ -244,7 +244,7 @@ class Alt_Race_Handler:
         Instances.window.bridge.send_to_js(f"UPDATED_RESULTS|||{json.dumps(dictified)}")
         Instances.announcer.handle_incoming_result(parsed_record)
         Instances.local_web_server.update_results(dictified)
-        Instances.livetiming.send_json_message(dictified)
+        Instances.livetiming.send_json_message({"livedata": parsed_record.to_dict()})
 
     def get_racerdata_from_bib(self, bib_num: str) -> dict:
         if not self.startlist or not self.startlist_parsed:
@@ -461,7 +461,8 @@ class Alt_Race_Handler:
         self.saved_raw_results = []
         from instances import Instances
 
-        Instances.announcer.clear_talk_pool()
+        # Instances.announcer.clear_talk_pool()
         Instances.livetiming.reinit()
-        res_folder = self.save_results_info()
+        if self.race_cfg_data:
+            res_folder = self.save_results_info()
         Instances.window.bridge.send_to_js(f"RACE_OVER|||{res_folder}")

@@ -1,154 +1,323 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>NYSSRA - Live Race</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="css/bootstrap.css" />
+        <link rel="stylesheet" href="css/bootstrap-icons.css" />
+        <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 
-<head>
-    <meta charset="UTF-8" />
-    <title>404 - Page Not Found</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" href="/images/nyssra-logo.jpg" />
+        <style>
+            body {
+                background: #f7f7f7;
+                margin: 0;
+                font-family: Arial, sans-serif;
+            }
 
-    <link rel="stylesheet" href="css/global.css" />
-    <link rel="stylesheet" href="css/bootstrap.css" />
-    <link rel="stylesheet" href="css/bootstrap-icons.css" />
+            main {
+                width: 100%;
+                max-width: 1200px;
+                margin: 1rem auto;
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+                padding: 0 1rem;
+            }
 
-    <style>
-        html,
-        body {
-            height: 100%;
-            margin: 0;
-        }
+            #header-container {
+                width: 100%;
+                background: #fff;
+                border-radius: 0.5rem;
+                border: 1px solid #ddd;
+                padding: 1rem;
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem;
+            }
 
-        body {
-            display: flex;
-            flex-direction: column;
-        }
+            .header-top {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            .header-top h4 {
+                margin: 0;
+                font-weight: bold;
+                font-size: 1.5rem;
+            }
+            .header-top .buttons {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
 
-        main {
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            text-align: center;
-        }
-    </style>
-</head>
+            .header-bottom {
+                display: flex;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 0.5rem;
+                font-size: 1rem;
+                color: #6c757d;
+            }
 
-<body class="min-vh-100 d-flex flex-column">
-    <nav></nav>
+            .status-dot {
+                width: 16px;
+                height: 16px;
+                border-radius: 50%;
+                display: inline-block;
+                position: relative;
+            }
+            .status-dot.live {
+                background-color: #198754;
+            }
+            .status-dot.live::after {
+                content: "";
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                width: 100%;
+                height: 100%;
+                background-color: #198754;
+                border-radius: 50%;
+                transform: translate(-50%, -50%);
+                animation: pulse-ring 1.5s infinite;
+                opacity: 0.6;
+            }
+            .status-dot.recent {
+                background-color: #0d6efd;
+            }
+            .status-dot.finished {
+                background-color: #dc3545;
+            }
 
-    <main class="py-4">
-        <div class="d-flex rounded" style="min-height: 200px;max-width: 80%; width: 80%;"
-            id="race-data-container">
-            <div id="loading" class="align-self-center justify-content-center p-2">
-                <h1>Loading...</h1>
-                <hr>
-                <h5>
-                    Getting the most up-to-date race data! <br> Please hold on!
-                </h5>
+            @keyframes pulse-ring {
+                0% {
+                    transform: translate(-50%, -50%) scale(1);
+                    opacity: 0.6;
+                }
+                70% {
+                    transform: translate(-50%, -50%) scale(2.5);
+                    opacity: 0;
+                }
+                100% {
+                    transform: translate(-50%, -50%) scale(1);
+                    opacity: 0;
+                }
+            }
+
+            .table-wrapper {
+                width: 100%;
+                background: #fff;
+                border-radius: 0.5rem;
+                border: 1px solid #ddd;
+                padding: 0.5rem;
+                overflow-x: auto;
+            }
+
+            table {
+                width: 100%;
+                min-width: 700px;
+                border-collapse: collapse;
+                white-space: nowrap;
+            }
+
+            .table-wrapper input {
+                max-width: 250px;
+            }
+
+            @media (max-width: 767px) {
+                .header-top {
+                    flex-direction: column;
+                    gap: 0.5rem;
+                }
+                .header-top .buttons {
+                    flex-direction: column;
+                    width: 100%;
+                }
+                .header-top .buttons button {
+                    width: 100%;
+                }
+            }
+
+            @media (min-width: 768px) {
+                .header-top {
+                    flex-direction: row;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+                .header-top .buttons {
+                    margin-left: auto;
+                }
+            }
+        </style>
+    </head>
+
+    <body >
+        <nav></nav>
+        <main class="flex-grow-1">
+            <div id="loading" class="text-center py-5">
+                <h2>Loading...</h2>
+                <p class="text-muted">
+                    Getting the most up-to-date race data...
+                </p>
             </div>
-            <div style="display:none" id="failed-to-load" class="align-self-center justify-content-center p-2">
-                <h1>Sorry...</h1>
-                <hr>
-                <h5>
-                    The race data could not be found for this race.
-                </h5>
+
+            <div id="failed-to-load" class="d-none text-center py-5">
+                <h2 class="text-danger">Race Not Found</h2>
+                <p class="text-muted">
+                    We could not load race data for this event.
+                </p>
             </div>
-            <div id="actual-data" class="d-none row" style="width:100%;">
-                <div id="header-container"
-                    class="d-flex align-items-center justify-content-between p-2 m-2 border rounded bg-light">
-                    <div class="d-flex align-items-center gap-3 border shadow-lg rounded p-2">
-                        <h4 id="race-name" class="mb-0 fw-bold"></h4>
-                        <br>
-                        <div class="d-flex align-items-center text-secondary">
-                            <i class="bi bi-geo-alt"></i> <span id="race-location"></span>
-                            <i class="bi bi-clock ms-3"></i> <span id="race-start-time"></span>
+
+            <div id="actual-data" class="d-none row m-1">
+                <div class="col-lg-12 col-sm-12 col-md-12">
+                    <div id="header-container">
+                        <div class="header-top">
+                            <h4 id="race-name"></h4>
+                            <div class="buttons">
+                                <button
+                                    class="btn btn-secondary btn-sm"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#configModal"
+                                >
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    More Info
+                                </button>
+                                <div class="btn-group">
+                                    <button
+                                        type="button"
+                                        class="btn btn-primary btn-sm dropdown-toggle"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false"
+                                    >
+                                        <i class="bi bi-download"></i
+                                        >&nbsp;&nbsp;Save
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a
+                                                class="dropdown-item"
+                                                href="#"
+                                                id="save_csv"
+                                                >CSV</a
+                                            >
+                                        </li>
+                                        <li>
+                                            <a
+                                                class="dropdown-item"
+                                                href="#"
+                                                id="save_xlsx"
+                                                >XLSX</a
+                                            >
+                                        </li>
+                                        <li>
+                                            <a
+                                                class="dropdown-item"
+                                                href="#"
+                                                id="save_pdf"
+                                                >PDF</a
+                                            >
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="d-flex align-items-center gap-3">
-                        <div id="race-status" class="status-dot"></div>
-                        <span id="race-status-text" class="fw-semibold"></span>
+                        <div class="header-bottom">
+                            <div class="d-flex gap-3 flex-wrap">
+                                <span class="d-flex align-items-center">
+                                    <i class="bi bi-geo-alt me-1"></i
+                                    ><span id="race-location"></span>
+                                </span>
+                                <span class="d-flex align-items-center">
+                                    <i class="bi bi-clock me-1"></i
+                                    ><span id="race-start-time"></span>
+                                </span>
+                            </div>
 
-                        <button id="refresh-btn" class="btn btn-sm p-0 border-0" disabled
-                            title="Auto refreshing every 500ms">
-                            <i class="bi bi-arrow-clockwise fs-5 text-secondary"></i>
-                        </button>
-
-                        <div id="extra-header-data" class="text-end text-secondary small">
+                            <div class="d-flex align-items-center gap-2">
+                                <div id="race-status" class="status-dot"></div>
+                                <span
+                                    id="race-status-text"
+                                    class="fw-semibold"
+                                ></span>
+                                <button
+                                    id="refresh-btn"
+                                    class="btn btn-sm p-0 border-0"
+                                    disabled
+                                    title="Auto refreshing every 500ms"
+                                >
+                                    <i
+                                        class="bi bi-arrow-clockwise fs-5 text-secondary"
+                                    ></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
+                <div class="table-wrapper mt-3 col-lg-12 col-sm-12 col-md-12">
+                    <table
+                        id="raceResults"
+                        class="table table-striped table-hover table-bordered"
+                    >
+                        <thead class="table-light">
+                            <tr>
+                                <th>PL</th>
+                                <th>BIB</th>
+                                <th>NAME</th>
+                                <th>TEAM</th>
+                                <th>TIME</th>
+                                <th>PTS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="race-results-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <div class="modal fade" id="configModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <!-- <h3 class="modal-title">Race Information</h3> -->
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                        ></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div
+                                class="col-12 mx-1 d-none"
+                                id="additional-race-headers"
+                            >
+                                <h5>Additional Information</h5>
+                                <hr />
+                                <ul
+                                    id="additional-race-headers-container"
+                                ></ul>
+                            </div>
+                            <hr style="border: 2px black solid" />
+
+                            <div class="col-12 mb-2 mx-1">
+                                <h5>Race Setup</h5>
+                                <hr>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </main>
-
-    <footer></footer>
-    <style>
-        #header-container {
-            min-height: 50px;
-        }
-
-        .status-dot {
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            display: inline-block;
-            position: relative;
-        }
-
-        .status-dot.live {
-            background-color: #198754;
-        }
-
-        .status-dot.live::after {
-            content: "";
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            width: 100%;
-            height: 100%;
-            background-color: #198754;
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            animation: pulse-ring 1.5s infinite;
-            opacity: 0.6;
-        }
-
-        .status-dot.recent {
-            background-color: #0d6efd;
-        }
-
-        .status-dot.finished {
-            background-color: #dc3545;
-        }
-
-        @keyframes pulse-ring {
-            0% {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 0.6;
-            }
-
-            70% {
-                transform: translate(-50%, -50%) scale(2.5);
-                opacity: 0;
-            }
-
-            100% {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 0;
-            }
-        }
-
-        #refresh-btn {
-            cursor: not-allowed;
-            background: transparent;
-        }
-    </style>
-    <script src="scripts/bootstrap.js"></script>
-    <script src="scripts/navbar.js"></script>
-    <script src="scripts/live_data.js"></script>
-</body>
-
+        <footer></footer>
+        <script src="scripts/bootstrap.js"></script>
+        <script src="scripts/navbar.js"></script>
+        <script src="scripts/live_data.js"></script>
+    </body>
 </html>

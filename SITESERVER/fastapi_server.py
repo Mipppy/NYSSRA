@@ -87,10 +87,8 @@ async def get_all_results():
                     first_line = f.readline()
                     header = json.loads(first_line)
 
-                    name = header.get("header", {}).get("name") or filename.replace(
-                        ".jsonl", ""
-                    )
-                    place = header.get("header", {}).get("place", "Unknown")
+                    name = header.get('header', {}).get('headers', {}).get('race_name', "Unknown")
+                    place = header.get("header", {}).get("headers", {}).get('race_location', "Unknown")
                     live = header.get("header", {}).get("live", False)
                     timestamp_str = header.get("header_timestamp")
 

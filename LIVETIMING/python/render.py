@@ -1,7 +1,8 @@
 import sys
 from pathlib import Path
+import webbrowser
 from PyQt5.QtWidgets import QApplication, QMainWindow #type: ignore
-from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage #type: ignore
+from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage, QWebEngineSettings #type: ignore
 from PyQt5.QtCore import QUrl, QObject, pyqtSlot, pyqtSignal, QTimer #type:ignore
 from PyQt5.QtWebChannel import QWebChannel #type: ignore
 from PyQt5.QtGui import QIcon
@@ -101,6 +102,7 @@ class Bridge(QObject):
         """
         from instances import Instances
         self.send_to_js(f"VERSION_NUMBER|||{Instances.settings.VERSION_NUMBER}")
+        self.send_to_js(f"LOCAL_WEB_SERVER|||{Instances.local_web_server.local_ip_addr}")
 class MyWebEnginePage(QWebEnginePage):
     def javaScriptConsoleMessage(self, level, message, lineNumber, sourceID):
         # Just logging it crashes the program with no error.
@@ -113,6 +115,7 @@ class MyWebEnginePage(QWebEnginePage):
                 }.get(level, logging.getLogger("BART2").debug)
             )
         ))
+
 class HTMLWindow(QMainWindow):
     """
     The actual window class.
@@ -141,7 +144,7 @@ class HTMLWindow(QMainWindow):
             self.setWindowIcon(QIcon(str(icon_path)))
         screen = QApplication.primaryScreen().availableGeometry()
         self.resize(screen.width() , screen.height())  
-        self.browser.setContextMenuPolicy(Qt.NoContextMenu)
+        self.browser.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
         self.load_html(html_file)
         QTimer.singleShot(0, lambda: self.setGeometry(QApplication.primaryScreen().availableGeometry()))
 
@@ -154,7 +157,9 @@ class HTMLWindow(QMainWindow):
             a0 (QCloseEvent): This is passed by Qt.  Oddly, naming the variable anything other than it's generated named, a0, creates errors or issues with VS code
         """
         from instances import Instances
+        Instances.dll_interfacer.kill_race()
         Instances.livetiming.reinit()
+        Instances.local_web_server.httpd.shutdown()
         a0.accept()
     
     def load_html(self, file_path):

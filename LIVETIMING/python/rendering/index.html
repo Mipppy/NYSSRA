@@ -218,10 +218,10 @@
                                     </h6>
                                     <h6 class="d-inline-block text-white">
                                         Local Web Server:
-                                        <span
+                                        <a
                                             id="race-local-webserver"
-                                            class="text-"
-                                            >No</span
+                                            class="text-info"
+                                            >No</a
                                         >
                                     </h6>
 
@@ -760,8 +760,8 @@
                                         style="
                                             border-top-left-radius: 15px !important;
                                             border-top-right-radius: 15px !important;
-											border-bottom-right-radius: 0px !important;
-											border-bottom-left-radius: 0px !important;
+                                            border-bottom-right-radius: 0px !important;
+                                            border-bottom-left-radius: 0px !important;
                                         "
                                     >
                                         Results control panel
@@ -1228,27 +1228,28 @@
                         const newRow = document.createElement("tr");
 
                         newRow.innerHTML = `
-                    <td>
-                        <input type="text" class="form-control key-input LIVETIMING_KEY" 
-                               placeholder="Enter header key" value="${key}" 
-                               ${isRequired ? "readonly" : ""}
-                               required oninput="updateSubmitButton() ">
-                    </td>
-                    <td>
-                        <input type="text" class="form-control value-input LIVETIMING_VALUE" 
-                               placeholder="Enter header value" value="${value}" key-value="${key}"
-                               oninput="updateSubmitButton()">
-                    </td>
-                    <td class="text-center align-items-center">
-                        ${
-                            isRequired
-                                ? '<span class="text-light">Required</span>'
-                                : `<button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)">
-                                 <i class="bi bi-trash"></i>
-                               </button>`
-                        }
-                    </td>
-                `;
+        <td>
+            <input type="text" class="form-control key-input LIVETIMING_KEY" 
+                   placeholder="Enter header key" value="${key}" 
+                   ${isRequired ? "readonly" : ""}
+                   required oninput="updateKeyValue(this)">
+        </td>
+        <td>
+            <input type="text" class="form-control value-input LIVETIMING_VALUE" 
+                   placeholder="Enter header value" value="${value}" 
+                   key-value="${key}"
+                   oninput="updateSubmitButton()">
+        </td>
+        <td class="text-center align-items-center">
+            ${
+                isRequired
+                    ? '<span class="text-light">Required</span>'
+                    : `<button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteRow(this)">
+                         <i class="bi bi-trash"></i>
+                       </button>`
+            }
+        </td>
+    `;
 
                         table.appendChild(newRow);
                         updateSubmitButton();
@@ -1259,7 +1260,16 @@
                         row.remove();
                         updateSubmitButton();
                     }
-
+                        function updateKeyValue(input) {
+                            const row = input.closest("tr");
+                            const valueInput =
+                                row.querySelector(".LIVETIMING_VALUE");
+                            valueInput.setAttribute(
+                                "key-value",
+                                input.value.trim()
+                            );
+                            updateSubmitButton();
+                        }
                     function updateSubmitButton() {
                         const password = document.querySelector(
                             'input[name="password"]'
@@ -1476,17 +1486,19 @@
                     } else if (msg_type === "STARTED_RACE_SUCCESSFULLY") {
                         startRaceClientSide(msg_body);
                     } else if (msg_type === "LOCAL_WEB_SERVER") {
-                        document.getElementById(
+                        const ele = document.getElementById(
                             "race-local-webserver"
-                        ).innerText = msg_body;
+                        );
+                        ele.innerText = msg_body;
+                        ele.href = msg_body;
                     } else if (msg_type === "RACE_STARTED") {
                         window.isRaceActive = true;
                         document.getElementById(
                             "side_ui_end_race_button"
                         ).disabled = false;
-                        document.getElementById(
-                            "race-results-table"
-                        ).querySelector("tbody").innerHTML = "";
+                        document
+                            .getElementById("race-results-table")
+                            .querySelector("tbody").innerHTML = "";
                         startClock();
                     } else if (msg_type === "UPDATED_RESULTS") {
                         function formatTime(totalSeconds) {
@@ -1565,7 +1577,11 @@
                         document
                             .getElementById("livetiming-cfg-container")
                             .classList.remove("disabled-div");
-							document.getElementById('start-race-btn').disabled = false
+                        document.getElementById(
+                            "start-race-btn"
+                        ).disabled = false;
+                    } else {
+                        console.log(msg_type);
                     }
                 }
 
@@ -1580,7 +1596,7 @@
                     if (window.raceConfig.useLivetiming) {
                         document.getElementById(
                             "is-race-livetiming"
-                        ).innerText = "Yes. Loading URL...";
+                        ).innerText = "Yes";
                     }
                     startRaceTimerCountdown(window.raceConfig);
                 }
@@ -1597,7 +1613,7 @@
                                 return false;
                             }
                         };
-						ev.target.disabled = true
+                        ev.target.disabled = true;
                         let hasError = false;
 
                         const commPortEl =
@@ -1735,6 +1751,7 @@
                                             const key =
                                                 input.getAttribute("key-value");
                                             const value = input.value.trim();
+                                            console.log(key);
                                             if (key && value) h[key] = value;
                                         });
                                     return h;
@@ -1743,7 +1760,7 @@
                         }
 
                         if (hasError) {
-							ev.target.disabled = false
+                            ev.target.disabled = false;
                             return;
                         }
                         window.raceConfig = raceConfig;

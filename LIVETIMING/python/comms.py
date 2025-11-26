@@ -90,7 +90,6 @@ class LivetimingHandler:
                 message = self.websocket_connection.recv()
                 if message:
                     json_data = json.loads(message)
-                    self.logger.debug(f"Received Livetiming WS message: {json_data}")
 
                     if "INFO_CLIENT_PONG" in json_data:
                         self.last_pong_time = time.time()
@@ -145,7 +144,6 @@ class LivetimingHandler:
                 
                 ping_message = {"INFO_SERVER_PING": "ping"}
                 self.websocket_connection.send(json.dumps(ping_message))
-                self.logger.debug("Sent PING to server")
 
                 time.sleep(self.ping_interval)  
 
@@ -188,8 +186,11 @@ class LivetimingHandler:
             return
 
         self.logger.debug("WebSocket ready — sending auth/config")
-        self.send_json_message({"password": config['livetiming_password']})
-
+        password = config.get('livetimingCfg')['password']
+        file_name = config.get('livetimingCfg')['filename']
+        headers = config.get('livetimingCfg')['headers']
+        self.send_json_message({"password": password})
+        self.logger.debug(headers)
         auth_wait_start = time.time()
         while not self.authenticated:
             if time.time() - auth_wait_start > self.timeout_wait_sec:
@@ -197,6 +198,6 @@ class LivetimingHandler:
                 return
             time.sleep(0.1)
 
-        self.send_json_message({'new_url': config['livetiming_filename']})
+        self.send_json_message({'new_url': file_name})
         time.sleep(0.2)
-        self.send_json_message(config['headers'])
+        self.send_json_message({'headers':headers, 'raceConfig': config})
