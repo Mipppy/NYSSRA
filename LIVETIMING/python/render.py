@@ -5,10 +5,12 @@ from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage #type: ignor
 from PyQt5.QtCore import QUrl, QObject, pyqtSlot, pyqtSignal, QTimer #type:ignore
 from PyQt5.QtWebChannel import QWebChannel #type: ignore
 from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import Qt
 import logging
 from typing import List
+from pathlib import Path
 import json
-from helpers import openFileInExplorer
+from helpers import openFileInExplorer, create_needed_dirs, get_root_documents_folder
 
 
 class Bridge(QObject):
@@ -62,6 +64,8 @@ class Bridge(QObject):
                 Instances.dll_interfacer.load_startlist(json_msg['data'])
             elif message_type == "open_file":
                 openFileInExplorer(json_msg['data'])
+            elif message_type == "open_folder":
+                openFileInExplorer(get_root_documents_folder())
             elif message_type == "change_settings":
                 Instances.settings.update_settings_from_window(json_msg['data'])
             elif message_type == "gimmie_settings":
@@ -137,9 +141,10 @@ class HTMLWindow(QMainWindow):
             self.setWindowIcon(QIcon(str(icon_path)))
         screen = QApplication.primaryScreen().availableGeometry()
         self.resize(screen.width() , screen.height())  
-        
+        self.browser.setContextMenuPolicy(Qt.NoContextMenu)
         self.load_html(html_file)
         QTimer.singleShot(0, lambda: self.setGeometry(QApplication.primaryScreen().availableGeometry()))
+
     def closeEvent(self, a0):
         """
         When the window is closed, this closes the Websocket as well.  
@@ -183,6 +188,7 @@ def create_window() -> List[QApplication|HTMLWindow]:
     Returns:
         List[QApplication|HTMLWindow]: Returns both because Qt decided to make the QApplication needed for one line of code outside this file.
     """
+    create_needed_dirs()
     app = QApplication(sys.argv)
     icon_path = Path(__file__).parent / "icon.ico"
     if icon_path.exists():

@@ -50,8 +50,26 @@ def ensure_dll_loaded(func):
             raise RuntimeError("DLL has not been loaded yet.")
         return func(self, *args, **kwargs)
     return wrapper
-    
+system_files:Path
+system_files_race_internals:Path
+system_files_internals:Path
+def create_needed_dirs():
+    global system_files, system_files_race_internals, system_files_internals
+    system_files = Path.home() / "Documents" / "TimingSystemData"
+    system_files.mkdir(parents=True, exist_ok=True)
+    system_files_race_internals = Path.home() / "Documents" / "TimingSystemData" / "RaceResults"
+    system_files_race_internals.mkdir(parents=True, exist_ok=True)
+    system_files_internals = Path.home() / "Documents" / "TimingSystemData" / "Internals"
+    system_files_internals.mkdir(parents=True, exist_ok=True)
 
+def get_root_documents_folder():
+    return system_files
+
+def get_system_internals_folder():
+    return system_files_internals
+
+def get_race_internals_folder():
+    return system_files_race_internals
 class AutoDecodingStructure(Structure):
     def __getattribute__(self, name):
         if name.startswith("_"):

@@ -142,6 +142,13 @@
                             >&nbsp;&nbsp;&nbsp;Settings
                         </button>
                         <button
+                            class="btn btn-info w-100 mb-2"
+                            onclick="open_main_folder()"
+                        >
+                            <i class="bi bi-folder-fill"></i
+                            >&nbsp;&nbsp;&nbsp;Open Stored Data
+                        </button>
+                        <button
                             class="btn btn-danger w-100 mb-2"
                             onclick="location.reload()"
                         >
@@ -749,7 +756,7 @@
                                 >
                                     <button
                                         id="race-results-control-panel-button"
-                                        class="mt-1 w-100 bg-secondary-subtle"
+                                        class="mt-1 w-100 bg-secondary-subtle btn"
                                         style="
                                             border-top-left-radius: 15px;
                                             border-top-right-radius: 15px;
@@ -1345,6 +1352,14 @@
                                 `{"message_type": "open_file", "data": "${relative_file_path}"}`
                             );
                         };
+                        window.open_main_folder = () => {
+                            bridge.py_message(
+                                JSON.stringify({
+                                    message_type: "open_folder",
+                                    data: {},
+                                })
+                            );
+                        };
                         bridge.py_message(
                             `{"message_type": "ready", "data": {}}`
                         );
@@ -1359,7 +1374,7 @@
                     if (msg_type === "LOG") {
                         add_to_log(msg_body);
                     } else if (msg_type === "LIVETIMING") {
-                        handleLivetimingMessage(msg_body);
+                        //handleLivetimingMessage(msg_body);
                     } else if (msg_type === "SAVED_PASSWORD") {
                         if (
                             msg_body &&
@@ -1463,14 +1478,13 @@
                             "race-local-webserver"
                         ).innerText = msg_body;
                     } else if (msg_type === "RACE_STARTED") {
-                        clearInterval(countdownInterval);
-                        document.getElementById(
-                            "race_starting_in_clock"
-                        ).innerText = "00:00:00";
                         window.isRaceActive = true;
                         document.getElementById(
                             "side_ui_end_race_button"
                         ).disabled = false;
+                        document.getElementById(
+                            "race-results-table"
+                        ).querySelector("tbody").innerHTML = "";
                         startClock();
                     } else if (msg_type === "UPDATED_RESULTS") {
                         function formatTime(totalSeconds) {
@@ -1481,7 +1495,7 @@
                             const seconds = Math.floor(totalSeconds % 60);
                             const ms = Math.floor(
                                 (totalSeconds - Math.floor(totalSeconds)) * 10
-                            ); 
+                            );
 
                             const hStr = hours > 0 ? `${hours}:` : ":";
                             const mStr = minutes.toString().padStart(2, "0");
@@ -1536,6 +1550,20 @@
 
                             raceTable.querySelector("tbody").appendChild(tr);
                         });
+                    } else if (msg_type === "RACE_OVER") {
+                        resetClock();
+                        window.isRaceActive = true;
+                        document.getElementById(
+                            "side_ui_end_race_button"
+                        ).disabled = true;
+                        resetCountdownClock();
+                        document
+                            .getElementById("main-race-cfg")
+                            .classList.remove("disabled-div");
+                        document
+                            .getElementById("livetiming-cfg-container")
+                            .classList.remove("disabled-div");
+							document.getElementById('start-race-btn').disabled = false
                     }
                 }
 
@@ -1557,203 +1585,172 @@
 
                 document
                     .getElementById("start-race-btn")
-                    .addEventListener("click", () => {
-                        document
-                            .getElementById("start-race-btn")
-                            .addEventListener("click", () => {
-                                const markError = (element, condition) => {
-                                    if (condition) {
-                                        element.classList.add("input-error");
-                                        return true;
-                                    } else {
-                                        element.classList.remove("input-error");
-                                        return false;
-                                    }
-                                };
+                    .addEventListener("click", (ev) => {
+                        const markError = (element, condition) => {
+                            if (condition) {
+                                element.classList.add("input-error");
+                                return true;
+                            } else {
+                                element.classList.remove("input-error");
+                                return false;
+                            }
+                        };
+						ev.target.disabled = true
+                        let hasError = false;
 
-                                let hasError = false;
+                        const commPortEl =
+                            document.getElementById("commPortSelection");
+                        const startlistEl = document.getElementById(
+                            "startlist_file_input"
+                        );
+                        const raceNameEl =
+                            document.getElementById("race-cfg-name");
+                        const raceLocationEl =
+                            document.getElementById("race-cfg-location");
+                        const useLivetimingEl = document.getElementById(
+                            "enable_livetiming_checkbox"
+                        );
 
-                                const commPortEl =
+                        const raceStartTimeEl =
+                            document.getElementById("first-start-time");
+
+                        hasError |= markError(commPortEl, !commPortEl.value);
+                        hasError |= markError(startlistEl, !startlistEl.value);
+                        hasError |= markError(
+                            raceNameEl,
+                            raceNameEl.value.trim() === ""
+                        );
+                        hasError |= markError(
+                            raceLocationEl,
+                            raceLocationEl.value.trim() === ""
+                        );
+                        hasError |= markError(
+                            raceStartTimeEl,
+                            (() => {
+                                const value = raceStartTimeEl.value;
+                                if (!value) return true;
+                                const [hours, minutes] = value
+                                    .split(":")
+                                    .map(Number);
+                                const now = new Date();
+                                const raceStart = new Date();
+                                raceStart.setHours(hours, minutes, 0, 0);
+                                return raceStart < now;
+                            })()
+                        );
+
+                        const raceType = document.querySelector(
+                            "input[name='raceType']:checked"
+                        ).value;
+
+                        if (raceType === "1") {
+                            const intervalEl = document.getElementById(
+                                "interval-start-start-interval"
+                            );
+                            const perWaveEl = document.getElementById(
+                                "interval-start-wave-athlete-count"
+                            );
+
+                            hasError |= markError(
+                                intervalEl,
+                                !intervalEl.value
+                            );
+                            hasError |= markError(
+                                perWaveEl,
+                                !perWaveEl.value || perWaveEl.value <= 0
+                            );
+                        }
+
+                        const raceConfig = {
+                            commPort: commPortEl.value,
+                            raceName: raceNameEl.value.trim(),
+                            raceLocation: raceLocationEl.value.trim(),
+                            raceType: raceType,
+                            useLivetiming: useLivetimingEl.checked,
+                            raceStartTime: raceStartTimeEl.value,
+                        };
+                        if (raceType === "1") {
+                            raceConfig.intervalStart = {
+                                startInterval: parseInt(
                                     document.getElementById(
-                                        "commPortSelection"
-                                    );
-                                const startlistEl = document.getElementById(
-                                    "startlist_file_input"
-                                );
-                                const raceNameEl =
-                                    document.getElementById("race-cfg-name");
-                                const raceLocationEl =
-                                    document.getElementById(
-                                        "race-cfg-location"
-                                    );
-                                const useLivetimingEl = document.getElementById(
-                                    "enable_livetiming_checkbox"
-                                );
-
-                                const raceStartTimeEl =
-                                    document.getElementById("first-start-time");
-
-                                hasError |= markError(
-                                    commPortEl,
-                                    !commPortEl.value
-                                );
-                                hasError |= markError(
-                                    startlistEl,
-                                    !startlistEl.value
-                                );
-                                hasError |= markError(
-                                    raceNameEl,
-                                    raceNameEl.value.trim() === ""
-                                );
-                                hasError |= markError(
-                                    raceLocationEl,
-                                    raceLocationEl.value.trim() === ""
-                                );
-                                hasError |= markError(
-                                    raceStartTimeEl,
-                                    (() => {
-                                        const value = raceStartTimeEl.value;
-                                        if (!value) return true;
-                                        const [hours, minutes] = value
-                                            .split(":")
-                                            .map(Number);
-                                        const now = new Date();
-                                        const raceStart = new Date();
-                                        raceStart.setHours(
-                                            hours,
-                                            minutes,
-                                            0,
-                                            0
-                                        );
-                                        return raceStart < now;
-                                    })()
-                                );
-
-                                const raceType = document.querySelector(
-                                    "input[name='raceType']:checked"
-                                ).value;
-
-                                if (raceType === "1") {
-                                    const intervalEl = document.getElementById(
                                         "interval-start-start-interval"
-                                    );
-                                    const perWaveEl = document.getElementById(
+                                    ).value
+                                ),
+                                athletesPerWave: parseInt(
+                                    document.getElementById(
                                         "interval-start-wave-athlete-count"
-                                    );
+                                    ).value
+                                ),
+                            };
+                        }
 
-                                    hasError |= markError(
-                                        intervalEl,
-                                        !intervalEl.value
-                                    );
-                                    hasError |= markError(
-                                        perWaveEl,
-                                        !perWaveEl.value || perWaveEl.value <= 0
-                                    );
-                                }
+                        if (useLivetimingEl.checked) {
+                            const passwordEl = document.getElementById(
+                                "livetiming_password"
+                            );
+                            const filenameEl = document.getElementById(
+                                "livetiming_filename"
+                            );
 
-                                const raceConfig = {
-                                    commPort: commPortEl.value,
-                                    raceName: raceNameEl.value.trim(),
-                                    raceLocation: raceLocationEl.value.trim(),
-                                    raceType: raceType,
-                                    useLivetiming: useLivetimingEl.checked,
-                                    raceStartTime: raceStartTimeEl.value,
-                                };
-                                if (raceType === "1") {
-                                    raceConfig.intervalStart = {
-                                        startInterval: parseInt(
-                                            document.getElementById(
-                                                "interval-start-start-interval"
-                                            ).value
-                                        ),
-                                        athletesPerWave: parseInt(
-                                            document.getElementById(
-                                                "interval-start-wave-athlete-count"
-                                            ).value
-                                        ),
-                                    };
-                                }
+                            hasError |= markError(
+                                passwordEl,
+                                passwordEl.value.trim() === ""
+                            );
+                            hasError |= markError(
+                                filenameEl,
+                                filenameEl.value.trim() === ""
+                            );
 
-                                if (useLivetimingEl.checked) {
-                                    const passwordEl = document.getElementById(
-                                        "livetiming_password"
-                                    );
-                                    const filenameEl = document.getElementById(
-                                        "livetiming_filename"
-                                    );
+                            const headerRaceNameEl = document.querySelector(
+                                ".LIVETIMING_VALUE[key-value='race_name']"
+                            );
+                            const headerRaceLocationEl = document.querySelector(
+                                ".LIVETIMING_VALUE[key-value='race_location']"
+                            );
 
-                                    hasError |= markError(
-                                        passwordEl,
-                                        passwordEl.value.trim() === ""
-                                    );
-                                    hasError |= markError(
-                                        filenameEl,
-                                        filenameEl.value.trim() === ""
-                                    );
+                            hasError |= markError(
+                                headerRaceNameEl,
+                                !headerRaceNameEl ||
+                                    headerRaceNameEl.value.trim() === ""
+                            );
+                            hasError |= markError(
+                                headerRaceLocationEl,
+                                !headerRaceLocationEl ||
+                                    headerRaceLocationEl.value.trim() === ""
+                            );
+                            raceConfig.livetimingCfg = {
+                                password: document
+                                    .getElementById("livetiming_password")
+                                    .value.trim(),
+                                filename: document
+                                    .getElementById("livetiming_filename")
+                                    .value.trim(),
+                                headers: (() => {
+                                    const h = {};
+                                    document
+                                        .querySelectorAll(".LIVETIMING_VALUE")
+                                        .forEach((input) => {
+                                            const key =
+                                                input.getAttribute("key-value");
+                                            const value = input.value.trim();
+                                            if (key && value) h[key] = value;
+                                        });
+                                    return h;
+                                })(),
+                            };
+                        }
 
-                                    const headerRaceNameEl =
-                                        document.querySelector(
-                                            ".LIVETIMING_VALUE[key-value='race_name']"
-                                        );
-                                    const headerRaceLocationEl =
-                                        document.querySelector(
-                                            ".LIVETIMING_VALUE[key-value='race_location']"
-                                        );
-
-                                    hasError |= markError(
-                                        headerRaceNameEl,
-                                        !headerRaceNameEl ||
-                                            headerRaceNameEl.value.trim() === ""
-                                    );
-                                    hasError |= markError(
-                                        headerRaceLocationEl,
-                                        !headerRaceLocationEl ||
-                                            headerRaceLocationEl.value.trim() ===
-                                                ""
-                                    );
-                                    raceConfig.livetimingCfg = {
-                                        password: document
-                                            .getElementById(
-                                                "livetiming_password"
-                                            )
-                                            .value.trim(),
-                                        filename: document
-                                            .getElementById(
-                                                "livetiming_filename"
-                                            )
-                                            .value.trim(),
-                                        headers: (() => {
-                                            const h = {};
-                                            document
-                                                .querySelectorAll(
-                                                    ".LIVETIMING_VALUE"
-                                                )
-                                                .forEach((input) => {
-                                                    const key =
-                                                        input.getAttribute(
-                                                            "key-value"
-                                                        );
-                                                    const value =
-                                                        input.value.trim();
-                                                    if (key && value)
-                                                        h[key] = value;
-                                                });
-                                            return h;
-                                        })(),
-                                    };
-                                }
-
-                                if (hasError) {
-                                    return;
-                                }
-                                window.raceConfig = raceConfig;
-                                bridge.py_message(
-                                    JSON.stringify({
-                                        message_type: "start_race",
-                                        data: raceConfig,
-                                    })
-                                );
-                            });
+                        if (hasError) {
+							ev.target.disabled = false
+                            return;
+                        }
+                        window.raceConfig = raceConfig;
+                        bridge.py_message(
+                            JSON.stringify({
+                                message_type: "start_race",
+                                data: raceConfig,
+                            })
+                        );
                     });
 
                 document
@@ -1789,18 +1786,15 @@
                     });
                 }
 
-                function handleLivetimingMessage(msg) {
-                    const submit = document.getElementById("livetiming_submit");
-                    const config = document.getElementById("live_config");
-                    if (msg === "t_started") {
-                        submit.disabled = false;
-                        config.style.display = "block";
-                    }
-                    if (msg === "t_canceled") {
-                        submit.disabled = true;
-                        config.style.display = "none";
-                    }
-                }
+                // function handleLivetimingMessage(msg) {
+                //     const config = document.getElementById("live_config");
+                //     if (msg === "t_started") {
+                //         config.style.display = "block";
+                //     }
+                //     if (msg === "t_canceled") {
+                //         config.style.display = "none";
+                //     }
+                // }
 
                 //document
                 //    .getElementById("startlist_class_sort")
@@ -2164,6 +2158,12 @@
                     stopClock();
                     raceClockElapsedTime = 0;
                     updateClockDisplay();
+                }
+                function resetCountdownClock() {
+                    clearInterval(countdownInterval);
+                    document.getElementById(
+                        "race_starting_in_clock"
+                    ).innerText = "00:00:00";
                 }
             </script>
         </div>

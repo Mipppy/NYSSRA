@@ -1,5 +1,6 @@
 from typing import Union
 import logging
+from pathlib import Path
 
 class BART2_SETTINGS:
     def __init__(self):
@@ -8,6 +9,7 @@ class BART2_SETTINGS:
         self.load_settings()
         self.logger = logging.getLogger("BART2")
         self.logger.info("Successfully loaded Settings")
+
 
     def load_settings(self):
         """

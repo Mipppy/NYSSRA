@@ -1,9 +1,20 @@
-[INFO] (2025-11-26 02:00:52) - Successfully loaded Logger.
-[DEBUG] (2025-11-26 02:00:52) - Loaded xc_timer_dll.dll's functions successfully.
-[INFO] (2025-11-26 02:00:52) - Successfully loaded xc_timer_dll.dll
-[INFO] (2025-11-26 02:00:52) - Local web server started.
-[INFO] (2025-11-26 02:00:52) - Successfully loaded Announcer.
-[INFO] (2025-11-26 02:00:52) - Serving HTTP on port 80...
-[INFO] (2025-11-26 02:00:52) - Successfully loaded all classes.
-[INFO] (2025-11-26 02:00:52) - JavaScript connection initialized
-[DEBUG] (2025-11-26 02:00:52) - Sent saved password to window.
+[INFO] (2025-11-26 09:48:58) - Successfully loaded Logger.
+[DEBUG] (2025-11-26 09:48:58) - Loaded xc_timer_dll.dll's functions successfully.
+[INFO] (2025-11-26 09:48:58) - Successfully loaded xc_timer_dll.dll
+[INFO] (2025-11-26 09:48:58) - Local web server started.
+[INFO] (2025-11-26 09:48:58) - Successfully loaded Announcer.
+[INFO] (2025-11-26 09:48:58) - Serving HTTP on port 80...
+[INFO] (2025-11-26 09:48:58) - Successfully loaded all classes.
+[INFO] (2025-11-26 09:48:58) - JavaScript connection initialized
+[DEBUG] (2025-11-26 09:48:58) - Sent saved password to window.
+[DEBUG] (2025-11-26 09:49:13) - [JS] {'commPort': 'COM3', 'raceName': '22111111', 'raceLocation': '1111111', 'raceType': '1', 'useLivetiming': False, 'raceStartTime': '09:50', 'intervalStart': {'startInterval': 15, 'athletesPerWave': 1}} (line 1571)
+[WARNING] (2025-11-26 09:49:32) - Received early record for bib 8 at 09:49:32.610300 before race start 09:50:00
+[WARNING] (2025-11-26 09:49:37) - Received early record for bib 4 at 09:49:37.397125 before race start 09:50:00
+[DEBUG] (2025-11-26 09:50:03) - BatchedTimerRecord({'bib_num': '1', 'first_name': 'Trey', 'last_name': 'Naselli', 'team': 'Johnstown', 'dll_record_structure': {'table_id': 0, 'device_num': 3, 'record_num': 51, 'event_num': 1, 'heat_num': 5, 'channel': 1, 'record_typ': 'b', 'userstring': '1', 'userxfield': [None, None, None, None, None, None, None, None, None, None], 'bib_string': '1', 'timer_time': '9:50:02.872', 'pc_time': '09:50:03', 'notes': ' '}, 'additional_startlist_data': {'bib_index': 0}, 'timing_data': {'pc_time': datetime.timedelta(seconds=35403), 'timer_time': datetime.timedelta(seconds=35402, microseconds=872000), 'interval_time_offset': 0, 'corrected_time': datetime.timedelta(seconds=2, microseconds=872000)}})
+[DEBUG] (2025-11-26 09:50:18) - BatchedTimerRecord({'bib_num': '3', 'first_name': 'Forrest', 'last_name': 'Slingerland', 'team': 'Glens Falls', 'dll_record_structure': {'table_id': 0, 'device_num': 3, 'record_num': 52, 'event_num': 1, 'heat_num': 5, 'channel': 1, 'record_typ': 'b', 'userstring': '3', 'userxfield': [None, None, None, None, None, None, None, None, None, None], 'bib_string': '3', 'timer_time': '9:50:16.716', 'pc_time': '09:50:18', 'notes': ' '}, 'additional_startlist_data': {'bib_index': 1}, 'timing_data': {'pc_time': datetime.timedelta(seconds=35418), 'timer_time': datetime.timedelta(seconds=35416, microseconds=716000), 'interval_time_offset': 15, 'corrected_time': datetime.timedelta(seconds=1, microseconds=716000)}})
+[DEBUG] (2025-11-26 09:50:25) - Saved race config -> C:\Users\Tim\Documents\TimingSystemData\RaceResults\11-26-2025_22111111\race_config.json
+[DEBUG] (2025-11-26 09:50:25) - Saved startlist -> C:\Users\Tim\Documents\TimingSystemData\RaceResults\11-26-2025_22111111\startlist.csv
+[DEBUG] (2025-11-26 09:50:25) - Saved race results -> C:\Users\Tim\Documents\TimingSystemData\RaceResults\11-26-2025_22111111\race_results.json
+[DEBUG] (2025-11-26 09:50:40) - [JS] {'commPort': 'COM3', 'raceName': '9999999', 'raceLocation': '1111111', 'raceType': '1', 'useLivetiming': False, 'raceStartTime': '09:51', 'intervalStart': {'startInterval': 15, 'athletesPerWave': 1}} (line 1571)
+[WARNING] (2025-11-26 09:50:50) - Received early record for bib 2 at 09:50:50.265659 before race start 09:51:00
+[DEBUG] (2025-11-26 09:51:35) - BatchedTimerRecord({'bib_num': '1', 'first_name': 'Trey', 'last_name': 'Naselli', 'team': 'Johnstown', 'dll_record_structure': {'table_id': 0, 'device_num': 3, 'record_num': 55, 'event_num': 5, 'heat_num': 2, 'channel': 1, 'record_typ': 'b', 'userstring': '1', 'userxfield': [None, None, None, None, None, None, None, None, None, None], 'bib_string': '1', 'timer_time': '9:51:34.528', 'pc_time': '09:51:35', 'notes': ' '}, 'additional_startlist_data': {'bib_index': 0}, 'timing_data': {'pc_time': datetime.timedelta(seconds=35495), 'timer_time': datetime.timedelta(seconds=35494, microseconds=528000), 'interval_time_offset': 0, 'corrected_time': datetime.timedelta(seconds=34, microseconds=528000)}})

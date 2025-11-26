@@ -5,9 +5,10 @@ To run:
 
 This file is super important, as you can probably guess from the whopping 4 lines of code.
 """
-
+from pathlib import Path
 import sys
 from instances import Instances
+
 
 Instances.create_instances()
 sys.exit(Instances.window_app.exec_())

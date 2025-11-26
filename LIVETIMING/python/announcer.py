@@ -54,3 +54,6 @@ class Announcer:
         self.engine.setProperty("voice", voices[0 if tts_male else 1].id)
         self.engine.setProperty("rate", tts_rate)
         self.engine.setProperty("volume", tts_volume)
+
+    def clear_talk_pool(self):
+        self.messages_to_speak = []
