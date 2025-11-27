@@ -95,12 +95,16 @@ document.addEventListener("DOMContentLoaded", async () => {
             }, 1000);
         }
         if (Object.keys(data[0].header.headers).length > 2) {
-            document.getElementById('additional-race-headers').classList.remove('d-none')
-            delete data[0].header.headers.race_name
-            delete data[0].header.headers.race_location
-            Object.entries(data[0].header.headers).forEach(e => {
-                document.getElementById('additional-race-headers-container').innerHTML += `<li><i>${e[0]}</i>:&nbsp;&nbsp;${e[1]}</li>`
-            })
+            document
+                .getElementById("additional-race-headers")
+                .classList.remove("d-none");
+            delete data[0].header.headers.race_name;
+            delete data[0].header.headers.race_location;
+            Object.entries(data[0].header.headers).forEach((e) => {
+                document.getElementById(
+                    "additional-race-headers-container"
+                ).innerHTML += `<li><i>${e[0]}</i>:&nbsp;&nbsp;${e[1]}</li>`;
+            });
         }
         updateRaceData(url_params);
     }
@@ -142,7 +146,7 @@ document.getElementById("save_xlsx").addEventListener("click", () => {
 });
 
 document.getElementById("save_pdf").addEventListener("click", () => {
-    const { jsPDF } = window.jspdf; 
+    const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
     const raceName = document.getElementById("race-name").innerText;

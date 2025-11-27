@@ -8,8 +8,10 @@
 document.addEventListener("DOMContentLoaded", async () => {
     const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 
-    const simplemde = new SimpleMDE(Navbar.simpleMDEParameters);
-
+    const simplemde = new SimpleMDE({
+        ...Navbar.simpleMDEParameters,   
+        element: document.getElementById("markdown-editor") 
+    });
     const imageInput = document.getElementById("image-upload");
     const previewContainer = document.getElementById("image-preview-container");
     const postNameInput = document.getElementById("post-name");

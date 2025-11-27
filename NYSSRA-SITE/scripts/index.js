@@ -100,5 +100,19 @@ function loadAndDisplayPosts(index) {
     getPostMetadataPaginated(index).then(data => renderPosts(data));
 }
 
-
+(async () => {
+    events = await Navbar.loadAllEvents()
+})()
 loadAndDisplayPosts(0);
+
+document.getElementById("calendar-frame").addEventListener("load", () => {
+    const iframe = document.getElementById("calendar-frame").contentWindow;
+
+    iframe.document.addEventListener("click", (e) => {
+        let a = e.target.closest("a");
+        if (!a) return;
+
+        e.preventDefault();
+        window.location.href = a.href; 
+    });
+});

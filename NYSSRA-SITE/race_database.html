@@ -1,109 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>NYSSRA - Race Database</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="shortcut icon" href="/images/nyssra-logo.jpg" />
 
-<head>
-  <meta charset="UTF-8" />
-  <title>NYSSRA - Race Database</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="shortcut icon" href="/images/nyssra-logo.jpg" />
+        <link rel="stylesheet" href="css/global.css" />
+        <link rel="stylesheet" href="css/bootstrap.css" />
+        <link rel="stylesheet" href="css/bootstrap-icons.css" />
+    </head>
 
-  <link rel="stylesheet" href="css/global.css" />
-  <link rel="stylesheet" href="css/bootstrap.css" />
-  <link rel="stylesheet" href="css/bootstrap-icons.css" />
-</head>
+    <body class="min-vh-100 d-flex flex-column" style="min-height: 100vh">
+        <nav></nav>
 
-<body class="min-vh-100 d-flex flex-column" style="min-height: 100vh;">
-  <nav></nav>
+        <main class="py-4 container flex-grow-1">
+            <fieldset
+                style="
+                    border: 1px solid #dee2e6;
+                    border-radius: 6px;
+                    padding: 15px;
+                "
+            >
+                <legend style="font-size: 1.25rem; padding: 0 10px">
+                    Search & Filter
+                </legend>
+                <div class="d-flex flex-wrap gap-3 align-items-end">
+                    <div>
+                        <label for="search-box" class="form-label"
+                            >Search</label
+                        >
+                        <input
+                            type="text"
+                            id="search-box"
+                            class="form-control"
+                            placeholder="Race name or place"
+                        />
+                    </div>
+                    <div>
+                        <label for="date-start" class="form-label"
+                            >Start Date</label
+                        >
+                        <input
+                            type="date"
+                            id="date-start"
+                            class="form-control"
+                        />
+                    </div>
+                    <div>
+                        <label for="date-end" class="form-label"
+                            >End Date</label
+                        >
+                        <input type="date" id="date-end" class="form-control" />
+                    </div>
+                    <div>
+                        <label for="sort-select" class="form-label"
+                            >Sort By</label
+                        >
+                        <select id="sort-select" class="form-select">
+                            <option value="timestamp_desc">Newest First</option>
+                            <option value="timestamp_asc">Oldest First</option>
+                            <option value="name_asc">Name A-Z</option>
+                            <option value="name_desc">Name Z-A</option>
+                        </select>
+                    </div>
+                </div>
+            </fieldset>
 
-  <main class="py-4 container flex-grow-1" >
-    <fieldset style="border: 1px solid #dee2e6; border-radius: 6px; padding: 15px;">
-      <legend style="font-size: 1.25rem; padding: 0 10px;">Search & Filter</legend>
-      <div class="d-flex flex-wrap gap-3 align-items-end">
-        <div>
-          <label for="search-box" class="form-label">Search</label>
-          <input type="text" id="search-box" class="form-control" placeholder="Race name or place">
-        </div>
-        <div>
-          <label for="date-start" class="form-label">Start Date</label>
-          <input type="date" id="date-start" class="form-control">
-        </div>
-        <div>
-          <label for="date-end" class="form-label">End Date</label>
-          <input type="date" id="date-end" class="form-control">
-        </div>
-        <div>
-          <label for="sort-select" class="form-label">Sort By</label>
-          <select id="sort-select" class="form-select">
-            <option value="timestamp_desc">Newest First</option>
-            <option value="timestamp_asc">Oldest First</option>
-            <option value="name_asc">Name A-Z</option>
-            <option value="name_desc">Name Z-A</option>
-          </select>
-        </div>
-      </div>
-    </fieldset>
+            <div
+                id="races-card-container"
+                class="row g-3 mt-3"
+                style="
+                    border: 1px solid #dee2e6;
+                    padding: 15px;
+                    border-radius: 6px;
+                "
+            ></div>
+        </main>
 
-    <div id="races-card-container" class="row g-3 mt-3" 
-         style="border: 1px solid #dee2e6; padding: 15px; border-radius: 6px;">
-    </div>
-  </main>
+        <footer></footer>
+        <style>
+            .status-dot {
+                width: 15px;
+                height: 15px;
+                border-radius: 50%;
+                margin-left: 20px;
+                position: relative;
+            }
 
-  <footer></footer>
-    <style>
-        .status-dot {
-            width: 15px;
-            height: 15px;
-            border-radius: 50%;
-            margin-left: 20px;
-            position: relative;
-        }
+            .status-dot.live {
+                background-color: #198754;
+            }
 
-        .status-dot.live {
-            background-color: #198754;
-        }
-
-        .status-dot.live::after {
-            content: "";
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            width: 100%;
-            height: 100%;
-            background-color: #198754;
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            animation: pulse-ring 1.5s infinite;
-            opacity: 0.6;
-        }
-
-        @keyframes pulse-ring {
-            0% {
-                transform: translate(-50%, -50%) scale(1);
+            .status-dot.live::after {
+                content: "";
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                width: 100%;
+                height: 100%;
+                background-color: #198754;
+                border-radius: 50%;
+                transform: translate(-50%, -50%);
+                animation: pulse-ring 1.5s infinite;
                 opacity: 0.6;
             }
 
-            70% {
-                transform: translate(-50%, -50%) scale(2.5);
-                opacity: 0;
+            @keyframes pulse-ring {
+                0% {
+                    transform: translate(-50%, -50%) scale(1);
+                    opacity: 0.6;
+                }
+
+                70% {
+                    transform: translate(-50%, -50%) scale(2.5);
+                    opacity: 0;
+                }
+
+                100% {
+                    transform: translate(-50%, -50%) scale(1);
+                    opacity: 0;
+                }
             }
 
-            100% {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 0;
+            .status-dot.recent {
+                background-color: #0d6efd;
             }
-        }
 
-        .status-dot.recent {
-            background-color: #0d6efd;
-        }
-
-        .status-dot.finished {
-            background-color: #dc3545;
-        }
-    </style>
-  <script src="scripts/bootstrap.js"></script>
-  <script src="scripts/navbar.js"></script>
-  <script src="scripts/race_database.js"></script>
-</body>
-
+            .status-dot.finished {
+                background-color: #dc3545;
+            }
+        </style>
+        <script src="scripts/bootstrap.js"></script>
+        <script src="scripts/navbar.js"></script>
+        <script src="scripts/race_database.js"></script>
+    </body>
 </html>

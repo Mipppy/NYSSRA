@@ -1,8 +1,6 @@
 contact
-e
 information
 mission
 permanant
 permanent
 program
-test

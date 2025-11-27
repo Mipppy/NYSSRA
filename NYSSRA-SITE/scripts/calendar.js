@@ -1,18 +1,18 @@
 window.displayCalendar = (json_events) => {
-    const calendarEl = document.getElementById('calendar');
-    const searchInput = document.getElementById('event-search');
+    const calendarEl = document.getElementById("calendar");
+    const searchInput = document.getElementById("event-search");
 
-    const events = json_events.map(event => ({
+    const events = json_events.map((event) => ({
         title: event.post_name,
         start: event.event_date,
-        url: `/article.html?article=${event.txt_path.replace('.txt', '')}`,
-        txtPath: event.txt_path.replace('.txt', ''),
-        allDay: true
+        url: `/article.html?article=${event.txt_path.replace(".txt", "")}`,
+        txtPath: event.txt_path.replace(".txt", ""),
+        allDay: true,
     }));
 
     const calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        events: events
+        initialView: "dayGridMonth",
+        events: events,
     });
 
     calendar.render();
@@ -23,7 +23,7 @@ window.displayCalendar = (json_events) => {
     const urlParams = new URLSearchParams(window.location.search);
     const targetEvent = urlParams.get("event");
     if (targetEvent) {
-        const match = events.find(ev => ev.txtPath === targetEvent);
+        const match = events.find((ev) => ev.txtPath === targetEvent);
         if (match) {
             calendar.gotoDate(match.start);
         }
@@ -31,7 +31,9 @@ window.displayCalendar = (json_events) => {
 
     searchInput.addEventListener("input", (e) => {
         const query = e.target.value.toLowerCase();
-        matchedEvents = events.filter(ev => ev.title.toLowerCase().includes(query));
+        matchedEvents = events.filter((ev) =>
+            ev.title.toLowerCase().includes(query)
+        );
         matchIndex = 0;
     });
 
@@ -43,12 +45,14 @@ window.displayCalendar = (json_events) => {
         }
     });
 
-    document.getElementById('export-pdf-btn').addEventListener('click', () => {
-        const calendarTableEle = calendarEl.querySelector('table.fc-scrollgrid');
-        html2canvas(calendarTableEle, { scale: 2 }).then(canvas => {
-            const imgData = canvas.toDataURL('image/png');
+    document.getElementById("export-pdf-btn").addEventListener("click", () => {
+        const calendarTableEle = calendarEl.querySelector(
+            "table.fc-scrollgrid"
+        );
+        html2canvas(calendarTableEle, { scale: 2 }).then((canvas) => {
+            const imgData = canvas.toDataURL("image/png");
             const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF('landscape', 'pt', 'a4');
+            const pdf = new jsPDF("landscape", "pt", "a4");
             const pdfWidth = pdf.internal.pageSize.getWidth();
             const pdfHeight = pdf.internal.pageSize.getHeight();
             const imgWidth = canvas.width;
@@ -58,8 +62,8 @@ window.displayCalendar = (json_events) => {
             const imgScaledHeight = imgHeight * ratio;
             const x = (pdfWidth - imgScaledWidth) / 2;
             const y = (pdfHeight - imgScaledHeight) / 2;
-            pdf.addImage(imgData, 'PNG', x, y, imgScaledWidth, imgScaledHeight);
-            pdf.save('calendar.pdf');
+            pdf.addImage(imgData, "PNG", x, y, imgScaledWidth, imgScaledHeight);
+            pdf.save("calendar.pdf");
         });
     });
 };

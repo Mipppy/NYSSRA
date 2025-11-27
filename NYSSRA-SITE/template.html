@@ -1,55 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>404 - Page Not Found</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="shortcut icon" href="/images/nyssra-logo.jpg" />
 
-<head>
-    <meta charset="UTF-8" />
-    <title>404 - Page Not Found</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" href="/images/nyssra-logo.jpg" />
+        <link rel="stylesheet" href="css/global.css" />
+        <link rel="stylesheet" href="css/bootstrap.css" />
+        <link rel="stylesheet" href="css/bootstrap-icons.css" />
 
-    <link rel="stylesheet" href="css/global.css" />
-    <link rel="stylesheet" href="css/bootstrap.css" />
-    <link rel="stylesheet" href="css/bootstrap-icons.css" />
+        <style>
+            html,
+            body {
+                height: 100%;
+                margin: 0;
+            }
 
-    <style>
-        html,
-        body {
-            height: 100%;
-            margin: 0;
-        }
+            body {
+                display: flex;
+                flex-direction: column;
+            }
 
-        body {
-            display: flex;
-            flex-direction: column;
-        }
+            main {
+                flex-grow: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                text-align: center;
+            }
+        </style>
+    </head>
 
-        main {
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            text-align: center;
-        }
-    </style>
-</head>
+    <body class="min-vh-100 d-flex flex-column">
+        <nav></nav>
 
-<body class="min-vh-100 d-flex flex-column">
-    <nav></nav>
+        <main class="py-4"></main>
 
-    <main class="py-4">
+        <footer></footer>
 
-    </main>
-
-    <footer></footer>
-
-    <script src="scripts/bootstrap.js"></script>
-    <script src="scripts/navbar.js"></script>
-    <script>
-        window.onload = function () {
-            Navbar.LoadExtraHTML()
-        }
-    </script>
-</body>
-
+        <script src="scripts/bootstrap.js"></script>
+        <script src="scripts/navbar.js"></script>
+        <script>
+            window.onload = function () {
+                Navbar.LoadExtraHTML();
+            };
+        </script>
+    </body>
 </html>

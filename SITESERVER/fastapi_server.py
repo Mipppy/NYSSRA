@@ -49,7 +49,9 @@ BUFFER_SIZE = 100
 FLUSH_INTERVAL = 0.25
 
 
-async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+async def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+):
     token = credentials.credentials
     cleanup_expired_tokens()
     username = get_user_from_token(token)
@@ -63,10 +65,7 @@ def admin_required(user: str = Depends(get_current_user)):
     user_data = users.get(user)
     if not user_data or not user_data.get("admin", False):
         raise HTTPException(status_code=403, detail="Admin privileges required")
-    return user  
-
-
-
+    return user
 
 
 @app.get("/")
@@ -87,8 +86,16 @@ async def get_all_results():
                     first_line = f.readline()
                     header = json.loads(first_line)
 
-                    name = header.get('header', {}).get('headers', {}).get('race_name', "Unknown")
-                    place = header.get("header", {}).get("headers", {}).get('race_location', "Unknown")
+                    name = (
+                        header.get("header", {})
+                        .get("headers", {})
+                        .get("race_name", "Unknown")
+                    )
+                    place = (
+                        header.get("header", {})
+                        .get("headers", {})
+                        .get("race_location", "Unknown")
+                    )
                     live = header.get("header", {}).get("live", False)
                     timestamp_str = header.get("header_timestamp")
 
@@ -145,7 +152,7 @@ async def websocket_endpoint(websocket: WebSocket):
                     await websocket.send_json(
                         {"INFO_CLIENT_PONG": "bro got ponged fr fr"}
                     )
-                    
+
                     continue
                 message_count += 1
                 if not authenticated:
@@ -168,7 +175,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
                 if message_count == 2 and "new_url" in json_data:
                     created_route = json_data["new_url"].replace(" ", "_")
-                    date_str = now_et.strftime("%d-%m-%Y_%H-%M") 
+                    date_str = now_et.strftime("%d-%m-%Y_%H-%M")
                     log_file_path = f"livetiming_data/{created_route}_{date_str}.jsonl"
                     log_file = open(log_file_path, "w", buffering=1)
                     await websocket.send_json(
@@ -210,8 +217,7 @@ async def websocket_endpoint(websocket: WebSocket):
                         {"status": "success", "message": "Data received"}
                     )
 
-                    time_elapsed = (datetime.now() -
-                                    last_flush_time).total_seconds()
+                    time_elapsed = (datetime.now() - last_flush_time).total_seconds()
                     if (
                         len(write_buffer) >= BUFFER_SIZE
                         or time_elapsed >= FLUSH_INTERVAL
@@ -253,28 +259,50 @@ async def websocket_endpoint(websocket: WebSocket):
             await websocket.close()
 
 
-@app.post('/editpost')
+@app.get("/get_all_tags")
+async def get_all_tags():
+    with open("misc_data/tags.txt", "r", encoding="utf-8") as f:
+        return {"tags": f"{f.read()}"}
+
+
+@app.post("/editpost")
 async def edit_post(
     primary_data: str = Form(...),
     token: str = Form(...),
-    user: str = Depends(admin_required)
+    user: str = Depends(admin_required),
 ):
     try:
         data = json.loads(primary_data)
     except json.JSONDecodeError:
         raise HTTPException(status_code=400, detail="Invalid JSON in primary_data")
 
-    post_name = data.get("postName")
-    if not post_name:
-        raise HTTPException(status_code=400, detail="Missing postName")
+    original_post_name = data.get("originalPostName")
+    new_post_name = data.get("postName")
+    if not original_post_name or not new_post_name:
+        raise HTTPException(status_code=400, detail="Missing post name")
 
-    md_path = os.path.join("pages", f"{post_name}.md")
-    txt_path = os.path.join("page_data", f"{post_name}.txt")
+    md_path = os.path.join("pages", f"{original_post_name}.md")
+    txt_path = os.path.join("page_data", f"{original_post_name}.txt")
 
     if not os.path.exists(md_path) or not os.path.exists(txt_path):
         raise HTTPException(status_code=404, detail="Post not found")
 
+    if new_post_name != original_post_name:
+        new_md_path = os.path.join("pages", f"{new_post_name}.md")
+        new_txt_path = os.path.join("page_data", f"{new_post_name}.txt")
+
+        if os.path.exists(new_md_path) or os.path.exists(new_txt_path):
+            raise HTTPException(
+                status_code=400,
+                detail=f"A post with the name '{new_post_name}' already exists",
+            )
+
+        os.rename(md_path, new_md_path)
+        os.rename(txt_path, new_txt_path)
+        md_path, txt_path = new_md_path, new_txt_path
+
     markdown = data.get("markdown", "")
+
     def sanitize_tables(md: str) -> str:
         lines = md.splitlines()
         cleaned = []
@@ -282,8 +310,7 @@ async def edit_post(
         for line in lines:
             stripped = line.strip()
             if stripped.startswith("|") and stripped.endswith("|"):
-                if not in_table:
-                    in_table = True
+                in_table = True
                 cleaned.append(line)
             elif stripped == "" and in_table:
                 continue
@@ -298,23 +325,22 @@ async def edit_post(
     tags_str = ",".join([t.lower() for t in data.get("tags", [])])
     event_data = data.get("eventData", {})
     advanced_event_data = json.dumps(data.get("advancedEventData", {}))
-
     username = user
+
+    try:
+        with open(txt_path, "r", encoding="utf-8") as old:
+            old_lines = old.readlines()
+            num_images = old_lines[6].strip() if len(old_lines) > 6 else "0"
+    except:
+        num_images = "0"
 
     with open(txt_path, "w", encoding="utf-8") as f:
         f.write(tags_str + "\n")
         f.write(f"{datetime.now(tz=ZoneInfo('America/New_York'))}\n")
         f.write(username + "\n")
-        f.write(data.get("postNameRaw", post_name) + "\n")
-        f.write(str(event_data.get('isEvent', 0)) + "\n")
-        f.write(event_data.get('eventDate', 0) + "\n")
-        # keep number of images from previous file if exists
-        try:
-            with open(txt_path, "r", encoding="utf-8") as old:
-                old_lines = old.readlines()
-                num_images = old_lines[6].strip() if len(old_lines) > 6 else "0"
-        except:
-            num_images = "0"
+        f.write(data.get("postNameRaw", new_post_name) + "\n")
+        f.write(str(event_data.get("isEvent", 0)) + "\n")
+        f.write(str(event_data.get("eventDate", "")) + "\n")
         f.write(str(num_images) + "\n")
         f.write(advanced_event_data + "\n")
 
@@ -323,21 +349,20 @@ async def edit_post(
     if os.path.exists(tag_file_path):
         with open(tag_file_path, "r", encoding="utf-8") as f:
             existing_tags = set(line.strip().lower() for line in f if line.strip())
-
     new_tags = existing_tags.union([t.lower() for t in data.get("tags", [])])
     with open(tag_file_path, "w", encoding="utf-8") as f:
         for tag in sorted(new_tags):
             f.write(tag + "\n")
 
-    return {"status": "success", "message": f"Post '{post_name}' updated"}
+    return {
+        "status": "success",
+        "message": f"Post '{original_post_name}' updated",
+        "new_post_name": new_post_name,
+    }
 
-    
 
-@app.post('/search')
-async def search(
-    tags: str = Form(...),
-    query: str = Form(...)
-):
+@app.post("/search")
+async def search(tags: str = Form(...), query: str = Form(...)):
     tags_folder = "page_data"
     pages_folder = "pages"
     results = []
@@ -359,8 +384,9 @@ async def search(
                     if len(lines) < 6:
                         continue
 
-                    metadata_tags = set(t.strip().lower()
-                                        for t in lines[0].split(",") if t.strip())
+                    metadata_tags = set(
+                        t.strip().lower() for t in lines[0].split(",") if t.strip()
+                    )
                     author = lines[2]
                     post_name_raw = lines[3]
                     is_event = lines[4].lower() == "true"
@@ -374,22 +400,26 @@ async def search(
                     content = f.read().lower()
 
                 matches_tags = not search_tags or search_tags.intersection(
-                    metadata_tags)
+                    metadata_tags
+                )
                 matches_query = not query_lower or (
-                    query_lower in content or query_lower in post_name_raw.lower())
+                    query_lower in content or query_lower in post_name_raw.lower()
+                )
 
                 if not (matches_tags and matches_query):
                     continue
 
-                results.append({
-                    "post_name": base_name,
-                    "post_name_raw": post_name_raw,
-                    "tags": list(metadata_tags),
-                    "author": author,
-                    "is_event": is_event,
-                    "event_date": event_date,
-                    "post_date": post_date
-                })
+                results.append(
+                    {
+                        "post_name": base_name,
+                        "post_name_raw": post_name_raw,
+                        "tags": list(metadata_tags),
+                        "author": author,
+                        "is_event": is_event,
+                        "event_date": event_date,
+                        "post_date": post_date,
+                    }
+                )
 
             except Exception as e:
                 print(f"Failed to process search for {filename}: {e}")
@@ -488,8 +518,8 @@ async def create_post(
         f.write(f"{datetime.now(tz=ZoneInfo('America/New_York'))}\n")
         f.write(username + "\n")
         f.write(postNameRaw + "\n")
-        f.write(str(event_data.get('isEvent', 0)) + "\n")
-        f.write(event_data.get('eventDate', 0) + "\n")
+        f.write(str(event_data.get("isEvent", 0)) + "\n")
+        f.write(event_data.get("eventDate", 0) + "\n")
         f.write(str(len(files)) + "\n")
         f.write(advancedEventData + "\n")
 
@@ -499,8 +529,7 @@ async def create_post(
     existing_tags = set()
     if os.path.exists(tag_file_path):
         with open(tag_file_path, "r", encoding="utf-8") as f:
-            existing_tags = set(line.strip().lower()
-                                for line in f if line.strip())
+            existing_tags = set(line.strip().lower() for line in f if line.strip())
 
     new_tags = existing_tags.union(tag_list)
     with open(tag_file_path, "w", encoding="utf-8") as f:
@@ -527,17 +556,19 @@ async def get_all_events():
                     if len(lines) >= 6:
                         post_name = lines[3]
                         author = lines[2]
-                        is_event = lines[4].lower() == '1'
+                        is_event = lines[4].lower() == "1"
                         event_date = lines[5] if lines[5] else None
 
                         if is_event:
-                            events.append({
-                                "post_name": post_name,
-                                "event_date": event_date,
-                                "author": author,
-                                "txt_path": filename,
-                                "advancedEventData": lines[7]
-                            })
+                            events.append(
+                                {
+                                    "post_name": post_name,
+                                    "event_date": event_date,
+                                    "author": author,
+                                    "txt_path": filename,
+                                    "advancedEventData": lines[7],
+                                }
+                            )
                     else:
                         print(f"Metadata format invalid in {txt_path}")
             except Exception as e:
@@ -549,8 +580,12 @@ async def get_all_events():
             except Exception:
                 return datetime.min
 
-        events.sort(key=lambda e: parse_date(
-            e["event_date"]) if e["event_date"] else datetime.min, reverse=True)
+        events.sort(
+            key=lambda e: (
+                parse_date(e["event_date"]) if e["event_date"] else datetime.min
+            ),
+            reverse=True,
+        )
 
         return JSONResponse(content=events)
 
@@ -587,21 +622,21 @@ async def get_paginated_pages(index: int = 0):
                     with open(txt_path, "r", encoding="utf-8") as f:
                         lines = [line.strip() for line in f.readlines()]
                         if len(lines) >= 6:
-                            metadata["tags"] = [tag.strip()
-                                                for tag in lines[0].split(",")]
+                            metadata["tags"] = [
+                                tag.strip() for tag in lines[0].split(",")
+                            ]
                             post_date_str = lines[1]
                             metadata["author"] = lines[2]
                             metadata["post_name_raw"] = lines[3]
                             metadata["is_event"] = lines[4].lower() == "true"
                             metadata["event_date"] = lines[5] if lines[5] else None
                             metadata["num_of_images"] = lines[6] if lines[6] else None
-                            metadata['post_name'] = filename.replace(
-                                '.txt', '')
-                            metadata['advancedEventData'] = lines[7] if len(
-                                lines) > 7 else '{}'
+                            metadata["post_name"] = filename.replace(".txt", "")
+                            metadata["advancedEventData"] = (
+                                lines[7] if len(lines) > 7 else "{}"
+                            )
                             try:
-                                post_date_dt = datetime.fromisoformat(
-                                    post_date_str)
+                                post_date_dt = datetime.fromisoformat(post_date_str)
                             except ValueError:
                                 post_date_dt = datetime.min
                         else:
@@ -610,21 +645,22 @@ async def get_paginated_pages(index: int = 0):
                     print(f"Missing metadata file: {txt_path}")
 
                 file_path = os.path.join(pages_folder, filename)
-                update_date = datetime.fromtimestamp(
-                    os.path.getmtime(file_path))
+                update_date = datetime.fromtimestamp(os.path.getmtime(file_path))
 
-                results.append({
-                    "filename": filename,
-                    "post_date": post_date_dt.isoformat(),
-                    "update_date": update_date.isoformat(),
-                    "tags": metadata["tags"],
-                    "author": metadata["author"],
-                    "post_name": metadata["post_name"],
-                    "is_event": metadata["is_event"],
-                    "event_date": metadata["event_date"],
-                    "num_of_images": int(metadata["num_of_images"]),
-                    "advancedEventData": metadata["advancedEventData"]
-                })
+                results.append(
+                    {
+                        "filename": filename,
+                        "post_date": post_date_dt.isoformat(),
+                        "update_date": update_date.isoformat(),
+                        "tags": metadata["tags"],
+                        "author": metadata["author"],
+                        "post_name": metadata["post_name"],
+                        "is_event": metadata["is_event"],
+                        "event_date": metadata["event_date"],
+                        "num_of_images": int(metadata["num_of_images"]),
+                        "advancedEventData": metadata["advancedEventData"],
+                    }
+                )
 
             except Exception as e:
                 print(f"Failed to process {filename}: {e}")
@@ -646,7 +682,6 @@ async def get_paginated_pages(index: int = 0):
 
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
-
 
 
 USERS_FILE = "users.json"
@@ -677,7 +712,8 @@ def hash_password(password, salt=None):
     if not salt:
         salt = secrets.token_hex(16)
     hashed = hashlib.pbkdf2_hmac(
-        "sha256", password.encode(), salt.encode(), 100_000).hex()
+        "sha256", password.encode(), salt.encode(), 100_000
+    ).hex()
     return hashed, salt
 
 
@@ -689,7 +725,7 @@ def verify_password(password, salt, stored_hash):
 def create_token_entry():
     return {
         "token": secrets.token_urlsafe(32),
-        "created": datetime.utcnow().isoformat()
+        "created": datetime.utcnow().isoformat(),
     }
 
 
@@ -714,7 +750,8 @@ def cleanup_expired_tokens():
     for username in list(tokens.keys()):
         original = tokens[username]
         tokens[username] = [
-            entry for entry in original
+            entry
+            for entry in original
             if now - datetime.fromisoformat(entry["created"]) < TOKEN_EXPIRY
         ]
         if not tokens[username]:
@@ -727,25 +764,23 @@ def cleanup_expired_tokens():
         save_json(TOKENS_PATH, tokens)
 
 
+# @app.post("/register")
+# async def register(username: str = Form(...), password: str = Form(...)):
+#     users = load_json(USERS_PATH)
+#     if username in users:
+#         return {"status": "error", "message": "Username already exists"}
 
+#     hashed, salt = hash_password(password)
+#     users[username] = {"hash": hashed, "salt": salt, "admin": False}
+#     save_json(USERS_PATH, users)
 
-@app.post("/register")
-async def register(username: str = Form(...), password: str = Form(...)):
-    users = load_json(USERS_PATH)
-    if username in users:
-        return {"status": "error", "message": "Username already exists"}
+#     token_entry = create_token_entry()
+#     tokens = load_json(TOKENS_PATH)
+#     tokens.setdefault(username, [])
+#     tokens[username].append(token_entry)
+#     save_json(TOKENS_PATH, tokens)
 
-    hashed, salt = hash_password(password)
-    users[username] = {"hash": hashed, "salt": salt, "admin": False}
-    save_json(USERS_PATH, users)
-
-    token_entry = create_token_entry()
-    tokens = load_json(TOKENS_PATH)
-    tokens.setdefault(username, [])
-    tokens[username].append(token_entry)
-    save_json(TOKENS_PATH, tokens)
-
-    return {"status": "success", "message": "User registered", "token": token_entry["token"]}
+#     return {"status": "success", "message": "User registered", "token": token_entry["token"]}
 
 
 @app.post("/login")
@@ -787,8 +822,7 @@ async def logout(credentials: HTTPAuthorizationCredentials = Depends(security)):
 
     for username in list(tokens.keys()):
         original = tokens[username]
-        tokens[username] = [
-            entry for entry in original if entry["token"] != token]
+        tokens[username] = [entry for entry in original if entry["token"] != token]
         if not tokens[username]:
             del tokens[username]
             updated = True

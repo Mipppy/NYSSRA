@@ -1,45 +1,48 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <title>NYSSRA Home Page</title>
+        <meta charset="UTF-8" />
+        <link rel="shortcut icon" href="/images/nyssra-logo.jpg" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<head>
-    <title>NYSSRA Home Page</title>
-    <meta charset="UTF-8" />
-    <link rel="shortcut icon" href="/images/nyssra-logo.jpg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="css/global.css" />
+        <link rel="stylesheet" href="css/bootstrap.css" />
+        <link rel="stylesheet" href="css/simplemde.css" />
+        <link rel="stylesheet" href="css/bootstrap-icons.css" />
+    </head>
 
-    <link rel="stylesheet" href="css/global.css" />
-    <link rel="stylesheet" href="css/bootstrap.css" />
-    <link rel="stylesheet" href="css/simplemde.css" />
-    <link rel="stylesheet" href="css/bootstrap-icons.css" />
-</head>
+    <body class="min-vh-100 d-flex flex-column">
+        <nav></nav>
 
-<body class="min-vh-100 d-flex flex-column">
-    <nav></nav>
+        <main class="flex-grow-1 d-flex flex-column py-2 my-2">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-8 flex-grow-1">
+                        <div id="md_parent_div" class="flex-grow-1"></div>
+                    </div>
 
-    <main class="flex-grow-1 py-2 my-2">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-8">
-                    <div id="md_parent_div"></div>
-                </div>
-
-                <div class="col-4">
-                    <div class="bg-light p-3 rounded shadow-lg">
-                        <h5>Sidebar</h5>
-                        <p>News, links, widgets, etc.</p>
+                    <div class="col-4 d-none d-md-block flex-grow-1">
+                        <div class="bg-light p-3 rounded shadow-lg">
+                            <iframe
+                                src="/calendar.html"
+                                style="width: 100%; height: 500px"
+                                id="calendar-frame"
+                            >
+                            </iframe>
+                            
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </main>
+        </main>
 
-    <footer></footer>
+        <footer></footer>
 
-    <script src="scripts/showdown.min.js"></script>
-    <script src="scripts/simplemde.js"></script>
-    <script src="scripts/navbar.js"></script>
-    <script src="scripts/index.js"></script>
-    <script src="scripts/bootstrap.js"></script>
-</body>
-
+        <script src="scripts/showdown.min.js"></script>
+        <script src="scripts/simplemde.js"></script>
+        <script src="scripts/navbar.js"></script>
+        <script src="scripts/index.js"></script>
+        <script src="scripts/bootstrap.js"></script>
+    </body>
 </html>
