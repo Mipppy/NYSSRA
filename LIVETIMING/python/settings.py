@@ -7,9 +7,10 @@ class BART2_SETTINGS:
     def __init__(self):
         self.loaded_data = {}
         self.VERSION_NUMBER = None
-        self.load_settings()
         self.logger = logging.getLogger("BART2")
         self.logger.info("Successfully loaded Settings")
+        self.load_settings()
+
 
 
     def load_settings(self):

@@ -77,7 +77,7 @@ class Bridge(QObject):
                 Instances.settings.load_defaults()
             elif message_type == "start_race":
                 Instances.dll_interfacer.start_race(json_msg["data"])
-                self.send_to_js(f'STARTED_RACE_SUCCESSFULLY|||{json_msg['data']}')
+                self.send_to_js(f"STARTED_RACE_SUCCESSFULLY|||{json_msg['data']}")
             elif message_type == "kill_race":
                 Instances.dll_interfacer.kill_race()
             else:   

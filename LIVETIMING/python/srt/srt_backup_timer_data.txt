@@ -33898,3 +33898,13 @@ table_id	device_num	record_num	event_num	heat_num	channel	record_typ	total_user_
 0	3	14	1	5	0	e	EV  0   1   5	EV	16:38:12.907	16:40:46	 
 0	3	15	6	5	0	e	EV  0   6   5	EV	16:40:38.984	16:40:46	 
 0	3	16	6	5	1	b	1	1	16:41:11.711	16:41:13	 
+
+Summit Systems Timer Backup Text File Initialized  at 12:38:25  on 11/27/25:
+
+table_id	device_num	record_num	event_num	heat_num	channel	record_typ	total_user_string	bib_string	timer_time	pc_time	notes
+0	3	1	6	2	0	e	EV  0   6   2	EV	12:38:25.887	12:38:29	 
+0	3	2	6	2	1	b	1	1	12:38:32.414	12:38:33	 
+0	3	3	6	2	1	b	1	1	12:40:09.367	12:40:12	 
+0	3	4	6	2	1	b	3	3	12:40:47.180	12:40:48	 
+0	3	5	6	2	1	b	4	4	12:41:14.180	12:41:17	 
+0	3	6	6	2	1	b	99	99	12:44:05.945	12:44:07	 
